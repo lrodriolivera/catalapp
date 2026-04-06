@@ -41,7 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 # lambda dependencies
-lambda/conversa/node_modules/
+lambda/*/node_modules/
+lambda/*/.next/
+lambda/*/package-lock.json
 
 # credentials (NEVER commit)
 credencialesAWS/
