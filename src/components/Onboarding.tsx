@@ -4,7 +4,8 @@ import { useEffect, useState, useCallback } from 'react';
 
 const slides = [
   {
-    emoji: '🇦🇩',
+    emoji: '',
+    senyera: true,
     title: 'Benvingut a CatalApp!',
     description: 'Aprèn català amb IA',
   },
@@ -125,8 +126,16 @@ export default function Onboarding() {
               : 'translate-x-0'
           }`}
         >
-          {/* Emoji */}
-          <div className="text-7xl mb-8">{slide.emoji}</div>
+          {/* Emoji or Senyera */}
+          {'senyera' in slide && slide.senyera ? (
+            <div className="flex gap-[4px] mb-8 justify-center">
+              {[...Array(9)].map((_, i) => (
+                <div key={i} className={`w-3 h-16 rounded-sm ${i % 2 === 0 ? 'bg-[#FCDD09]' : 'bg-[#C40000]'}`} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-7xl mb-8">{slide.emoji}</div>
+          )}
 
           {/* Title */}
           <h1 className="text-2xl font-bold text-[#1a1a1a] dark:text-[#F5F5F5] mb-4">
