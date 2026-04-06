@@ -8,7 +8,7 @@ import MatchPairs from '@/components/exercises/MatchPairs'
 import ListenWrite from '@/components/exercises/ListenWrite'
 import { addXP, completeExercise, saveLessonScore, updateStreak } from '@/lib/progress'
 import UnitSelector from '@/components/UnitSelector'
-import { callSonnet } from '@/lib/api'
+import { callSonnet, speakNatural } from '@/lib/api'
 
 type View =
   | { mode: 'home' }
@@ -119,11 +119,7 @@ export default function GramaticaPage() {
   // === VERB CONJUGATION TABLE ===
   if (view.mode === 'verbs') {
     const speakVerb = (text: string) => {
-      if (typeof speechSynthesis === 'undefined') return
-      speechSynthesis.cancel()
-      const u = new SpeechSynthesisUtterance(text)
-      u.lang = 'ca-ES'; u.rate = 0.75
-      speechSynthesis.speak(u)
+      speakNatural(text, 0.75)
     }
     const persons = ['jo', 'tu', 'ell/ella/vostè', 'nosaltres', 'vosaltres', 'ells/elles/vostès'] as const
     const personShort: Record<string, string> = { 'jo': 'Jo', 'tu': 'Tu', 'ell/ella/vostè': 'Ell/Ella', 'nosaltres': 'Nosaltres', 'vosaltres': 'Vosaltres', 'ells/elles/vostès': 'Ells/Elles' }
@@ -184,11 +180,7 @@ export default function GramaticaPage() {
   // === VOCABULARY ===
   if (view.mode === 'vocab') {
     const speakWord = (text: string) => {
-      if (typeof speechSynthesis === 'undefined') return
-      speechSynthesis.cancel()
-      const u = new SpeechSynthesisUtterance(text)
-      u.lang = 'ca-ES'; u.rate = 0.75
-      speechSynthesis.speak(u)
+      speakNatural(text, 0.75)
     }
 
     return (

@@ -10,6 +10,7 @@ import {
   reviewCard,
   getWordIdsForUnit,
 } from '@/lib/spacedRepetition'
+import { speakNatural } from '@/lib/api'
 
 // ── Types ───────────────────────────────────────────────────────────
 
@@ -55,12 +56,8 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 function speak(text: string) {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return
-  window.speechSynthesis.cancel()
-  const utt = new SpeechSynthesisUtterance(text)
-  utt.lang = 'ca-ES'
-  utt.rate = 0.85
-  window.speechSynthesis.speak(utt)
+  if (typeof window === 'undefined') return
+  speakNatural(text, 0.9)
 }
 
 // ── Component ───────────────────────────────────────────────────────

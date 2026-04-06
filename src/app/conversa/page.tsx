@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { sendConversaMessage } from '@/lib/api'
+import { sendConversaMessage, speakNatural } from '@/lib/api'
 
 interface Message {
   id: string
@@ -253,28 +253,16 @@ export default function ConversaPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any
     setHasSR(!!(w.SpeechRecognition || w.webkitSpeechRecognition))
-    setHasTTS(typeof speechSynthesis !== 'undefined')
-    if (typeof speechSynthesis !== 'undefined') { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices() }
+    setHasTTS(true) // Google Cloud TTS works on all browsers
   }, [])
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, isTyping])
 
-  const getBestVoice = useCallback(() => {
-    const v = speechSynthesis.getVoices()
-    return v.find(x => x.lang.startsWith('ca') && x.name.includes('Google')) || v.find(x => x.lang.startsWith('ca')) || v.find(x => x.lang === 'es-ES' && x.name.includes('Google')) || null
-  }, [])
-
   const speak = useCallback((text: string, onEnd?: () => void) => {
     if (!text || !hasTTS) { onEnd?.(); return }
-    speechSynthesis.cancel()
-    const u = new SpeechSynthesisUtterance(text)
-    u.lang = 'ca-ES'; u.rate = 0.82; u.pitch = 1.0
-    const v = getBestVoice(); if (v) u.voice = v
     setIsSpeaking(true)
-    u.onend = () => { setIsSpeaking(false); onEnd?.() }
-    u.onerror = () => { setIsSpeaking(false); onEnd?.() }
-    speechSynthesis.speak(u)
-  }, [getBestVoice, hasTTS])
+    speakNatural(text, 0.9, () => { setIsSpeaking(false); onEnd?.() })
+  }, [hasTTS])
 
   // PUSH-TO-TALK: record while holding, send on release
   const startListening = useCallback(() => {
@@ -319,15 +307,9 @@ export default function ConversaPage() {
   // Speak the corrected phrase when there's a correction
   const speakCorrection = useCallback((phrase: string) => {
     if (!hasTTS) return
-    speechSynthesis.cancel()
-    const u = new SpeechSynthesisUtterance(phrase)
-    u.lang = 'ca-ES'; u.rate = 0.7; u.pitch = 1.0 // Slower for learning
-    const v = getBestVoice(); if (v) u.voice = v
     setIsSpeaking(true)
-    u.onend = () => setIsSpeaking(false)
-    u.onerror = () => setIsSpeaking(false)
-    speechSynthesis.speak(u)
-  }, [getBestVoice, hasTTS])
+    speakNatural(phrase, 0.7, () => setIsSpeaking(false))
+  }, [hasTTS])
 
   const sendDirect = useCallback(async (text: string) => {
     if (!text.trim() || !selected) return
@@ -380,7 +362,7 @@ export default function ConversaPage() {
   }, [selected, messages, audioMode, hasTTS, speak])
 
   const goBack = useCallback(() => {
-    speechSynthesis.cancel(); if (recognitionRef.current) try { recognitionRef.current.stop() } catch {}
+    if (recognitionRef.current) try { recognitionRef.current.stop() } catch {}
     setSelected(null); setMessages([]); setInput(''); setIsTyping(false); setIsRecording(false); setIsSpeaking(false); setShowEvaluation(false); setEvaluation('')
   }, [])
 

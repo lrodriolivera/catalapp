@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { dialogues, Dialogue } from '@/data/dialogues'
+import { speakNatural } from '@/lib/api'
 
 export default function DialegsPage() {
   const [selected, setSelected] = useState<Dialogue | null>(null)
@@ -23,36 +24,9 @@ export default function DialegsPage() {
     }
   }, [currentLine])
 
-  const getBestVoice = useCallback(() => {
-    if (typeof speechSynthesis === 'undefined') return null
-    const v = speechSynthesis.getVoices()
-    return v.find(x => x.lang.startsWith('ca') && x.name.includes('Google'))
-      || v.find(x => x.lang.startsWith('ca'))
-      || v.find(x => x.lang === 'es-ES')
-      || null
-  }, [])
-
-  useEffect(() => {
-    if (typeof speechSynthesis !== 'undefined') {
-      speechSynthesis.getVoices()
-      speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices()
-    }
-  }, [])
-
   const speakLine = useCallback((text: string): Promise<void> => {
-    return new Promise((resolve) => {
-      if (typeof speechSynthesis === 'undefined') { resolve(); return }
-      speechSynthesis.cancel()
-      const u = new SpeechSynthesisUtterance(text)
-      u.lang = 'ca-ES'
-      u.rate = speed === 'slow' ? 0.65 : 0.82
-      u.pitch = 1.0
-      const v = getBestVoice(); if (v) u.voice = v
-      u.onend = () => resolve()
-      u.onerror = () => resolve()
-      speechSynthesis.speak(u)
-    })
-  }, [getBestVoice, speed])
+    return speakNatural(text, speed === 'slow' ? 0.65 : 0.82)
+  }, [speed])
 
   const playAll = useCallback(async () => {
     if (!selected) return
@@ -73,7 +47,6 @@ export default function DialegsPage() {
   const stopPlaying = useCallback(() => {
     setPlaying(false)
     playingRef.current = false
-    if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel()
     setCurrentLine(-1)
   }, [])
 
