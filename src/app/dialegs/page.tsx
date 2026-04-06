@@ -25,8 +25,10 @@ export default function DialegsPage() {
   }, [currentLine])
 
   const speakLine = useCallback((text: string, speaker?: 'A' | 'B'): Promise<void> => {
-    // Speaker A = female, Speaker B = male (to differentiate voices)
-    const gender = speaker === 'B' ? 'male' : 'female'
+    if (!selected) return Promise.resolve()
+    // Detect gender from speaker emoji: 👨 = male, 👩 = female
+    const speakerData = speaker === 'A' ? selected.speakerA : selected.speakerB
+    const gender = speakerData?.emoji === '👨' || speakerData?.emoji === '👨‍💼' || speakerData?.emoji === '🧑' ? 'male' : 'female'
     return speakNatural(text, speed === 'slow' ? 0.65 : 0.82, undefined, gender)
   }, [speed])
 
