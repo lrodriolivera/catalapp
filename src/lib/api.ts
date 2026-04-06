@@ -76,6 +76,7 @@ export async function speakNatural(text: string, speed: number = 0.9, onEnd?: ()
       const u = new SpeechSynthesisUtterance(text)
       u.lang = 'ca-ES'
       u.rate = speed
+      u.pitch = gender === 'male' ? 0.75 : 1.0
       u.voice = catalanVoice
       return new Promise<void>((resolve) => {
         u.onend = () => { onEnd?.(); resolve() }
