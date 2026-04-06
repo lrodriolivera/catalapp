@@ -22,7 +22,6 @@ export async function callSonnet(action: string, data: Record<string, any>): Pro
   })
   if (!res.ok) throw new Error('Error de connexió amb la IA')
   const json = await res.json()
-  // Handle markdown-wrapped JSON
   if (typeof json.result === 'string' && json.result.includes('```')) {
     const match = json.result.match(/```(?:json)?\s*([\s\S]*?)```/)
     if (match) return JSON.parse(match[1].trim())
@@ -30,51 +29,16 @@ export async function callSonnet(action: string, data: Record<string, any>): Pro
   return json.result
 }
 
-// Google Cloud TTS - returns base64 MP3 audio
-let ttsCache: Record<string, string> = {}
-
-export async function speakWithGoogleTTS(text: string, speed: number = 0.9, gender: 'male' | 'female' = 'female'): Promise<void> {
-  // Check cache first
-  const cacheKey = `${text}-${speed}-${gender}`
-  let audioBase64 = ttsCache[cacheKey]
-
-  if (!audioBase64) {
-    const res = await fetch(`${API_URL}/tts`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text.slice(0, 1000), speed, gender }),
-    })
-    if (!res.ok) throw new Error('TTS error')
-    const json = await res.json()
-    audioBase64 = json.audio
-    // Cache up to 50 entries
-    if (Object.keys(ttsCache).length > 50) ttsCache = {}
-    ttsCache[cacheKey] = audioBase64
-  }
-
-  // Play the MP3
-  const audioBlob = Uint8Array.from(atob(audioBase64), c => c.charCodeAt(0))
-  const blob = new Blob([audioBlob], { type: 'audio/mp3' })
-  const url = URL.createObjectURL(blob)
-  const audio = new Audio(url)
-  audio.playbackRate = 1.0
-  return new Promise((resolve) => {
-    audio.onended = () => { URL.revokeObjectURL(url); resolve() }
-    audio.onerror = () => { URL.revokeObjectURL(url); resolve() }
-    audio.play().catch(() => resolve())
-  })
-}
-
-// Speak using Web Speech API with pitch-based gender
+// Speak using Web Speech API only — pitch 0.75 for male, 1.0 for female
 export async function speakNatural(text: string, speed: number = 0.9, onEnd?: () => void, gender: 'male' | 'female' = 'female'): Promise<void> {
   if (typeof speechSynthesis === 'undefined') { onEnd?.(); return }
 
-  // Wait for voices to load (they load async on some browsers)
+  // Wait for voices to load
   let voices = speechSynthesis.getVoices()
   if (voices.length === 0) {
     await new Promise<void>((resolve) => {
       speechSynthesis.onvoiceschanged = () => resolve()
-      setTimeout(resolve, 500) // timeout fallback
+      setTimeout(resolve, 500)
     })
     voices = speechSynthesis.getVoices()
   }
@@ -85,7 +49,6 @@ export async function speakNatural(text: string, speed: number = 0.9, onEnd?: ()
   u.rate = speed
   u.pitch = gender === 'male' ? 0.75 : 1.0
 
-  // Find best voice: Catalan first, then Spanish
   const catalanVoice = voices.find(v => v.lang.startsWith('ca'))
   const spanishVoice = voices.find(v => v.lang === 'es-ES')
   if (catalanVoice) u.voice = catalanVoice
