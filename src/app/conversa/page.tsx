@@ -89,6 +89,17 @@ const scenarioGroups: ScenarioGroup[] = [
         suggestions: [['Necessites tomàquets', 'Compra enciam i ceba', 'Oli d\'oliva i sal'], ['Un quilo de patates', 'Mig quilo de pollastre', 'Una dotzena d\'ous'], ['El formatge és car', 'Les verdures són fresques', 'La carn és barata al mercat']] },
     ],
   },
+  {
+    unitId: 7, unitTitle: 'Què vol prendre?',
+    scenarios: [
+      { key: 'restaurant', emoji: '🍽️', title: 'Al restaurant', description: 'Demanar menjar i beure', starter: "Bona tarda! Benvinguts al restaurant. Aquí tenen la carta. Què volen prendre?",
+        suggestions: [['Voldria el menú del dia', 'De primer, una sopa', 'Per beure, un vi negre'], ['Què recomana de segon?', 'El peix a la planxa', 'Per a mi una amanida'], ['El compte, si us plau', 'Està molt bo!', 'Bon profit!']] },
+      { key: 'plats_catalans', emoji: '🥘', title: 'Plats catalans', description: 'Conèixer i recomanar plats típics', starter: "Hola! Coneixes els plats típics catalans? Quin és el teu preferit?",
+        suggestions: [['M\'agrada el pa amb tomàquet', 'La crema catalana és fantàstica', 'Què és l\'escalivada?'], ['M\'encanta la botifarra', 'La fideuà és molt bona', 'Vull provar els calçots'], ['Recomano l\'esqueixada', 'L\'escudella és per a l\'hivern', 'Bon profit!']] },
+      { key: 'feina_restaurant', emoji: '💼', title: 'La feina', description: 'Parlar de la feina i condicions laborals', starter: "Hola! De què treballes? Jo treballo de cambrer en un restaurant del centre.",
+        suggestions: [['Treballo de cuiner', 'Tinc jornada completa', 'El meu sou és bo'], ['Treballo de cambrer', 'Tinc mitja jornada', 'Tinc els caps de setmana lliures'], ['M\'agrada treballar de cara al públic', 'Tinc contracte fix', 'Les vacances són al juliol']] },
+    ],
+  },
 ]
 
 // Flat list for lookup

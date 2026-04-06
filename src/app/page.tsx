@@ -77,6 +77,18 @@ const unitData = [
       { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-6' },
     ],
   },
+  {
+    id: 7,
+    title: 'Què vol prendre?',
+    color: '#E8EAF6',
+    accent: '#5C6BC0',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=7', key: 'gram-7' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=7', key: 'vocab-7' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=restaurant', key: 'conv-7' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-7' },
+    ],
+  },
 ]
 
 function getUnitProgress(unitId: number, progress: UserProgress): number {

@@ -33,6 +33,10 @@ const SCENARIOS = {
   'comprar': "L'alumne practica comprar al mercat: demanar productes, quantitats, preus i pagar.",
   'aliments': "L'alumne practica parlar dels àpats: què menja per esmorzar, dinar i sopar.",
   'receptes': "L'alumne practica explicar ingredients i quantitats per cuinar un plat.",
+  // Unitat 7
+  'restaurant': "L'alumne practica demanar menjar i beure al restaurant: primer plat, segon plat, postres, begudes, el compte.",
+  'plats_catalans': "L'alumne practica conèixer i parlar sobre plats típics catalans: pa amb tomàquet, escalivada, crema catalana, botifarra, calçots.",
+  'feina_restaurant': "L'alumne practica parlar de la feina: horaris, sou, jornada, contracte, condicions laborals.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };
 
