@@ -144,6 +144,39 @@ const scenarioGroups: ScenarioGroup[] = [
         suggestions: [['Necessito una rentadora', 'Quant val aquesta nevera?', 'Té microones?'], ['Vull un rentaplats', 'És massa car!', 'Hi ha ofertes?'], ['Funciona bé?', 'Té garantia?', 'Me\'l poden portar a casa?']] },
     ],
   },
+  {
+    unitId: 12, unitTitle: 'Avui és festa!',
+    scenarios: [
+      { key: 'festes', emoji: '🎉', title: 'Festes catalanes', description: 'Parlar de festes i tradicions', starter: "Hola! Saps quines festes es celebren a Catalunya? Quina t'agrada més?",
+        suggestions: [['M\'agrada Sant Jordi', 'La nit de Sant Joan!', 'La Mercè és genial'], ['Què es fa per Nadal?', 'Què és un correfoc?', 'M\'agraden els castells'], ['Per molts anys!', 'Bones festes!', 'Feliç any nou!']] },
+      { key: 'tradicions', emoji: '🏰', title: 'Tradicions', description: 'Descobrir tradicions i cultura catalana', starter: "Coneixes les tradicions catalanes? Saps què és una calçotada?",
+        suggestions: [['Què és un castell?', 'M\'agrada la sardana', 'Què és el tió?'], ['Vaig veure els gegants', 'El correfoc és increïble', 'Vull anar a una festa major'], ['La senyera és la bandera', 'Gaudí és molt famós', 'M\'encanta Montserrat']] },
+      { key: 'celebrar', emoji: '🥂', title: 'Celebrar i felicitar', description: 'Felicitar i celebrar esdeveniments', starter: "Enhorabona! Avui és un dia especial? Què celebrem?",
+        suggestions: [['Per molts anys!', 'Bon Nadal!', 'Enhorabona!'], ['Bona nit de Sant Joan!', 'Bones festes!', 'Felicitats!'], ['Feliç any nou!', 'Bona sort!', 'Ens ho passem molt bé!']] },
+    ],
+  },
+  {
+    unitId: 13, unitTitle: 'Ens formem',
+    scenarios: [
+      { key: 'formacio', emoji: '🎓', title: 'Estudis i formació', description: 'Parlar dels estudis i experiència', starter: "Hola! Estudies o treballes? Què has estudiat?",
+        suggestions: [['He estudiat enginyeria', 'Estudio català al CPNL', 'Vull aprendre més'], ['He treballat de...', 'Tinc experiència en...', 'M\'agradaria estudiar...'], ['L\'any que ve vull...', 'El meu objectiu és...', 'Penso fer un curs']] },
+      { key: 'idiomes', emoji: '🗣️', title: 'Aprendre idiomes', description: 'Parlar de llengües i aprenentatge', starter: "Quantes llengües parles? Com aprens català? Quin idioma voldries aprendre?",
+        suggestions: [['Parlo castellà i anglès', 'Aprenc català al CPNL', 'Llegeixo en català'], ['Escric cada dia', 'Escolto podcasts', 'Parlo amb amics catalans'], ['M\'agradaria parlar millor', 'He après molt', 'El català és bonic']] },
+      { key: 'futur', emoji: '💭', title: 'Plans de futur', description: 'Parlar de plans i objectius', starter: "Quins plans tens per al futur? Què t'agradaria fer?",
+        suggestions: [['Vull acabar el curs', 'M\'agradaria trobar feina', 'Penso estudiar més'], ['L\'any que ve vull...', 'El meu somni és...', 'Vull millorar el català'], ['He pensat en...', 'M\'agradaria viatjar', 'Vull quedar-me a Barcelona']] },
+    ],
+  },
+  {
+    unitId: 14, unitTitle: 'Anem a comprar (ampliació)',
+    scenarios: [
+      { key: 'compres_roba', emoji: '👗', title: 'Comprar roba', description: 'Provar-se roba, talles i preus', starter: "Bon dia! Benvinguda a la botiga. En què la puc ajudar? Busca alguna cosa?",
+        suggestions: [['Vull provar-me aquesta faldilla', 'Quina talla és?', 'Té una talla més gran?'], ['Em queda bé?', 'On és el vestidor?', 'Quant val?'], ['És massa car', 'Hi ha rebaixes?', 'El puc tornar?']] },
+      { key: 'rebaixes', emoji: '🏷️', title: 'Les rebaixes', description: 'Buscar ofertes i comparar preus', starter: "Avui hi ha rebaixes! Tot a meitat de preu. Vols venir a mirar?",
+        suggestions: [['Quina oferta!', 'Això és molt barat', 'Prefereixo el blau'], ['És més bonic que l\'altre', 'El vermell em queda millor', 'Massa car!'], ['El compro perquè m\'agrada', 'Accepten targeta?', 'Me\'l quedo!']] },
+      { key: 'canviar', emoji: '🔄', title: 'Canviar o tornar', description: 'Tornar o canviar una compra', starter: "Bon dia. Necessita ajuda? Vol canviar alguna cosa?",
+        suggestions: [['Vull canviar aquesta peça', 'No em queda bé', 'Té el tiquet?'], ['Vull una talla més gran', 'Prefereixo un altre color', 'El puc tornar?'], ['Tinc el tiquet aquí', 'Quan caduca?', 'Gràcies per l\'ajuda']] },
+    ],
+  },
 ]
 
 // Flat list for lookup

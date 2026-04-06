@@ -137,6 +137,30 @@ const unitData = [
       { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-11' },
     ],
   },
+  { id: 12, title: 'Avui és festa!', color: '#FFF9C4', accent: '#FDD835',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=12', key: 'gram-12' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=12', key: 'vocab-12' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=festes', key: 'conv-12' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-12' },
+    ],
+  },
+  { id: 13, title: 'Ens formem', color: '#E1F5FE', accent: '#039BE5',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=13', key: 'gram-13' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=13', key: 'vocab-13' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=formacio', key: 'conv-13' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-13' },
+    ],
+  },
+  { id: 14, title: 'Anem a comprar (ampliació)', color: '#F1F8E9', accent: '#7CB342',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=14', key: 'gram-14' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=14', key: 'vocab-14' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=compres_roba', key: 'conv-14' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-14' },
+    ],
+  },
 ]
 
 function getUnitProgress(unitId: number, progress: UserProgress): number {

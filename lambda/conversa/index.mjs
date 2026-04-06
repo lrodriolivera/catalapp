@@ -53,6 +53,18 @@ const SCENARIOS = {
   'pis': "L'alumne practica explicar problemes domèstics al propietari: avaries, fuites, electrodomèstics espatllats.",
   'tasques': "L'alumne practica parlar de les tasques de la llar: netejar, rentar, planxar, freqüència.",
   'electrodomestics': "L'alumne practica comprar electrodomèstics: preus, característiques, garantia.",
+  // Unitat 12
+  'festes': "L'alumne practica parlar de festes catalanes: Sant Jordi, Sant Joan, Nadal, La Mercè, tradicions.",
+  'tradicions': "L'alumne practica conèixer tradicions catalanes: castells, sardanes, correfoc, gegants, calçotada.",
+  'celebrar': "L'alumne practica felicitar i celebrar: aniversaris, Nadal, cap d'any, Sant Jordi.",
+  // Unitat 13
+  'formacio': "L'alumne practica parlar d'estudis i experiència: he estudiat, he treballat, certificats.",
+  'idiomes': "L'alumne practica parlar de llengües: quines parla, com aprèn català, recursos.",
+  'futur': "L'alumne practica parlar de plans futurs: vull, m'agradaria, penso + infinitiu.",
+  // Unitat 14
+  'compres_roba': "L'alumne practica comprar roba: provar-se, talles, vestidor, preus.",
+  'rebaixes': "L'alumne practica buscar ofertes i comparar: més barat, millor, prefereixo.",
+  'canviar': "L'alumne practica canviar o tornar roba: no em queda bé, tiquet, canvi de talla.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };
 
