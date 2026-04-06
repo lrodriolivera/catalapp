@@ -404,6 +404,8 @@ export default function ConversaPage() {
                 </div>
               </div>
               <button onClick={() => setAudioMode(prev => !prev)}
+                aria-label={audioMode ? 'Desactivar mode veu' : 'Activar mode veu'}
+                aria-pressed={audioMode}
                 className={`relative w-14 h-8 rounded-full transition-colors ${audioMode ? 'bg-[#1a1a1a]' : 'bg-[#ddd]'}`}>
                 <span className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${audioMode ? 'translate-x-7' : 'translate-x-1'}`}/>
               </button>
@@ -453,8 +455,8 @@ export default function ConversaPage() {
           </div>
 
           {hasTTS && (
-            <button onClick={() => speak(evaluation)} className="w-full bg-[#F5F5F5] text-[#1a1a1a] font-bold py-4 rounded-full text-[16px] hover:bg-[#eee] transition-colors mb-3 flex items-center justify-center gap-2">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            <button onClick={() => speak(evaluation)} aria-label="Escolta l'avaluació en veu alta" className="w-full bg-[#F5F5F5] text-[#1a1a1a] font-bold py-4 rounded-full text-[16px] hover:bg-[#eee] transition-colors mb-3 flex items-center justify-center gap-2">
+              <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
               Escolta l&apos;avaluació
             </button>
           )}
@@ -476,10 +478,11 @@ export default function ConversaPage() {
       {/* Header */}
       <div className="fixed top-0 md:top-14 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-b border-gray-100">
         <div className="flex items-center justify-between max-w-[700px] mx-auto px-5 py-3">
-          <button onClick={goBack} className="text-[15px] font-bold text-[#555] hover:text-[#1a1a1a]">← Tornar</button>
+          <button onClick={goBack} aria-label="Tornar a la llista de converses" className="text-[15px] font-bold text-[#555] hover:text-[#1a1a1a]">← Tornar</button>
           <p className="text-[16px] font-extrabold text-[#1a1a1a]">{selected.title}</p>
           <div className="flex items-center gap-2">
             <button onClick={evaluateConversation} disabled={isEvaluating || messages.length < 3}
+              aria-label="Avaluar la conversa"
               className="bg-[#F5F5F5] text-[#1a1a1a] text-[12px] font-bold rounded-full px-3 py-1.5 hover:bg-[#eee] disabled:opacity-30 transition-colors">
               {isEvaluating ? '...' : '📊 Avaluar'}
             </button>
@@ -489,7 +492,7 @@ export default function ConversaPage() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-5 pt-16 md:pt-4 pb-48 md:pb-36">
-        <div className="max-w-[700px] mx-auto space-y-4 pt-2">
+        <div role="log" aria-label="Conversa" className="max-w-[700px] mx-auto space-y-4 pt-2">
           {messages.map(msg => (
             <div key={msg.id}>
               <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -500,8 +503,8 @@ export default function ConversaPage() {
                 }`}>
                   <p className="text-[17px] leading-relaxed">{msg.content}</p>
                   {msg.role === 'assistant' && !msg.error && hasTTS && (
-                    <button onClick={() => speak(msg.content)} className="mt-2 text-[#777] hover:text-[#555] transition-colors flex items-center gap-1.5">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                    <button onClick={() => speak(msg.content)} aria-label="Escolta aquest missatge" className="mt-2 text-[#777] hover:text-[#555] transition-colors flex items-center gap-1.5">
+                      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
                       <span className="text-[13px] font-semibold">Escolta</span>
                     </button>
                   )}
@@ -518,8 +521,9 @@ export default function ConversaPage() {
                     <p className="text-[15px] text-[#6D4C00] leading-relaxed mb-2">💡 {msg.correction}</p>
                     {hasTTS && (
                       <button onClick={() => speakCorrection(msg.correction!)}
+                        aria-label="Escolta la pronunciació correcta"
                         className="flex items-center gap-2 bg-[#FFF0C0] rounded-full px-4 py-2 text-[14px] font-bold text-[#6D4C00] hover:bg-[#FFE8A0] transition-colors">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
                         Escolta la pronunciació correcta
                       </button>
                     )}
@@ -530,7 +534,7 @@ export default function ConversaPage() {
           ))}
 
           {isTyping && (
-            <div className="flex justify-start">
+            <div className="flex justify-start" role="status" aria-label="La IA està escrivint">
               <div className="bg-[#F5F5F5] rounded-2xl rounded-bl-sm px-5 py-4">
                 <div className="flex gap-1.5">
                   <span className="w-2.5 h-2.5 bg-[#bbb] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}/>
@@ -562,7 +566,7 @@ export default function ConversaPage() {
           {audioMode ? (
             <div className="flex flex-col items-center gap-2">
               {isSpeaking && (
-                <p className="text-[15px] font-semibold text-[#555] flex items-center gap-2">
+                <p className="text-[15px] font-semibold text-[#555] flex items-center gap-2" role="status">
                   <span className="w-2.5 h-2.5 bg-[#2E7D32] rounded-full animate-pulse"/> La IA està parlant...
                 </p>
               )}
@@ -571,10 +575,11 @@ export default function ConversaPage() {
                 onMouseDown={startListening} onMouseUp={stopListening} onMouseLeave={stopListening}
                 onTouchStart={(e) => { e.preventDefault(); startListening() }} onTouchEnd={stopListening}
                 disabled={isTyping || isSpeaking}
+                aria-label={isRecording ? 'Parlant... deixa anar per enviar' : 'Mantén premut per parlar'}
                 className={`w-24 h-24 rounded-full flex items-center justify-center transition-all disabled:opacity-30 select-none ${
                   isRecording ? 'bg-[#C62828] scale-110' : 'bg-[#1a1a1a] hover:bg-[#333] active:scale-105'
                 }`}>
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg aria-hidden="true" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/>
                 </svg>
               </button>
@@ -584,10 +589,11 @@ export default function ConversaPage() {
               {/* Text fallback */}
               <div className="flex items-center gap-2 w-full mt-1">
                 <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                  placeholder="O escriu aquí..." className="flex-1 bg-[#F5F5F5] border-0 rounded-full px-4 py-2.5 text-[15px] text-[#1a1a1a] placeholder-[#999] focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]"/>
+                  placeholder="O escriu aquí..." aria-label="Escriu un missatge en català"
+                  className="flex-1 bg-[#F5F5F5] border-0 rounded-full px-4 py-2.5 text-[15px] text-[#1a1a1a] placeholder-[#888] focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]"/>
                 {input.trim() && (
-                  <button onClick={sendMessage} className="w-9 h-9 rounded-full bg-[#1a1a1a] flex items-center justify-center flex-shrink-0">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  <button onClick={sendMessage} aria-label="Enviar missatge" className="w-9 h-9 rounded-full bg-[#1a1a1a] flex items-center justify-center flex-shrink-0">
+                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                   </button>
                 )}
               </div>
@@ -597,19 +603,22 @@ export default function ConversaPage() {
               {hasSR && (
                 <button onMouseDown={startListening} onMouseUp={stopListening} onMouseLeave={stopListening}
                   onTouchStart={(e) => { e.preventDefault(); startListening() }} onTouchEnd={stopListening}
+                  aria-label={isRecording ? 'Gravant... deixa anar per aturar' : 'Mantén premut per gravar veu'}
                   className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-colors select-none ${
                     isRecording ? 'bg-[#C62828]' : 'bg-[#F5F5F5] text-[#555]'
                   }`}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isRecording ? 'white' : 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isRecording ? 'white' : 'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/>
                   </svg>
                 </button>
               )}
               <input type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                placeholder="Escriu en català..." className="flex-1 bg-[#F5F5F5] border-0 rounded-full px-5 py-3 text-[16px] text-[#1a1a1a] placeholder-[#999] focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]"/>
+                placeholder="Escriu en català..." aria-label="Escriu un missatge en català"
+                className="flex-1 bg-[#F5F5F5] border-0 rounded-full px-5 py-3 text-[16px] text-[#1a1a1a] placeholder-[#888] focus:outline-none focus:ring-2 focus:ring-[#E0E0E0]"/>
               <button onClick={sendMessage} disabled={!input.trim() || isTyping}
+                aria-label="Enviar missatge"
                 className="w-11 h-11 rounded-full bg-[#1a1a1a] flex items-center justify-center flex-shrink-0 disabled:opacity-30 active:scale-95 transition-all">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               </button>
             </div>
           )}

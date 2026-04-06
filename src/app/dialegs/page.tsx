@@ -127,7 +127,7 @@ export default function DialegsPage() {
                         <p className="text-[14px] text-[#666]">{d.description}</p>
                         <p className="text-[13px] text-[#999] mt-1">{d.speakerA.emoji} {d.speakerA.name} · {d.speakerB.emoji} {d.speakerB.name} · {d.lines.length} línies</p>
                       </div>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#4F46E5" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="#4F46E5" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                     </div>
                   </button>
                 ))}
@@ -140,10 +140,12 @@ export default function DialegsPage() {
   }
 
   // === DIALOGUE PLAYER ===
+  const dialogueProgress = currentLine >= 0 ? ((currentLine + 1) / selected.lines.length) * 100 : 0
+
   return (
     <div className={W}><div className={C}>
       <button onClick={goBack} className="text-[#555] text-[15px] font-bold mb-6 flex items-center gap-1 hover:text-[#1a1a1a]">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         Tornar
       </button>
 
@@ -159,13 +161,14 @@ export default function DialegsPage() {
       <div className="flex items-center justify-center gap-4 mb-8">
         {/* Play/Stop */}
         <button onClick={playing ? stopPlaying : playAll}
+          aria-label={playing ? 'Aturar diàleg' : 'Reproduir diàleg'}
           className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
             playing ? 'bg-[#EF4444] hover:bg-[#DC2626]' : 'bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] hover:opacity-90'
           }`}>
           {playing ? (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
           ) : (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="6 3 20 12 6 21 6 3"/></svg>
           )}
         </button>
       </div>
@@ -173,12 +176,14 @@ export default function DialegsPage() {
       {/* Options */}
       <div className="flex items-center justify-center gap-3 mb-8">
         <button onClick={() => setSpeed(speed === 'normal' ? 'slow' : 'normal')}
+          aria-pressed={speed === 'slow'}
           className={`px-4 py-2 rounded-full text-[14px] font-bold transition-colors ${
             speed === 'slow' ? 'bg-[#FFF8E1] text-[#F59E0B]' : 'bg-[#F5F5F5] text-[#666]'
           }`}>
           🐢 {speed === 'slow' ? 'Lent' : 'Normal'}
         </button>
         <button onClick={() => setShowTranslation(!showTranslation)}
+          aria-pressed={showTranslation}
           className={`px-4 py-2 rounded-full text-[14px] font-bold transition-colors ${
             showTranslation ? 'bg-[#F0F4FF] text-[#4F46E5]' : 'bg-[#F5F5F5] text-[#666]'
           }`}>
@@ -189,9 +194,9 @@ export default function DialegsPage() {
       {/* Progress */}
       {playing && (
         <div className="flex items-center gap-3 mb-6">
-          <div className="flex-1 bg-[#F0F0F0] rounded-full h-2">
+          <div className="flex-1 bg-[#F0F0F0] rounded-full h-2" role="progressbar" aria-valuenow={Math.round(dialogueProgress)} aria-valuemin={0} aria-valuemax={100} aria-label="Progrés del diàleg">
             <div className="h-2 rounded-full bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] transition-all duration-500"
-              style={{ width: `${currentLine >= 0 ? ((currentLine + 1) / selected.lines.length) * 100 : 0}%` }}/>
+              style={{ width: `${dialogueProgress}%` }}/>
           </div>
           <span className="text-[13px] font-bold text-[#999]">{currentLine + 1}/{selected.lines.length}</span>
         </div>
@@ -206,6 +211,8 @@ export default function DialegsPage() {
 
           return (
             <button key={i} onClick={() => playSingleLine(i)}
+              aria-current={isActive ? 'true' : undefined}
+              aria-label={`${speaker.name}: ${line.catalan}`}
               className={`w-full text-left transition-all rounded-2xl p-4 ${
                 isActive
                   ? isLeft ? 'bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] scale-[1.02]' : 'bg-[#1a1a1a] scale-[1.02]'
@@ -227,7 +234,7 @@ export default function DialegsPage() {
                   )}
                 </div>
                 <span className={`flex-shrink-0 self-center ${isActive ? 'text-white' : 'text-[#ccc]'}`}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 </span>
               </div>
             </button>
@@ -238,11 +245,12 @@ export default function DialegsPage() {
       {/* Replay button at bottom */}
       <div className="mt-8">
         <button onClick={playing ? stopPlaying : playAll}
+          aria-label={playing ? 'Aturar diàleg' : 'Reproduir tot el diàleg'}
           className="w-full bg-[#1a1a1a] text-white font-bold py-4 rounded-full text-[16px] hover:bg-[#333] transition-colors flex items-center justify-center gap-2">
           {playing ? (
-            <><svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Aturar</>
+            <><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Aturar</>
           ) : (
-            <><svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg> Reproduir tot el diàleg</>
+            <><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg> Reproduir tot el diàleg</>
           )}
         </button>
       </div>

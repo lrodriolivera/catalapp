@@ -82,7 +82,7 @@ export default function GramaticaPage() {
   const C = 'max-w-[800px] mx-auto'
   const Back = ({ onClick, label = 'Tornar' }: { onClick: () => void; label?: string }) => (
     <button onClick={onClick} className="text-[#555] text-[15px] font-bold mb-6 flex items-center gap-1 hover:text-[#1a1a1a]">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       {label}
     </button>
   )
@@ -115,20 +115,21 @@ export default function GramaticaPage() {
                   <h3 className="text-[22px] font-extrabold text-white">{v.infinitive}</h3>
                   <p className="text-[14px] text-white/70">{v.translation}</p>
                 </div>
-                <button onClick={() => speakVerb(v.infinitive)} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                <button onClick={() => speakVerb(v.infinitive)} aria-label={`Escolta el verb ${v.infinitive}`} className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
+                  <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
                 </button>
               </div>
               {/* Conjugation rows */}
               <div>
                 {persons.map((person, pi) => (
                   <button key={person} onClick={() => speakVerb(v.conjugations[person])}
+                    aria-label={`Escolta ${personShort[person]} ${v.conjugations[person]}`}
                     className={`w-full flex items-center justify-between px-6 py-3.5 hover:bg-[#EEF2FF] transition-colors ${pi % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFF]'} ${pi < persons.length - 1 ? 'border-b border-gray-200/60' : ''}`}>
                     <span className="text-[15px] text-[#666] font-bold">{personShort[person]}</span>
                     <div className="flex items-center gap-3">
                       <span className="text-[18px] font-bold text-[#1a1a1a]">{v.conjugations[person]}</span>
                       <span className="w-8 h-8 rounded-full bg-[#F0F4FF] flex items-center justify-center flex-shrink-0">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
                       </span>
                     </div>
                   </button>
@@ -175,12 +176,13 @@ export default function GramaticaPage() {
               <div key={category}>
                 <button
                   onClick={() => setExpandedCategory(isExpanded ? null : category)}
+                  aria-expanded={isExpanded}
                   className="flex items-center gap-3 mb-4 w-full text-left"
                 >
                   <span className="bg-[#F59E0B] text-white rounded-full px-4 py-1.5 text-[14px] font-bold">{category}</span>
                   <span className="text-[13px] text-[#999]">{items.length} paraules</span>
                   <svg
-                    width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                     className={`ml-auto transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
                   >
                     <polyline points="6 9 12 15 18 9"/>
@@ -202,8 +204,9 @@ export default function GramaticaPage() {
                             )}
                           </div>
                           <button onClick={() => speakWord(item.catalan)}
+                            aria-label={`Escolta ${item.catalan}`}
                             className="w-10 h-10 rounded-full bg-[#FFF8F0] flex items-center justify-center flex-shrink-0 ml-3 hover:bg-[#FFEDD5] active:bg-[#FED7AA] transition-colors">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
                             </svg>
                           </button>
@@ -284,7 +287,7 @@ export default function GramaticaPage() {
 
         {/* Progress bar */}
         <div className="flex items-center gap-3 mb-8">
-          <div className="flex-1 bg-[#F0F0F0] rounded-full h-2">
+          <div className="flex-1 bg-[#F0F0F0] rounded-full h-2" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100} aria-label="Progrés dels exercicis">
             <div className="h-2 rounded-full bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] transition-all duration-500" style={{ width: `${pct}%` }}/>
           </div>
           <span className="text-[14px] font-bold text-[#999]">{exIdx + 1}/{exercises.length}</span>
@@ -313,7 +316,7 @@ export default function GramaticaPage() {
                   let s = 'bg-[#F5F5F5] text-[#1a1a1a] hover:bg-[#EBEBEB] hover:border-[#4F46E5] hover:border-l-4 border-l-4 border-transparent'
                   if (fb && answer === o) s = fb === 'correct' ? 'bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46]' : 'bg-[#FEF2F2] border border-[#FECACA] text-[#991B1B]'
                   else if (fb && (Array.isArray(ex.correctAnswer) ? ex.correctAnswer.includes(o) : ex.correctAnswer === o)) s = 'bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46]'
-                  return <button key={o} onClick={() => !fb && pickOption(o)} disabled={!!fb} className={`w-full text-left px-5 py-4 rounded-2xl text-[16px] font-semibold transition-all ${s}`}>{o}</button>
+                  return <button key={o} onClick={() => !fb && pickOption(o)} disabled={!!fb} className={`w-full text-left px-5 py-4 rounded-2xl text-[16px] font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed ${s}`}>{o}</button>
                 })}
               </div>
             ) : (
@@ -321,8 +324,8 @@ export default function GramaticaPage() {
                 <input type="text" value={answer} onChange={e => setAnswer(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && !fb && answer.trim() && check()}
                   disabled={!!fb} placeholder="Escriu la teva resposta..."
-                  className="w-full bg-[#F5F5F5] border-0 rounded-2xl px-5 py-4 text-[16px] text-[#1a1a1a] placeholder-[#bbb] focus:outline-none focus:ring-2 focus:ring-[#C7D2FE]" autoFocus/>
-                {!fb && <button onClick={check} disabled={!answer.trim()} className="w-full mt-3 bg-[#1a1a1a] text-white font-bold py-4 rounded-full text-[16px] disabled:opacity-20 hover:bg-[#333] transition-colors">Comprovar</button>}
+                  className="w-full bg-[#F5F5F5] border-0 rounded-2xl px-5 py-4 text-[16px] text-[#1a1a1a] placeholder-[#888] focus:ring-2 focus:ring-[#C7D2FE] focus:outline-none" autoFocus/>
+                {!fb && <button onClick={check} disabled={!answer.trim()} className="w-full mt-3 bg-[#1a1a1a] text-white font-bold py-4 rounded-full text-[16px] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#333] transition-colors">Comprovar</button>}
               </div>
             )}
           </>
@@ -330,7 +333,7 @@ export default function GramaticaPage() {
 
         {/* Feedback */}
         {fb && (
-          <div className={`rounded-2xl p-5 mb-4 ${fb === 'correct' ? 'bg-[#ECFDF5] border border-[#A7F3D0]' : 'bg-[#FEF2F2] border border-[#FECACA]'}`}>
+          <div role="alert" className={`rounded-2xl p-5 mb-4 ${fb === 'correct' ? 'bg-[#ECFDF5] border border-[#A7F3D0]' : 'bg-[#FEF2F2] border border-[#FECACA]'}`}>
             <p className={`text-[17px] font-bold ${fb === 'correct' ? 'text-[#065F46]' : 'text-[#991B1B]'}`}>
               {fb === 'correct' ? '✓ Correcte! +10 XP' : '✗ Incorrecte'}
             </p>
@@ -420,7 +423,7 @@ export default function GramaticaPage() {
                 <h4 className="text-[16px] font-bold text-[#1a1a1a]">{topic.title}</h4>
                 <p className="text-[14px] text-[#888] mt-0.5">{topic.examples.length} exemples</p>
               </div>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 ml-3"><polyline points="9 18 15 12 9 6"/></svg>
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 ml-3"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
           </button>
         ))}

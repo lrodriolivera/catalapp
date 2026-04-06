@@ -111,7 +111,7 @@ export default function AvaluacioPage() {
         <p className="text-[13px] font-bold text-[#666] uppercase tracking-[0.15em] mb-3">Prepara&apos;t</p>
         <h1 className="text-[32px] md:text-[40px] font-extrabold text-[#1a1a1a] leading-tight mb-10">Avaluacio</h1>
         <p className="text-[13px] font-bold text-[#666] uppercase tracking-[0.15em] mb-4">Selecciona unitats</p>
-        <div className="grid grid-cols-6 gap-2 mb-3">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-3">
           {units.map((u) => (
             <button key={u.id} onClick={() => toggleUnit(u.id)}
               className={`py-2.5 rounded-xl text-[14px] font-bold transition-colors ${
@@ -156,12 +156,12 @@ export default function AvaluacioPage() {
     return (
       <div className={W}><div className={C}>
         <button onClick={reset} className="text-[#666] text-[15px] font-bold mb-8 flex items-center gap-1 hover:text-[#1a1a1a]">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           Sortir
         </button>
 
         <div className="flex items-center gap-4 mb-10">
-          <div className="flex-1 bg-[#F0F0F0] rounded-full h-[6px]">
+          <div className="flex-1 bg-[#F0F0F0] rounded-full h-[6px]" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100} aria-label="Progrés de l'avaluació">
             <div className="h-[6px] rounded-full bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] transition-all duration-500" style={{ width: `${progress}%` }}/>
           </div>
           <span className="text-[14px] font-bold text-[#666]">{currentIndex + 1}/{questions.length}</span>
@@ -214,7 +214,7 @@ export default function AvaluacioPage() {
                   else if (feedback && (Array.isArray(ex.correctAnswer) ? ex.correctAnswer.includes(o) : ex.correctAnswer === o)) s = 'bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46]'
                   return (
                     <button key={o} onClick={() => !feedback && pickOption(o)} disabled={!!feedback}
-                      className={`w-full text-left px-5 py-4 rounded-2xl text-[16px] font-semibold transition-all ${s}`}>
+                      className={`w-full text-left px-5 py-4 rounded-2xl text-[16px] font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed ${s}`}>
                       {o}
                     </button>
                   )
@@ -225,11 +225,11 @@ export default function AvaluacioPage() {
                 <input type="text" value={userAnswer} onChange={(e) => setUserAnswer(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !feedback && userAnswer.trim() && checkPractice()}
                   disabled={!!feedback} placeholder="Escriu la teva resposta..."
-                  className="w-full bg-[#F5F5F5] border-0 rounded-2xl px-5 py-4 text-[16px] text-[#1a1a1a] placeholder-[#999] focus:outline-none focus:ring-2 focus:ring-[#C7D2FE]"
+                  className="w-full bg-[#F5F5F5] border-0 rounded-2xl px-5 py-4 text-[16px] text-[#1a1a1a] placeholder-[#888] focus:ring-2 focus:ring-[#C7D2FE] focus:outline-none"
                   autoFocus/>
                 {!feedback && (
                   <button onClick={checkPractice} disabled={!userAnswer.trim()}
-                    className="w-full mt-4 bg-[#1a1a1a] text-white font-bold py-4 rounded-full text-[16px] disabled:opacity-20 hover:bg-[#333] transition-colors">
+                    className="w-full mt-4 bg-[#1a1a1a] text-white font-bold py-4 rounded-full text-[16px] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#333] transition-colors">
                     Comprovar
                   </button>
                 )}
@@ -241,7 +241,7 @@ export default function AvaluacioPage() {
         {/* Feedback */}
         {feedback && (
           <>
-            <div className={`rounded-2xl p-5 mb-6 ${feedback === 'correct' ? 'bg-[#ECFDF5] border border-[#A7F3D0]' : 'bg-[#FEF2F2] border border-[#FECACA]'}`}>
+            <div role="alert" className={`rounded-2xl p-5 mb-6 ${feedback === 'correct' ? 'bg-[#ECFDF5] border border-[#A7F3D0]' : 'bg-[#FEF2F2] border border-[#FECACA]'}`}>
               <p className={`text-[16px] font-bold ${feedback === 'correct' ? 'text-[#065F46]' : 'text-[#991B1B]'}`}>
                 {feedback === 'correct' ? 'Correcte!' : 'Incorrecte'}
               </p>
@@ -272,7 +272,7 @@ export default function AvaluacioPage() {
     return (
       <div className={W}><div className={C}>
         <button onClick={reset} className="text-[#666] text-[15px] font-bold mb-8 flex items-center gap-1 hover:text-[#1a1a1a]">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           Sortir
         </button>
 
@@ -281,7 +281,7 @@ export default function AvaluacioPage() {
         </div>
 
         <div className="flex items-center gap-4 mb-10">
-          <div className="flex-1 bg-[#F0F0F0] rounded-full h-[6px]">
+          <div className="flex-1 bg-[#F0F0F0] rounded-full h-[6px]" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100} aria-label="Progrés de l'examen">
             <div className="h-[6px] rounded-full bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] transition-all duration-500" style={{ width: `${progress}%` }}/>
           </div>
           <span className="text-[14px] font-bold text-[#666]">{currentIndex + 1}/{questions.length}</span>
@@ -362,7 +362,7 @@ export default function AvaluacioPage() {
               <input type="text" value={stored || userAnswer}
                 onChange={(e) => { setUserAnswer(e.target.value); storeExam(e.target.value) }}
                 placeholder="Escriu la teva resposta..."
-                className="w-full bg-[#F5F5F5] border-0 rounded-2xl px-5 py-4 text-[16px] text-[#1a1a1a] placeholder-[#999] focus:outline-none focus:ring-2 focus:ring-[#C7D2FE] mb-6"
+                className="w-full bg-[#F5F5F5] border-0 rounded-2xl px-5 py-4 text-[16px] text-[#1a1a1a] placeholder-[#888] focus:ring-2 focus:ring-[#C7D2FE] focus:outline-none mb-6"
                 autoFocus/>
             )}
           </>
@@ -370,7 +370,7 @@ export default function AvaluacioPage() {
 
         <div className="flex gap-3">
           <button onClick={() => { if (currentIndex > 0) { setCurrentIndex((p) => p - 1); setUserAnswer('') } }} disabled={currentIndex === 0}
-            className="flex-1 bg-[#F5F5F5] text-[#1a1a1a] font-bold py-4 rounded-full text-[16px] disabled:opacity-20 hover:bg-[#eee] transition-colors">
+            className="flex-1 bg-[#F5F5F5] text-[#1a1a1a] font-bold py-4 rounded-full text-[16px] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#eee] transition-colors">
             Anterior
           </button>
           {currentIndex < questions.length - 1 ? (

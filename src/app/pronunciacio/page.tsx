@@ -177,6 +177,7 @@ export default function PronunciacioPage() {
                     setExpandedSection(isExpanded ? null : sectionKey)
                     setComparisonResult(null)
                   }}
+                  aria-expanded={isExpanded}
                   className="w-full flex items-center justify-between px-6 py-5 text-left"
                 >
                   <div className="flex items-center gap-3">
@@ -184,6 +185,7 @@ export default function PronunciacioPage() {
                     <span className="text-[14px] text-[#666]">{section.words.length} paraules</span>
                   </div>
                   <svg
+                    aria-hidden="true"
                     width="18"
                     height="18"
                     viewBox="0 0 24 24"
@@ -220,6 +222,7 @@ export default function PronunciacioPage() {
                           {hasTTS && <button
                             onClick={() => speak(word.example || word.catalan)}
                             disabled={listeningWord === word.catalan}
+                            aria-label={`Escolta la paraula ${word.catalan}`}
                             className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
                               listeningWord === word.catalan
                                 ? 'bg-[#059669] text-white'
@@ -227,6 +230,7 @@ export default function PronunciacioPage() {
                             }`}
                           >
                             <svg
+                              aria-hidden="true"
                               width="16"
                               height="16"
                               viewBox="0 0 24 24"
@@ -249,6 +253,7 @@ export default function PronunciacioPage() {
                                 ? stopRecording()
                                 : startRecording(word.example || word.catalan)
                             }
+                            aria-label={recordingWord === word.catalan ? `Aturar gravació de ${word.catalan}` : `Grava la teva pronunciació de ${word.catalan}`}
                             className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
                               recordingWord === word.catalan
                                 ? 'bg-[#DC2626] text-white animate-pulse'
@@ -256,6 +261,7 @@ export default function PronunciacioPage() {
                             }`}
                           >
                             <svg
+                              aria-hidden="true"
                               width="16"
                               height="16"
                               viewBox="0 0 24 24"
@@ -276,7 +282,7 @@ export default function PronunciacioPage() {
 
                     {/* Comparison result with similarity bar */}
                     {comparisonResult && expandedSection === sectionKey && (
-                      <div className="mt-4 rounded-2xl px-5 py-4 bg-white border border-[#A7F3D0]">
+                      <div role="alert" className="mt-4 rounded-2xl px-5 py-4 bg-white border border-[#A7F3D0]">
                         <div className="flex items-center justify-between mb-3">
                           <p
                             className="text-[16px] font-extrabold"
@@ -297,7 +303,7 @@ export default function PronunciacioPage() {
                         </div>
 
                         {/* Similarity bar */}
-                        <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden mb-3">
+                        <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden mb-3" role="progressbar" aria-valuenow={comparisonResult.percentage} aria-valuemin={0} aria-valuemax={100} aria-label="Similitud de pronunciació">
                           <div
                             className="h-full rounded-full transition-all duration-500"
                             style={{

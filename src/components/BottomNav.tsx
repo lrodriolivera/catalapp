@@ -19,15 +19,17 @@ export default function BottomNav() {
   return (
     <div>
       {/* DESKTOP */}
-      <header className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-100">
+      <header className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-100" aria-label="Navegació principal">
         <div className="h-[60px] px-6 lg:px-10 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2" aria-label="CatalApp - Pàgina d'inici">
             <span className="text-[17px] font-extrabold text-[#1a1a1a] tracking-tight">CatalApp</span>
           </Link>
-          <nav className="flex items-center gap-0.5">
+          <nav className="flex items-center gap-0.5" aria-label="Navegació principal">
             {items.map(({ href, label }) => (
               <Link key={href} href={href}
-                className={`px-4 py-1.5 rounded-full text-[13px] font-bold transition-all ${
+                aria-label={label}
+                aria-current={active(href) ? 'page' : undefined}
+                className={`px-4 py-1.5 rounded-full text-[13px] font-bold transition-all min-h-[44px] flex items-center ${
                   active(href)
                     ? 'bg-[#1a1a1a] text-white'
                     : 'text-[#555] hover:text-[#1a1a1a] hover:bg-gray-50'
@@ -41,12 +43,14 @@ export default function BottomNav() {
       </header>
 
       {/* MOBILE */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-t border-gray-100">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-t border-gray-100" aria-label="Navegació principal">
         <div className="flex items-center justify-around h-16 px-2">
           {items.map(({ href, label, d }) => (
             <Link key={href} href={href}
-              className={`flex flex-col items-center gap-0.5 flex-1 py-1 transition-colors ${active(href) ? 'text-[#1a1a1a]' : 'text-[#555]'}`}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active(href) ? 2.5 : 1.8} strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>
+              aria-label={label}
+              aria-current={active(href) ? 'page' : undefined}
+              className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 min-h-[44px] min-w-[44px] transition-colors ${active(href) ? 'text-[#1a1a1a]' : 'text-[#555]'}`}>
+              <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active(href) ? 2.5 : 1.8} strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>
               <span className={`text-[10px] ${active(href) ? 'font-extrabold' : 'font-semibold'}`}>{label}</span>
             </Link>
           ))}
