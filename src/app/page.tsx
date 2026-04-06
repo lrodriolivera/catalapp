@@ -125,6 +125,18 @@ const unitData = [
       { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-10' },
     ],
   },
+  {
+    id: 11,
+    title: 'El pis a punt',
+    color: '#EFEBE9',
+    accent: '#8D6E63',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=11', key: 'gram-11' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=11', key: 'vocab-11' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=pis', key: 'conv-11' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-11' },
+    ],
+  },
 ]
 
 function getUnitProgress(unitId: number, progress: UserProgress): number {

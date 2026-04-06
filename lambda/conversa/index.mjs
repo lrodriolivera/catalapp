@@ -49,6 +49,10 @@ const SCENARIOS = {
   'descripcions': "L'alumne practica descriure persones: aspecte físic, caràcter, roba que porten, colors.",
   'roba': "L'alumne practica parlar de roba: colors, talles, comprar roba, el que porta posat.",
   'formal': "L'alumne practica el registre formal (vostè) i informal (tu): presentacions, salutacions, demanar coses.",
+  // Unitat 11
+  'pis': "L'alumne practica explicar problemes domèstics al propietari: avaries, fuites, electrodomèstics espatllats.",
+  'tasques': "L'alumne practica parlar de les tasques de la llar: netejar, rentar, planxar, freqüència.",
+  'electrodomestics': "L'alumne practica comprar electrodomèstics: preus, característiques, garantia.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };
 

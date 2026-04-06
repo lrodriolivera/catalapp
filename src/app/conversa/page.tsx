@@ -133,6 +133,17 @@ const scenarioGroups: ScenarioGroup[] = [
         suggestions: [['Sí, em dic...', 'Encantat de conèixer-lo', 'Com es diu vostè?'], ['Li presento el meu company', 'Vingui, segui', 'Molt de gust'], ['El meu telèfon és...', 'Treballo de...', 'Gràcies, senyor Garcia']] },
     ],
   },
+  {
+    unitId: 11, unitTitle: 'El pis a punt',
+    scenarios: [
+      { key: 'pis', emoji: '🔧', title: 'Problemes al pis', description: 'Explicar avaries i trucar al propietari', starter: "Hola! Soc el propietari. Em diu que hi ha un problema al pis?",
+        suggestions: [['La rentadora no funciona', "S'ha espatllat la nevera", 'No hi ha aigua calenta'], ['Hi ha una fuita d\'aigua', 'La calefacció no va', 'No hi ha llum'], ['Pot enviar un tècnic?', 'Quan pot venir?', 'Gràcies, espero la seva trucada']] },
+      { key: 'tasques', emoji: '🧹', title: 'Tasques de la llar', description: 'Parlar de les tasques i la seva freqüència', starter: "Hola! Parlem de les tasques de casa. Qui neteja a casa teva? Cada quant?",
+        suggestions: [['Netejo cada dia', 'Passo l\'aspiradora', 'Fregar els plats'], ['Rento la roba dos cops', 'He de planxar', 'Trec les escombraries'], ['Un cop per setmana', 'Gairebé mai', 'Cada quinze dies']] },
+      { key: 'electrodomestics', emoji: '🏠', title: 'Electrodomèstics', description: 'Comprar i parlar d\'electrodomèstics', starter: "Bon dia! Benvingut a la botiga d'electrodomèstics. En què el puc ajudar?",
+        suggestions: [['Necessito una rentadora', 'Quant val aquesta nevera?', 'Té microones?'], ['Vull un rentaplats', 'És massa car!', 'Hi ha ofertes?'], ['Funciona bé?', 'Té garantia?', 'Me\'l poden portar a casa?']] },
+    ],
+  },
 ]
 
 // Flat list for lookup
