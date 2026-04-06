@@ -177,6 +177,50 @@ const scenarioGroups: ScenarioGroup[] = [
         suggestions: [['Vull canviar aquesta peça', 'No em queda bé', 'Té el tiquet?'], ['Vull una talla més gran', 'Prefereixo un altre color', 'El puc tornar?'], ['Tinc el tiquet aquí', 'Quan caduca?', 'Gràcies per l\'ajuda']] },
     ],
   },
+  {
+    unitId: 15, unitTitle: 'Com et trobes?',
+    scenarios: [
+      { key: 'salut', emoji: '🏥', title: 'Salut i símptomes', description: 'Explicar com et trobes i símptomes', starter: "Hola! Com et trobes avui? Tens bona cara... o no gaire?",
+        suggestions: [['Em trobo malament', 'Em fa mal el cap', 'Tinc febre'], ['Estic refredat', 'Tinc mal de panxa', 'Estic cansat'], ['He pres un paracetamol', 'He d\'anar al metge', 'Necessito descansar']] },
+      { key: 'habits', emoji: '💪', title: 'Hàbits saludables', description: 'Parlar de dieta, exercici i salut', starter: "Parlem de salut! Fas exercici? Menges bé? Dorms prou?",
+        suggestions: [['Camino cada dia', 'Menjo molta fruita', 'Dormo vuit hores'], ['Faig yoga', 'Bec molta aigua', 'No fumo'], ['He de fer més esport', 'M\'agrada córrer', 'Intento menjar sa']] },
+      { key: 'farmacia', emoji: '💊', title: 'A la farmàcia', description: 'Comprar medicaments i demanar consell', starter: "Bon dia! Benvingut a la farmàcia. En què el puc ajudar?",
+        suggestions: [['Tinc mal de cap', 'Necessito paracetamol', 'Tinc al·lèrgia'], ['Quantes pastilles he de prendre?', 'Necessito recepta?', 'Cada quantes hores?'], ['Gràcies pel consell', 'Quant val?', 'Tinc la targeta sanitària']] },
+    ],
+  },
+  {
+    unitId: 16, unitTitle: 'Sortim!',
+    scenarios: [
+      { key: 'sortir', emoji: '🏛️', title: 'Visitar Barcelona', description: 'Recomanar i visitar llocs d\'interès', starter: "Hola! Vols sortir avui? Què t'agradaria visitar a Barcelona?",
+        suggestions: [['Vull visitar la Sagrada Família', 'Anem al Parc Güell?', 'M\'agrada el Barri Gòtic'], ['Podem anar a Montjuïc', 'El Born és molt bonic', 'La Barceloneta!'], ['Fa bon temps avui', 'Fem un pícnic?', 'Vols fer fotos?']] },
+      { key: 'temps', emoji: '☀️', title: 'El temps', description: 'Parlar del temps meteorològic', starter: "Quin temps fa avui? Fa sol o plou? Sortim o ens quedem a casa?",
+        suggestions: [['Fa sol i calor', 'Plou una mica', 'Fa molt de vent'], ['Fa bon temps per passejar', 'Fa fred, porto abric', 'Està ennuvolat'], ['A l\'estiu fa molta calor', 'A l\'hivern fa fred', 'La primavera és bonica']] },
+      { key: 'excursio', emoji: '⛰️', title: 'Fer una excursió', description: 'Planejar una excursió fora de Barcelona', starter: "Aquest cap de setmana vull fer una excursió. Vols venir? On anem?",
+        suggestions: [['Anem a Montserrat!', 'Podem fer senderisme', 'Porto l\'esmorzar'], ['A quina hora sortim?', 'Com hi anem?', 'Quant de temps és?'], ['Fa bon temps per sortir', 'Porto aigua i fruita', 'Serà genial!']] },
+    ],
+  },
+  {
+    unitId: 17, unitTitle: 'Tinc una entrevista!',
+    scenarios: [
+      { key: 'entrevista', emoji: '💼', title: 'Entrevista de treball', description: 'Practicar una entrevista en català', starter: "Bon dia, segui si us plau. Soc la directora de recursos humans. Per què vol treballar aquí?",
+        suggestions: [['Tinc experiència en...', 'He treballat de...', 'Parlo tres idiomes'], ['Soc responsable i puntual', 'Treballo bé en equip', 'M\'agrada aprendre'], ['Quan puc començar?', 'Quin és l\'horari?', 'Quines condicions té?']] },
+      { key: 'cv', emoji: '📄', title: 'El currículum', description: 'Parlar de la teva experiència i formació', starter: "Explica'm el teu currículum. Què has estudiat? On has treballat?",
+        suggestions: [['He estudiat enginyeria', 'He treballat cinc anys', 'Sé parlar català'], ['Tinc el certificat A1', 'He fet pràctiques', 'Sé fer servir l\'ordinador'], ['El meu punt fort és...', 'Vull créixer professionalment', 'Tinc ganes d\'aprendre']] },
+      { key: 'buscar_feina', emoji: '🔍', title: 'Buscar feina', description: 'Parlar de com busques feina', starter: "Hola! Busques feina? Com la busques? Què t'agradaria trobar?",
+        suggestions: [['Busco feina d\'enginyer', 'Miro ofertes per internet', 'He enviat el CV'], ['Vull jornada completa', 'M\'agradaria teletreball', 'El sou és important'], ['Tinc una entrevista demà', 'Espero trobar feina aviat', 'Barcelona té moltes oportunitats']] },
+    ],
+  },
+  {
+    unitId: 18, unitTitle: 'Tinc temps lliure',
+    scenarios: [
+      { key: 'oci', emoji: '🎭', title: 'Oci i cultura', description: 'Activitats culturals i temps lliure', starter: "Hola! Què t'agrada fer en el teu temps lliure? Vas a concerts, teatre...?",
+        suggestions: [['M\'encanten els concerts', 'Vaig al teatre sovint', 'M\'agrada visitar exposicions'], ['Tinc ganes d\'anar al festival', 'Vull veure una obra', 'Estic interessat en el taller'], ['Gaudeixo molt de la cultura', 'Barcelona té molt a oferir', 'Descobreixo coses noves']] },
+      { key: 'centre_civic', emoji: '🏫', title: 'Centre cívic', description: 'Inscriure\'s a activitats', starter: "Bon dia! Benvingut al centre cívic. Tenim moltes activitats. Què li interessa?",
+        suggestions: [['Vull inscriure\'m al curs de pintura', 'Hi ha yoga?', 'M\'interessa la fotografia'], ['Quin horari té?', 'Quant costa?', 'Quan comença?'], ['M\'hi apunto!', 'Tinc ganes de començar', 'Gràcies per la informació']] },
+      { key: 'final_curs', emoji: '🎓', title: 'Final del curs', description: 'Celebrar i reflexionar sobre el curs A1', starter: "Enhorabona! Has acabat el curs A1 de català! Com ha estat l'experiència? Què has après?",
+        suggestions: [['He après molt de català!', 'Ara parlo millor', 'M\'ha agradat el curs'], ['Vull continuar estudiant', 'El nivell A2 és el següent', 'Gràcies a tots!'], ['Barcelona m\'encanta', 'Tinc molts amics catalans', 'El català és una llengua bonica']] },
+    ],
+  },
 ]
 
 // Flat list for lookup

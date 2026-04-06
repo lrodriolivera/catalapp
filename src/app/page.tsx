@@ -161,6 +161,38 @@ const unitData = [
       { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-14' },
     ],
   },
+  { id: 15, title: 'Com et trobes?', color: '#FFEBEE', accent: '#EF5350',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=15', key: 'gram-15' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=15', key: 'vocab-15' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=salut', key: 'conv-15' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-15' },
+    ],
+  },
+  { id: 16, title: 'Sortim!', color: '#E8F5E9', accent: '#66BB6A',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=16', key: 'gram-16' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=16', key: 'vocab-16' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=sortir', key: 'conv-16' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-16' },
+    ],
+  },
+  { id: 17, title: 'Tinc una entrevista!', color: '#E3F2FD', accent: '#42A5F5',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=17', key: 'gram-17' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=17', key: 'vocab-17' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=entrevista', key: 'conv-17' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-17' },
+    ],
+  },
+  { id: 18, title: 'Tinc temps lliure', color: '#F3E5F5', accent: '#AB47BC',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=18', key: 'gram-18' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=18', key: 'vocab-18' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=oci', key: 'conv-18' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-18' },
+    ],
+  },
 ]
 
 function getUnitProgress(unitId: number, progress: UserProgress): number {

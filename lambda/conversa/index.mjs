@@ -65,6 +65,22 @@ const SCENARIOS = {
   'compres_roba': "L'alumne practica comprar roba: provar-se, talles, vestidor, preus.",
   'rebaixes': "L'alumne practica buscar ofertes i comparar: més barat, millor, prefereixo.",
   'canviar': "L'alumne practica canviar o tornar roba: no em queda bé, tiquet, canvi de talla.",
+  // Unitat 15
+  'salut': "L'alumne practica parlar de salut: símptomes, com es troba, visita al metge.",
+  'habits': "L'alumne practica parlar d'hàbits saludables: exercici, dieta, dormir, no fumar.",
+  'farmacia': "L'alumne practica comprar a la farmàcia: medicaments, recepta, consells.",
+  // Unitat 16
+  'sortir': "L'alumne practica parlar de sortir: visitar llocs de Barcelona, recomanar, convidar.",
+  'temps': "L'alumne practica parlar del temps meteorològic: sol, pluja, fred, calor, estacions.",
+  'excursio': "L'alumne practica planejar excursions: Montserrat, senderisme, pícnic.",
+  // Unitat 17
+  'entrevista': "L'alumne practica una entrevista de treball: experiència, formació, habilitats, condicions.",
+  'cv': "L'alumne practica explicar el seu currículum: estudis, experiència, idiomes, habilitats.",
+  'buscar_feina': "L'alumne practica buscar feina: ofertes, CV, entrevistes, condicions laborals.",
+  // Unitat 18
+  'oci': "L'alumne practica parlar d'oci i cultura: concerts, teatre, exposicions, festivals.",
+  'centre_civic': "L'alumne practica inscriure's a activitats del centre cívic: cursos, tallers, horaris.",
+  'final_curs': "L'alumne celebra el final del curs A1: reflexió, progressos, plans futurs per al català.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };
 
