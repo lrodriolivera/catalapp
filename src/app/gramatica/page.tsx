@@ -7,6 +7,7 @@ import WordOrder from '@/components/exercises/WordOrder'
 import MatchPairs from '@/components/exercises/MatchPairs'
 import ListenWrite from '@/components/exercises/ListenWrite'
 import { addXP, completeExercise, saveLessonScore, updateStreak } from '@/lib/progress'
+import UnitSelector from '@/components/UnitSelector'
 
 type View =
   | { mode: 'home' }
@@ -386,16 +387,7 @@ export default function GramaticaPage() {
       <p className="text-[16px] text-[#666] mb-8">Aprèn les regles del català pas a pas</p>
 
       {/* Unit selector */}
-      <div className="flex gap-2 mb-10">
-        {units.map((u, i) => (
-          <button key={u.id} onClick={() => reset(i)}
-            className={`flex-1 py-3 rounded-full text-[15px] font-bold transition-colors ${
-              unitIdx === i ? 'bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white' : 'bg-[#F5F5F5] text-[#666] hover:bg-[#eee]'
-            }`}>
-            Unitat {u.id}
-          </button>
-        ))}
-      </div>
+      <UnitSelector selectedUnit={unitIdx} onSelect={reset} />
 
       {/* Unit title */}
       <div className="mb-10">

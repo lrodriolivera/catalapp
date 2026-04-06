@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { units } from '@/data/units'
 import { addXP } from '@/lib/progress'
+import UnitSelector from '@/components/UnitSelector'
 
 interface PronunciationWord {
   catalan: string
@@ -153,26 +154,8 @@ export default function PronunciacioPage() {
           Escolta, repeteix i millora la teva pronunciació
         </p>
 
-        {/* Unit pills */}
-        <div className="flex gap-2 mb-10 overflow-x-auto pb-1">
-          {units.map((u, i) => (
-            <button
-              key={u.id}
-              onClick={() => {
-                setSelectedUnit(i)
-                setExpandedSection(null)
-                setComparisonResult(null)
-              }}
-              className={`flex-shrink-0 px-5 py-2.5 rounded-full text-[16px] font-bold transition-colors ${
-                selectedUnit === i
-                  ? 'bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white'
-                  : 'bg-[#F5F5F5] text-[#1a1a1a] hover:bg-[#F0F0F0]'
-              }`}
-            >
-              Unitat {u.id}
-            </button>
-          ))}
-        </div>
+        {/* Unit selector */}
+        <UnitSelector selectedUnit={selectedUnit} onSelect={(i) => { setSelectedUnit(i); setExpandedSection(null); setComparisonResult(null) }} />
 
         {/* Info box */}
         <div className="bg-[#F0FFF4] border border-[#A7F3D0] rounded-2xl px-6 py-4 mb-10">

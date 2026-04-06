@@ -111,14 +111,26 @@ export default function AvaluacioPage() {
         <p className="text-[13px] font-bold text-[#666] uppercase tracking-[0.15em] mb-3">Prepara&apos;t</p>
         <h1 className="text-[32px] md:text-[40px] font-extrabold text-[#1a1a1a] leading-tight mb-10">Avaluacio</h1>
         <p className="text-[13px] font-bold text-[#666] uppercase tracking-[0.15em] mb-4">Selecciona unitats</p>
-        <div className="flex gap-2 mb-3">
+        <div className="grid grid-cols-6 gap-2 mb-3">
           {units.map((u) => (
-            <button key={u.id} onClick={() => toggleUnit(u.id)} className={`flex-1 py-3 rounded-full text-[16px] font-bold transition-all ${selectedUnits.includes(u.id) ? 'bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white' : 'bg-[#F5F5F5] text-[#666] hover:bg-[#eee]'}`}>
-              Unitat {u.id}
+            <button key={u.id} onClick={() => toggleUnit(u.id)}
+              className={`py-2.5 rounded-xl text-[14px] font-bold transition-colors ${
+                selectedUnits.includes(u.id)
+                  ? 'bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white'
+                  : 'bg-[#F5F5F5] text-[#888]'
+              }`}>
+              {u.id}
             </button>
           ))}
         </div>
-        <button onClick={() => setSelectedUnits([1, 2, 3])} className={`w-full py-3 rounded-full text-[16px] font-bold mb-10 transition-all ${selectedUnits.length === 3 ? 'bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white' : 'bg-[#F5F5F5] text-[#666] hover:bg-[#eee]'}`}>Totes (1-3)</button>
+        <button onClick={() => setSelectedUnits(units.map(u => u.id))}
+          className={`w-full mb-6 py-3 rounded-xl text-[14px] font-bold transition-colors ${
+            selectedUnits.length === units.length
+              ? 'bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white'
+              : 'bg-[#F5F5F5] text-[#888]'
+          }`}>
+          Totes les unitats ({units.length})
+        </button>
         <p className="text-center text-[16px] text-[#555] font-semibold mb-10">{questions.length} preguntes</p>
         <div className="space-y-3">
           <button onClick={() => startEval('practice')} className="w-full text-left bg-white border-l-4 border-[#10B981] rounded-2xl p-6 hover:bg-[#F0FFF4] transition-colors shadow-sm">
