@@ -29,6 +29,10 @@ const SCENARIOS = {
   'gustos': "L'alumne practica parlar dels seus gustos i preferències: m'agrada, m'encanta, prefereixo, no m'agrada.",
   'quedar': "L'alumne practica quedar amb amics: proposar activitats, acordar hora i lloc, transport.",
   'transport': "L'alumne practica parlar del transport públic a Barcelona: metro, autobús, bici, com arribar a llocs.",
+  // Unitat 6
+  'comprar': "L'alumne practica comprar al mercat: demanar productes, quantitats, preus i pagar.",
+  'aliments': "L'alumne practica parlar dels àpats: què menja per esmorzar, dinar i sopar.",
+  'receptes': "L'alumne practica explicar ingredients i quantitats per cuinar un plat.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };
 

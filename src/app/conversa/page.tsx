@@ -78,6 +78,17 @@ const scenarioGroups: ScenarioGroup[] = [
         suggestions: [['Agafa el metro', "L'autobús passa cada deu minuts", 'Pots anar a peu'], ['Quina línia és?', 'On és la parada?', 'Tens la T-Casual?'], ['Vaig en bici', 'Prefereixo el tren', 'El taxi és car']] },
     ],
   },
+  {
+    unitId: 6, unitTitle: 'Anem a comprar',
+    scenarios: [
+      { key: 'comprar', emoji: '🛒', title: 'Comprar al mercat', description: 'Demanar productes, quantitats i preus', starter: "Bon dia! Benvingut al mercat de la Boqueria! Què voldria?",
+        suggestions: [['Em posa un quilo de...', 'Quant val?', 'Alguna cosa més?'], ['Vull mig quilo de...', 'Les maduixes estan d\'oferta?', 'Això és tot'], ['Necessito pa i llet', 'Quant és tot plegat?', 'Vol bossa?']] },
+      { key: 'aliments', emoji: '🥘', title: 'Els meus àpats', description: 'Parlar del que menges i beus', starter: "Hola! Parlem del menjar. Què menges normalment per esmorzar?",
+        suggestions: [['Esmorzo cafè amb llet', 'Menjo pa amb tomàquet', 'Bec suc de taronja'], ['Dino arròs amb verdura', 'M\'agrada el peix', 'Sopo amanida'], ['Cuino cada dia', 'Compro al mercat', 'La fruita és barata']] },
+      { key: 'receptes', emoji: '👨‍🍳', title: 'Cuinar un plat', description: 'Explicar els ingredients d\'una recepta', starter: "Hola! Vull cuinar un plat típic avui. Tu saps cuinar? Què necessito per fer una amanida?",
+        suggestions: [['Necessites tomàquets', 'Compra enciam i ceba', 'Oli d\'oliva i sal'], ['Un quilo de patates', 'Mig quilo de pollastre', 'Una dotzena d\'ous'], ['El formatge és car', 'Les verdures són fresques', 'La carn és barata al mercat']] },
+    ],
+  },
 ]
 
 // Flat list for lookup

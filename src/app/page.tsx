@@ -65,6 +65,18 @@ const unitData = [
       { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-5' },
     ],
   },
+  {
+    id: 6,
+    title: 'Anem a comprar',
+    color: '#FFF8E1',
+    accent: '#FFB300',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=6', key: 'gram-6' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=6', key: 'vocab-6' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=comprar', key: 'conv-6' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-6' },
+    ],
+  },
 ]
 
 function getUnitProgress(unitId: number, progress: UserProgress): number {
