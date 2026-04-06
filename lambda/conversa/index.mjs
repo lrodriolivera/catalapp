@@ -25,6 +25,10 @@ const SCENARIOS = {
   'rutina': "L'alumne practica parlar de la rutina diària: hores, dies de la setmana, activitats quotidianes.",
   'hores': "L'alumne practica dir i preguntar les hores en català: sistema de quarts.",
   'cap_setmana': "L'alumne practica parlar del que fa els caps de setmana: oci, esport, família.",
+  // Unitat 5
+  'gustos': "L'alumne practica parlar dels seus gustos i preferències: m'agrada, m'encanta, prefereixo, no m'agrada.",
+  'quedar': "L'alumne practica quedar amb amics: proposar activitats, acordar hora i lloc, transport.",
+  'transport': "L'alumne practica parlar del transport públic a Barcelona: metro, autobús, bici, com arribar a llocs.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };
 

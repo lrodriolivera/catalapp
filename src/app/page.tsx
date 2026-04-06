@@ -53,6 +53,18 @@ const unitData = [
       { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-4' },
     ],
   },
+  {
+    id: 5,
+    title: "T'agrada el cinema?",
+    color: '#FCE4EC',
+    accent: '#EC407A',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=5', key: 'gram-5' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=5', key: 'vocab-5' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=gustos', key: 'conv-5' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-5' },
+    ],
+  },
 ]
 
 function getUnitProgress(unitId: number, progress: UserProgress): number {

@@ -1871,4 +1871,372 @@ export const units: Unit[] = [
       'Parlar de la freqüència de les activitats',
     ],
   },
+
+  // =====================================================
+  // UNITAT 5: T'agrada el cinema?
+  // =====================================================
+  {
+    id: 5,
+    title: 'Unitat 5',
+    subtitle: "T'agrada el cinema?",
+    description:
+      "Aprendre a parlar del temps lliure, els gustos, les preferències, el transport públic i les activitats d'oci.",
+    verbs: [
+      {
+        infinitive: 'agradar',
+        translation: 'gustar (verb especial, com "gustar" en castellà. S\'usa amb pronom feble: M\'agrada el cinema)',
+        conjugations: {
+          jo: "m'agrada",
+          tu: "t'agrada",
+          'ell/ella/vostè': 'li agrada',
+          nosaltres: 'ens agrada',
+          vosaltres: 'us agrada',
+          'ells/elles/vostès': 'els agrada',
+        },
+      },
+      {
+        infinitive: 'anar',
+        translation: 'ir',
+        conjugations: {
+          jo: 'vaig',
+          tu: 'vas',
+          'ell/ella/vostè': 'va',
+          nosaltres: 'anem',
+          vosaltres: 'aneu',
+          'ells/elles/vostès': 'van',
+        },
+      },
+      {
+        infinitive: 'voler',
+        translation: 'querer',
+        conjugations: {
+          jo: 'vull',
+          tu: 'vols',
+          'ell/ella/vostè': 'vol',
+          nosaltres: 'volem',
+          vosaltres: 'voleu',
+          'ells/elles/vostès': 'volen',
+        },
+      },
+      {
+        infinitive: 'poder',
+        translation: 'poder',
+        conjugations: {
+          jo: 'puc',
+          tu: 'pots',
+          'ell/ella/vostè': 'pot',
+          nosaltres: 'podem',
+          vosaltres: 'podeu',
+          'ells/elles/vostès': 'poden',
+        },
+      },
+      {
+        infinitive: 'preferir',
+        translation: 'preferir (3a conjugació incoativa)',
+        conjugations: {
+          jo: 'prefereixo',
+          tu: 'prefereixes',
+          'ell/ella/vostè': 'prefereix',
+          nosaltres: 'preferim',
+          vosaltres: 'preferiu',
+          'ells/elles/vostès': 'prefereixen',
+        },
+      },
+    ],
+    vocabulary: {
+      "Activitats d'oci": [
+        { catalan: 'anar al cinema', spanish: 'ir al cine', example: "M'agrada anar al cinema." },
+        { catalan: 'llegir', spanish: 'leer', example: 'Llegeixo cada nit.' },
+        { catalan: 'mirar la televisió', spanish: 'ver la televisión', example: 'Miro la tele al vespre.' },
+        { catalan: 'escoltar música', spanish: 'escuchar música', example: 'Escolto música al metro.' },
+        { catalan: 'fer esport', spanish: 'hacer deporte', example: 'Faig esport tres cops per setmana.' },
+        { catalan: 'passejar', spanish: 'pasear', example: 'Passejo per la platja.' },
+        { catalan: 'anar de compres', spanish: 'ir de compras', example: 'Vaig de compres al centre comercial.' },
+        { catalan: 'jugar a futbol', spanish: 'jugar a fútbol', example: 'Jugo a futbol els dissabtes.' },
+        { catalan: 'sortir amb amics', spanish: 'salir con amigos', example: 'Surto amb amics el divendres.' },
+        { catalan: 'viatjar', spanish: 'viajar', example: "M'agrada molt viatjar." },
+        { catalan: 'cuinar', spanish: 'cocinar', example: "M'encanta cuinar plats nous." },
+        { catalan: 'ballar', spanish: 'bailar', example: 'Ballo salsa els dijous.' },
+      ],
+      'Transport públic': [
+        { catalan: 'el metro', spanish: 'el metro', example: 'Agafo el metro cada dia.' },
+        { catalan: "l'autobús", spanish: 'el autobús', example: "L'autobús passa cada deu minuts." },
+        { catalan: 'el tramvia', spanish: 'el tranvía', example: 'El tramvia va per la Diagonal.' },
+        { catalan: 'el tren', spanish: 'el tren', example: 'Agafo el tren a Sants.' },
+        { catalan: 'el taxi', spanish: 'el taxi', example: "Agafo un taxi a l'aeroport." },
+        { catalan: 'la bicicleta', spanish: 'la bicicleta', example: 'Vaig en bicicleta a la feina.' },
+        { catalan: 'a peu', spanish: 'a pie', example: 'Vaig a peu al supermercat.' },
+        { catalan: "l'estació", spanish: 'la estación', example: "L'estació de metro és a prop." },
+        { catalan: 'la parada', spanish: 'la parada', example: "La parada d'autobús és davant." },
+        { catalan: 'el bitllet', spanish: 'el billete', example: 'Compro un bitllet senzill.' },
+      ],
+      "Llocs d'oci": [
+        { catalan: 'el cinema', spanish: 'el cine', example: 'Anem al cinema dissabte?' },
+        { catalan: 'el teatre', spanish: 'el teatro', example: "M'agrada anar al teatre." },
+        { catalan: 'el museu', spanish: 'el museo', example: 'El Museu Picasso és molt bonic.' },
+        { catalan: 'la platja', spanish: 'la playa', example: 'Anem a la platja diumenge.' },
+        { catalan: 'el parc', spanish: 'el parque', example: 'Passejo pel parc cada dia.' },
+        { catalan: 'el restaurant', spanish: 'el restaurante', example: 'Sopem al restaurant italià.' },
+        { catalan: 'la biblioteca', spanish: 'la biblioteca', example: 'Estudio a la biblioteca.' },
+        { catalan: 'el gimnàs', spanish: 'el gimnasio', example: 'Vaig al gimnàs al matí.' },
+        { catalan: 'el centre comercial', spanish: 'el centro comercial', example: 'Vaig de compres al centre comercial.' },
+        { catalan: 'la discoteca', spanish: 'la discoteca', example: 'Anem a la discoteca dissabte?' },
+      ],
+      'Gustos i preferències': [
+        { catalan: "m'agrada", spanish: 'me gusta', example: "M'agrada el cinema." },
+        { catalan: "m'agrada molt", spanish: 'me gusta mucho', example: "M'agrada molt llegir." },
+        { catalan: "m'encanta", spanish: 'me encanta', example: "M'encanta la música!" },
+        { catalan: "no m'agrada", spanish: 'no me gusta', example: "No m'agrada el futbol." },
+        { catalan: "no m'agrada gens", spanish: 'no me gusta nada', example: "No m'agrada gens ballar." },
+        { catalan: 'prefereixo', spanish: 'prefiero', example: 'Prefereixo el teatre al cinema.' },
+        { catalan: 'també', spanish: 'también', example: "A mi també m'agrada." },
+        { catalan: 'tampoc', spanish: 'tampoco', example: "A mi tampoc m'agrada." },
+      ],
+    },
+    grammar: [
+      {
+        id: 'u5-verb-agradar',
+        title: 'El verb agradar',
+        explanation:
+          "Funciona com \"gustar\" en castellà. Sempre amb pronom feble: m'/t'/li/ens/us/els + agrada + nom/infinitiu. Plural: agraden (M'agraden els llibres). Negació: No m'agrada.",
+        examples: [
+          { catalan: "M'agrada el cinema", spanish: 'Me gusta el cine' },
+          { catalan: "T'agraden els museus?", spanish: '¿Te gustan los museos?' },
+          { catalan: 'No li agrada el futbol', spanish: 'No le gusta el fútbol' },
+        ],
+      },
+      {
+        id: 'u5-anar-en-a',
+        title: 'Anar + en/a',
+        explanation:
+          'Per indicar transport: anar en metro/autobús/tren/bici. Per indicar lloc: anar a + article (anar al cinema, anar a la platja). Contraccions: a + el = al, a + els = als.',
+        examples: [
+          { catalan: 'Vaig en metro a la feina', spanish: 'Voy en metro al trabajo' },
+          { catalan: 'Anem al cinema?', spanish: '¿Vamos al cine?' },
+          { catalan: 'Van a la platja', spanish: 'Van a la playa' },
+        ],
+      },
+      {
+        id: 'u5-voler-poder-infinitiu',
+        title: 'Voler/Poder + infinitiu',
+        explanation:
+          'Perífrasi verbal: vull/puc + infinitiu. Vols venir al cinema? Puc anar en metro. No podem sortir avui.',
+        examples: [
+          { catalan: 'Vull anar al cinema', spanish: 'Quiero ir al cine' },
+          { catalan: 'Pots venir demà?', spanish: '¿Puedes venir mañana?' },
+          { catalan: 'No volem sortir', spanish: 'No queremos salir' },
+        ],
+      },
+      {
+        id: 'u5-tambe-tampoc',
+        title: 'També i tampoc',
+        explanation:
+          "Per expressar acord: Jo també (afirmatiu), Jo tampoc (negatiu). A mi també m'agrada / A mi tampoc m'agrada. Diferent del castellà: \"también\" i \"tampoco\".",
+        examples: [
+          { catalan: "M'agrada el tennis. A mi també!", spanish: 'Me gusta el tenis. ¡A mí también!' },
+          { catalan: "No m'agrada el futbol. A mi tampoc.", spanish: 'No me gusta el fútbol. A mí tampoco.' },
+        ],
+      },
+    ],
+    exercises: [
+      // --- fill-blank ---
+      {
+        id: 'u5-ex01',
+        type: 'fill-blank',
+        question: '___ el cinema.',
+        correctAnswer: "M'agrada",
+        hint: 'Verb agradar, primera persona.',
+      },
+      {
+        id: 'u5-ex02',
+        type: 'fill-blank',
+        question: 'Vaig ___ metro a la feina.',
+        correctAnswer: 'en',
+        hint: 'Preposició de transport.',
+      },
+      {
+        id: 'u5-ex03',
+        type: 'fill-blank',
+        question: '___ venir al cinema demà?',
+        correctAnswer: 'Vols',
+        hint: 'Verb voler, tu.',
+      },
+      {
+        id: 'u5-ex04',
+        type: 'fill-blank',
+        question: "No m'agrada el futbol. A mi ___.",
+        correctAnswer: 'tampoc',
+        hint: 'Acord negatiu.',
+      },
+      {
+        id: 'u5-ex05',
+        type: 'fill-blank',
+        question: "Agafo el ___ a l'estació de Sants.",
+        correctAnswer: 'tren',
+        hint: 'Transport ferroviari.',
+      },
+      // --- multiple-choice ---
+      {
+        id: 'u5-ex06',
+        type: 'multiple-choice',
+        question: "Com dius 'me gusta mucho leer' en català?",
+        options: ["M'agrada molt llegir", "M'agrado molt llegir", "M'agraden molt llegir", 'Em gusta molt llegir'],
+        correctAnswer: "M'agrada molt llegir",
+      },
+      {
+        id: 'u5-ex07',
+        type: 'multiple-choice',
+        question: 'Quin transport va per sota terra?',
+        options: ['El metro', "L'autobús", 'El tramvia', 'El tren'],
+        correctAnswer: 'El metro',
+      },
+      {
+        id: 'u5-ex08',
+        type: 'multiple-choice',
+        question: "T'agraden els museus?",
+        options: ["Sí, m'agraden molt", "Sí, m'agrada molt", "Sí, m'agraden molts", "Sí, m'agrado molt"],
+        correctAnswer: "Sí, m'agraden molt",
+      },
+      {
+        id: 'u5-ex09',
+        type: 'multiple-choice',
+        question: "M'agrada el tennis. I a tu?",
+        options: ['A mi també!', 'A mi tampoc!', 'Jo també no!', 'A mi sí tampoc!'],
+        correctAnswer: 'A mi també!',
+      },
+      {
+        id: 'u5-ex10',
+        type: 'multiple-choice',
+        question: 'Com vas a la feina?',
+        options: ['Vaig en metro', 'Vaig amb metro', 'Vaig per metro', 'Vaig de metro'],
+        correctAnswer: 'Vaig en metro',
+      },
+      // --- translate ---
+      {
+        id: 'u5-ex11',
+        type: 'translate',
+        question: 'Tradueix: Quiero ir al cine mañana',
+        correctAnswer: 'Vull anar al cinema demà',
+      },
+      {
+        id: 'u5-ex12',
+        type: 'translate',
+        question: 'Tradueix: ¿Te gusta la playa?',
+        correctAnswer: "T'agrada la platja?",
+      },
+      {
+        id: 'u5-ex13',
+        type: 'translate',
+        question: 'Tradueix: Prefiero el teatro al cine',
+        correctAnswer: 'Prefereixo el teatre al cinema',
+      },
+      // --- conjugate ---
+      {
+        id: 'u5-ex14',
+        type: 'conjugate',
+        question: "Conjuga 'anar' amb 'nosaltres'",
+        correctAnswer: 'anem',
+      },
+      {
+        id: 'u5-ex15',
+        type: 'conjugate',
+        question: "Conjuga 'voler' amb 'jo'",
+        correctAnswer: 'vull',
+      },
+      {
+        id: 'u5-ex16',
+        type: 'conjugate',
+        question: "Conjuga 'poder' amb 'tu'",
+        correctAnswer: 'pots',
+      },
+      {
+        id: 'u5-ex17',
+        type: 'conjugate',
+        question: "Conjuga 'preferir' amb 'ells'",
+        correctAnswer: 'prefereixen',
+      },
+      // --- word-order ---
+      {
+        id: 'u5-ex18',
+        type: 'word-order',
+        question: 'Ordena les paraules per formar una frase correcta.',
+        words: ['al', 'Vols', 'cinema', 'venir', '?'],
+        correctAnswer: 'Vols venir al cinema?',
+      },
+      {
+        id: 'u5-ex19',
+        type: 'word-order',
+        question: 'Ordena les paraules per formar una frase correcta.',
+        words: ['en', 'la', 'Vaig', 'metro', 'a', 'feina', '.'],
+        correctAnswer: 'Vaig en metro a la feina.',
+      },
+      {
+        id: 'u5-ex20',
+        type: 'word-order',
+        question: 'Ordena les paraules per formar una frase correcta.',
+        words: ['molt', "M'agrada", 'llegir', '.'],
+        correctAnswer: "M'agrada molt llegir.",
+      },
+      // --- match-pairs ---
+      {
+        id: 'u5-ex21',
+        type: 'match-pairs',
+        question: "Emparella els llocs d'oci en català amb la seva traducció.",
+        pairs: [
+          { a: 'el cinema', b: 'el cine' },
+          { a: 'la platja', b: 'la playa' },
+          { a: 'el museu', b: 'el museo' },
+          { a: 'el teatre', b: 'el teatro' },
+          { a: 'el gimnàs', b: 'el gimnasio' },
+        ],
+        correctAnswer: 'completed',
+      },
+      {
+        id: 'u5-ex22',
+        type: 'match-pairs',
+        question: 'Emparella els transports en català amb la seva traducció.',
+        pairs: [
+          { a: 'el metro', b: 'el metro' },
+          { a: "l'autobús", b: 'el autobús' },
+          { a: 'el tren', b: 'el tren' },
+          { a: 'a peu', b: 'a pie' },
+          { a: 'el bitllet', b: 'el billete' },
+        ],
+        correctAnswer: 'completed',
+      },
+      {
+        id: 'u5-ex23',
+        type: 'match-pairs',
+        question: 'Emparella les expressions de gustos en català amb la seva traducció.',
+        pairs: [
+          { a: "m'agrada", b: 'me gusta' },
+          { a: "m'encanta", b: 'me encanta' },
+          { a: 'prefereixo', b: 'prefiero' },
+          { a: 'també', b: 'también' },
+          { a: 'tampoc', b: 'tampoco' },
+        ],
+        correctAnswer: 'completed',
+      },
+      // --- listen-write ---
+      {
+        id: 'u5-ex24',
+        type: 'listen-write',
+        question: 'Escolta i escriu la frase.',
+        correctAnswer: "M'agrada molt anar al cinema",
+      },
+      {
+        id: 'u5-ex25',
+        type: 'listen-write',
+        question: 'Escolta i escriu la frase.',
+        correctAnswer: 'Vols venir a la platja diumenge?',
+      },
+    ],
+    conversationTopics: [
+      "Parlar dels gustos i preferències d'oci",
+      'Quedar amb amics per fer alguna activitat',
+      'Preguntar i explicar com anar a un lloc amb transport públic',
+      'Parlar del que fas durant el temps lliure',
+      'Recomanar llocs per visitar a Barcelona',
+    ],
+  },
 ];

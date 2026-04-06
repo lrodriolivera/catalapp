@@ -67,6 +67,17 @@ const scenarioGroups: ScenarioGroup[] = [
         suggestions: [['Dissabte em llevo tard', 'Vaig al mercat', 'Surto amb amics'], ['Diumenge descanso', 'Cuino a casa', 'Passejo per la platja'], ['Sempre vaig al cinema', 'De vegades llegeixo', 'Mai treballo el diumenge']] },
     ],
   },
+  {
+    unitId: 5, unitTitle: "T'agrada el cinema?",
+    scenarios: [
+      { key: 'gustos', emoji: '❤️', title: 'Gustos i preferències', description: "Parlar del que t'agrada i no t'agrada", starter: "Hola! Parlem dels nostres gustos. Què t'agrada fer en el teu temps lliure?",
+        suggestions: [["M'agrada el cinema", "M'encanta llegir", "Prefereixo la platja"], ["No m'agrada el futbol", "M'agrada molt cuinar", "M'agraden els museus"], ["A mi també!", "Prefereixo passejar", "M'encanta la música"]] },
+      { key: 'quedar', emoji: '🎬', title: 'Quedar amb amics', description: 'Fer plans i quedar per sortir', starter: "Ei! Vols fer alguna cosa aquest cap de setmana? Podem anar a algun lloc!",
+        suggestions: [['Vols venir al cinema?', 'Podem anar a la platja', 'A quina hora quedem?'], ['Prefereixo el teatre', 'Puc anar en metro', 'Quedem a les cinc?'], ["D'acord! Perfecte!", 'On ens trobem?', 'Compro els bitllets']] },
+      { key: 'transport', emoji: '🚇', title: 'El transport', description: 'Com arribar als llocs amb transport públic', starter: "Hola! Necessito anar al centre de Barcelona. Com puc arribar-hi?",
+        suggestions: [['Agafa el metro', "L'autobús passa cada deu minuts", 'Pots anar a peu'], ['Quina línia és?', 'On és la parada?', 'Tens la T-Casual?'], ['Vaig en bici', 'Prefereixo el tren', 'El taxi és car']] },
+    ],
+  },
 ]
 
 // Flat list for lookup
