@@ -88,9 +88,9 @@ export default function DialegsPage() {
     setSelected(null)
   }, [stopPlaying])
 
-  const unitGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(uid => ({
+  const unitGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(uid => ({
     unitId: uid,
-    title: ['', 'Hola, com et dius?', 'Coneixes la meva família?', 'On vius?', 'Què fas cada dia?', "T'agrada el cinema?", 'Anem a comprar', 'Què vol prendre?', 'Ens movem per la ciutat', 'Què necessito?'][uid] || '',
+    title: ['', 'Hola, com et dius?', 'Coneixes la meva família?', 'On vius?', 'Què fas cada dia?', "T'agrada el cinema?", 'Anem a comprar', 'Què vol prendre?', 'Ens movem per la ciutat', 'Què necessito?', 'Qui és qui?'][uid] || '',
     items: dialogues.filter(d => d.unitId === uid),
   }))
 

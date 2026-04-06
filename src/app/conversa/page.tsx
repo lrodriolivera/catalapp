@@ -122,6 +122,17 @@ const scenarioGroups: ScenarioGroup[] = [
         suggestions: [['Necessito el NIE', 'On demano el certificat?', 'He de portar el passaport'], ['Com obro un compte bancari?', 'Necessito el contracte de lloguer', 'On és l\'oficina d\'estrangeria?'], ['Tinc el número de la SS', 'He d\'omplir el formulari', 'Quins papers necessito?']] },
     ],
   },
+  {
+    unitId: 10, unitTitle: 'Qui és qui?',
+    scenarios: [
+      { key: 'descripcions', emoji: '👤', title: 'Descriure persones', description: 'Aspecte físic, caràcter i roba', starter: "Hola! Avui practicarem les descripcions. Com ets tu? Descriu-te!",
+        suggestions: [['Soc alt i prim', 'Tinc els cabells morens', 'Porto una samarreta blava'], ['Soc simpàtic i divertit', 'La meva amiga és rossa', 'Ell porta pantalons negres'], ['Sembla molt amable', 'És jove i extravertida', 'Té els ulls marrons']] },
+      { key: 'roba', emoji: '👗', title: 'La roba', description: 'Parlar de roba, colors i talles', starter: "Ei! Anem de compres! Què necessites comprar? Quins colors t'agraden?",
+        suggestions: [['Necessito una jaqueta', 'M\'agrada el color blau', 'Quina talla portes?'], ['Vull uns texans negres', 'Les vambes blanques', 'L\'abric vermell és bonic'], ['Quant val la faldilla?', 'És massa car!', 'El vestit verd és molt bonic']] },
+      { key: 'formal', emoji: '🤝', title: 'Formal i informal', description: 'Practicar el registre formal i informal', starter: "Bon dia. Soc el senyor Garcia, el director. Vostè és el nou treballador?",
+        suggestions: [['Sí, em dic...', 'Encantat de conèixer-lo', 'Com es diu vostè?'], ['Li presento el meu company', 'Vingui, segui', 'Molt de gust'], ['El meu telèfon és...', 'Treballo de...', 'Gràcies, senyor Garcia']] },
+    ],
+  },
 ]
 
 // Flat list for lookup

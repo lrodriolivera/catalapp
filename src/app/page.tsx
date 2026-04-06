@@ -113,6 +113,18 @@ const unitData = [
       { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-9' },
     ],
   },
+  {
+    id: 10,
+    title: 'Qui és qui?',
+    color: '#EDE7F6',
+    accent: '#7E57C2',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=10', key: 'gram-10' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=10', key: 'vocab-10' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=descripcions', key: 'conv-10' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-10' },
+    ],
+  },
 ]
 
 function getUnitProgress(unitId: number, progress: UserProgress): number {

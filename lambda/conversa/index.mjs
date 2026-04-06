@@ -45,6 +45,10 @@ const SCENARIOS = {
   'tramits': "L'alumne practica fer tràmits: empadronar-se, targeta sanitària, NIE, demanar cita, omplir formularis.",
   'metge': "L'alumne practica anar al metge: explicar símptomes, demanar cita al CAP, recepta, farmàcia.",
   'documents': "L'alumne practica parlar de documents: DNI, NIE, passaport, certificats, contractes.",
+  // Unitat 10
+  'descripcions': "L'alumne practica descriure persones: aspecte físic, caràcter, roba que porten, colors.",
+  'roba': "L'alumne practica parlar de roba: colors, talles, comprar roba, el que porta posat.",
+  'formal': "L'alumne practica el registre formal (vostè) i informal (tu): presentacions, salutacions, demanar coses.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };
 
