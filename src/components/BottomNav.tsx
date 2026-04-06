@@ -39,15 +39,11 @@ export default function BottomNav() {
               </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-2">
-            <Link href="/flashcards" aria-label="Flashcards"
-              className={`px-3 py-1.5 rounded-full text-[13px] font-bold transition-all min-h-[44px] flex items-center ${active('/flashcards') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:text-[#1a1a1a] hover:bg-gray-50'}`}>
-              🃏
-            </Link>
-            <Link href="/estadistiques" aria-label="Estadístiques"
-              className={`px-3 py-1.5 rounded-full text-[13px] font-bold transition-all min-h-[44px] flex items-center ${active('/estadistiques') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:text-[#1a1a1a] hover:bg-gray-50'}`}>
-              📊
-            </Link>
+          <div className="flex items-center gap-1">
+            <Link href="/flashcards" aria-label="Flashcards" className={`px-2 py-1.5 rounded-full text-[12px] font-bold min-h-[36px] flex items-center ${active('/flashcards') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:bg-gray-50'}`}>🃏</Link>
+            <Link href="/escriptura" aria-label="Escriptura" className={`px-2 py-1.5 rounded-full text-[12px] font-bold min-h-[36px] flex items-center ${active('/escriptura') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:bg-gray-50'}`}>✍️</Link>
+            <Link href="/examen" aria-label="Examen CPNL" className={`px-2 py-1.5 rounded-full text-[12px] font-bold min-h-[36px] flex items-center ${active('/examen') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:bg-gray-50'}`}>🎓</Link>
+            <Link href="/estadistiques" aria-label="Estadístiques" className={`px-2 py-1.5 rounded-full text-[12px] font-bold min-h-[36px] flex items-center ${active('/estadistiques') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:bg-gray-50'}`}>📊</Link>
             <DarkModeToggle />
           </div>
         </div>
