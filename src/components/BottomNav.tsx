@@ -1,8 +1,11 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import DarkModeToggle from '@/components/DarkModeToggle'
+import { getLang, setLang } from '@/lib/i18n'
+import type { Lang } from '@/lib/i18n'
 
 const items = [
   { href: '/', label: 'Inici', d: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10' },
@@ -16,6 +19,11 @@ const items = [
 export default function BottomNav() {
   const pathname = usePathname()
   const active = (h: string) => h === '/' ? pathname === '/' : pathname.startsWith(h)
+  const [langState, setLangState] = useState<Lang>('ca')
+
+  useEffect(() => {
+    setLangState(getLang())
+  }, [])
 
   return (
     <div>
@@ -44,6 +52,12 @@ export default function BottomNav() {
             <Link href="/escriptura" aria-label="Escriptura" className={`px-2 py-1.5 rounded-full text-[12px] font-bold min-h-[36px] flex items-center ${active('/escriptura') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:bg-gray-50'}`}>✍️</Link>
             <Link href="/examen" aria-label="Examen CPNL" className={`px-2 py-1.5 rounded-full text-[12px] font-bold min-h-[36px] flex items-center ${active('/examen') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:bg-gray-50'}`}>🎓</Link>
             <Link href="/estadistiques" aria-label="Estadístiques" className={`px-2 py-1.5 rounded-full text-[12px] font-bold min-h-[36px] flex items-center ${active('/estadistiques') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:bg-gray-50'}`}>📊</Link>
+            <button onClick={() => {
+              const next: Lang = langState === 'ca' ? 'es' : langState === 'es' ? 'en' : 'ca'
+              setLang(next); setLangState(next)
+            }} className="text-[12px] font-bold bg-[#F5F5F5] rounded-full px-2.5 py-1.5 min-h-[36px] hover:bg-[#EBEBEB] transition-colors" aria-label="Canviar idioma">
+              {langState.toUpperCase()}
+            </button>
             <DarkModeToggle />
           </div>
         </div>

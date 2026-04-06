@@ -8,6 +8,7 @@ import MatchPairs from '@/components/exercises/MatchPairs'
 import ListenWrite from '@/components/exercises/ListenWrite'
 import { addXP, completeExercise, saveLessonScore, updateStreak } from '@/lib/progress'
 import UnitSelector from '@/components/UnitSelector'
+import { callSonnet } from '@/lib/api'
 
 type View =
   | { mode: 'home' }
@@ -27,6 +28,9 @@ export default function GramaticaPage() {
   const [fb, setFb] = useState<'correct' | 'incorrect' | null>(null)
   const [answers, setAnswers] = useState<AR[]>([])
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
+  const [generatingAI, setGeneratingAI] = useState(false)
+  const [aiExercises, setAiExercises] = useState<any[]>([])
+  const [aiAnswers, setAiAnswers] = useState<Record<number, { answer: string; correct: boolean }>>({})
 
   const unit = units[unitIdx]
   const grammar = unit.grammar
@@ -77,6 +81,31 @@ export default function GramaticaPage() {
       setView({ mode: 'results', score: s, total: exercises.length, answers: [...answers], xp: s * 10 })
     }
   }, [exIdx, exercises.length, answers, unit.id])
+
+  const generateAIExercises = useCallback(async () => {
+    setGeneratingAI(true)
+    try {
+      const weakTopics = grammar.map(g => g.title).join(', ')
+      const result = await callSonnet('generate_exercises', {
+        topic: `Unitat ${unit.id}: ${unit.subtitle} — ${weakTopics}`,
+        count: 5,
+      })
+      if (Array.isArray(result)) {
+        setAiExercises(result)
+        setAiAnswers({})
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setGeneratingAI(false)
+    }
+  }, [grammar, unit])
+
+  const checkAiAnswer = useCallback((idx: number, answer: string, correctAnswer: string) => {
+    const isCorrect = answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim()
+    setAiAnswers(prev => ({ ...prev, [idx]: { answer, correct: isCorrect } }))
+    if (isCorrect) addXP(10)
+  }, [])
 
   const W = 'px-5 md:px-10 lg:px-20 xl:px-32 pt-8 pb-44 md:pb-12'
   const C = 'max-w-[800px] mx-auto'
@@ -434,6 +463,103 @@ export default function GramaticaPage() {
         className="w-full bg-[#1a1a1a] text-white font-bold py-4 rounded-full text-[16px] hover:bg-[#333] transition-colors">
         Fer tots els exercicis ({exercises.length})
       </button>
+
+      <button onClick={generateAIExercises} disabled={generatingAI}
+        className="w-full mt-3 bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white font-bold py-4 rounded-full text-[16px] disabled:opacity-50 hover:opacity-90 transition-all flex items-center justify-center gap-2">
+        {generatingAI ? (
+          <><span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Generant...</>
+        ) : (
+          <><span>🤖</span> Genera exercicis nous amb IA</>
+        )}
+      </button>
+
+      {/* AI Generated Exercises */}
+      {aiExercises.length > 0 && (
+        <div className="mt-10">
+          <h3 className="text-[13px] font-bold text-[#666] uppercase tracking-[0.15em] mb-4">Exercicis generats per IA</h3>
+          <div className="space-y-4">
+            {aiExercises.map((ex: any, i: number) => {
+              const answered = aiAnswers[i]
+              const ca = Array.isArray(ex.correctAnswer) ? ex.correctAnswer[0] : ex.correctAnswer
+              return (
+                <div key={i} className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+                  <span className="inline-block bg-[#F0F4FF] rounded-full px-3 py-1 text-[12px] font-bold text-[#4F46E5] mb-3">
+                    🤖 {ex.type === 'multiple-choice' ? 'Tria' : ex.type === 'fill-blank' ? 'Completa' : ex.type || 'Exercici'}
+                  </span>
+                  <p className="text-[16px] font-bold text-[#1a1a1a] mb-3">{ex.question}</p>
+
+                  {/* Multiple choice */}
+                  {ex.type === 'multiple-choice' && ex.options ? (
+                    <div className="space-y-2">
+                      {ex.options.map((opt: string, oi: number) => {
+                        let cls = 'bg-[#F5F5F5] text-[#1a1a1a] hover:bg-[#EBEBEB]'
+                        if (answered) {
+                          if (opt === ca) cls = 'bg-[#ECFDF5] border border-[#A7F3D0] text-[#065F46]'
+                          else if (opt === answered.answer && !answered.correct) cls = 'bg-[#FEF2F2] border border-[#FECACA] text-[#991B1B]'
+                          else cls = 'bg-[#F5F5F5] text-[#999]'
+                        }
+                        return (
+                          <button key={oi} disabled={!!answered}
+                            onClick={() => checkAiAnswer(i, opt, ca)}
+                            className={`w-full text-left px-4 py-3 rounded-xl text-[15px] font-semibold transition-all disabled:cursor-not-allowed ${cls}`}>
+                            {opt}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    /* Fill blank / other */
+                    !answered ? (
+                      <div className="flex gap-2">
+                        <input type="text" placeholder="Escriu la resposta..."
+                          className="flex-1 bg-[#F5F5F5] rounded-xl px-4 py-3 text-[15px] focus:ring-2 focus:ring-[#C7D2FE] focus:outline-none"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim()) {
+                              checkAiAnswer(i, (e.target as HTMLInputElement).value, ca)
+                            }
+                          }}
+                        />
+                        <button onClick={(e) => {
+                          const input = (e.target as HTMLElement).parentElement?.querySelector('input') as HTMLInputElement
+                          if (input?.value.trim()) checkAiAnswer(i, input.value, ca)
+                        }}
+                          className="bg-[#1a1a1a] text-white font-bold px-5 py-3 rounded-xl text-[14px] hover:bg-[#333] transition-colors">
+                          Comprovar
+                        </button>
+                      </div>
+                    ) : null
+                  )}
+
+                  {/* Feedback */}
+                  {answered && (
+                    <div className={`mt-3 rounded-xl px-4 py-3 ${answered.correct ? 'bg-[#ECFDF5] border border-[#A7F3D0]' : 'bg-[#FEF2F2] border border-[#FECACA]'}`}>
+                      <p className={`text-[14px] font-bold ${answered.correct ? 'text-[#065F46]' : 'text-[#991B1B]'}`}>
+                        {answered.correct ? '✓ Correcte! +10 XP' : '✗ Incorrecte'}
+                      </p>
+                      {!answered.correct && <p className="text-[13px] text-[#666] mt-1">Resposta correcta: <strong>{ca}</strong></p>}
+                      {ex.explanation && <p className="text-[13px] text-[#888] mt-1">{ex.explanation}</p>}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          {/* AI Score summary */}
+          {Object.keys(aiAnswers).length === aiExercises.length && aiExercises.length > 0 && (
+            <div className="mt-6 bg-[#F0F4FF] rounded-2xl p-6 text-center">
+              <p className="text-[22px] font-extrabold text-[#1a1a1a] mb-1">
+                {Object.values(aiAnswers).filter(a => a.correct).length} / {aiExercises.length} correctes
+              </p>
+              <p className="text-[14px] text-[#666]">+{Object.values(aiAnswers).filter(a => a.correct).length * 10} XP amb exercicis IA</p>
+              <button onClick={generateAIExercises} disabled={generatingAI}
+                className="mt-4 bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white font-bold py-3 px-8 rounded-full text-[14px] disabled:opacity-50 hover:opacity-90 transition-all">
+                🤖 Genera&apos;n m&eacute;s
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div></div>
   )
 }
