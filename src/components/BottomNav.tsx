@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import DarkModeToggle from '@/components/DarkModeToggle'
 
 const items = [
   { href: '/', label: 'Inici', d: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10' },
@@ -38,7 +39,17 @@ export default function BottomNav() {
               </Link>
             ))}
           </nav>
-          <div className="w-20" />
+          <div className="flex items-center gap-2">
+            <Link href="/flashcards" aria-label="Flashcards"
+              className={`px-3 py-1.5 rounded-full text-[13px] font-bold transition-all min-h-[44px] flex items-center ${active('/flashcards') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:text-[#1a1a1a] hover:bg-gray-50'}`}>
+              🃏
+            </Link>
+            <Link href="/estadistiques" aria-label="Estadístiques"
+              className={`px-3 py-1.5 rounded-full text-[13px] font-bold transition-all min-h-[44px] flex items-center ${active('/estadistiques') ? 'bg-[#1a1a1a] text-white' : 'text-[#555] hover:text-[#1a1a1a] hover:bg-gray-50'}`}>
+              📊
+            </Link>
+            <DarkModeToggle />
+          </div>
         </div>
       </header>
 

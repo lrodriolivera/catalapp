@@ -119,3 +119,42 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
   }
 }
+
+/* ========== Dark Mode ========== */
+
+html.dark {
+  color-scheme: dark;
+  --color-text-primary: #F5F5F5;
+  --color-text-secondary: #A0A0A0;
+  --color-text-muted: #888;
+  --color-text-placeholder: #666;
+  --color-bg-primary: #0F0F0F;
+  --color-bg-secondary: #1A1A1A;
+}
+
+html.dark body {
+  background: #0F0F0F;
+  color: #F5F5F5;
+}
+
+/* Dark mode overrides for specific components */
+html.dark .bg-white { background-color: #1A1A1A; }
+html.dark .bg-\[\#F5F5F5\] { background-color: #2A2A2A; }
+html.dark .bg-\[\#F8F8F8\] { background-color: #222; }
+html.dark .bg-\[\#F0F4FF\] { background-color: #1a1a3a; }
+html.dark .bg-\[\#FFF8F0\] { background-color: #2a1a0a; }
+html.dark .bg-\[\#F0FFF4\] { background-color: #0a2a1a; }
+html.dark .text-\[\#1a1a1a\] { color: #F5F5F5; }
+html.dark .border-gray-100 { border-color: #333; }
+html.dark .border-gray-50 { border-color: #2a2a2a; }
+
+/* Dark mode backdrop blur fallback */
+@supports not (backdrop-filter: blur(12px)) {
+  html.dark .backdrop-blur-lg { background-color: rgba(15, 15, 15, 0.97) !important; }
+}
+
+/* Dark mode autofill fix */
+html.dark input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px #1A1A1A inset;
+  -webkit-text-fill-color: #F5F5F5;
+}
