@@ -29,7 +29,7 @@ export default function DialegsPage() {
     // Detect gender from speaker emoji: 👨 = male, 👩 = female
     const speakerData = speaker === 'A' ? selected.speakerA : selected.speakerB
     const gender = speakerData?.emoji === '👨' || speakerData?.emoji === '👨‍💼' || speakerData?.emoji === '🧑' ? 'male' : 'female'
-    return speakNatural(text, speed === 'slow' ? 0.65 : 0.82, undefined, gender)
+    return speakNatural(text, speed === 'slow' ? 0.8 : 1.0, undefined, gender)
   }, [speed])
 
   const playAll = useCallback(async () => {
