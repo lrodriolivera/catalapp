@@ -1,10 +1,10 @@
 const GOOGLE_TTS_API = 'https://texttospeech.googleapis.com/v1/text:synthesize'
 const API_KEY = process.env.GOOGLE_TTS_API_KEY
 
-// Catalan only has 1 female voice. For male, use Spanish which pronounces Catalan well.
+// Chirp3-HD voices are the most natural. Catalan has no HD voices, so we use Spanish HD which sounds natural speaking Catalan.
 const VOICES = {
-  female: { languageCode: 'ca-ES', name: 'ca-ES-Standard-B' },        // Catalan female (native)
-  male: { languageCode: 'es-ES', name: 'es-ES-Standard-B' },           // Spanish male standard
+  female: { languageCode: 'es-ES', name: 'es-ES-Chirp3-HD-Achernar' },  // Spanish female HD (very natural)
+  male: { languageCode: 'es-ES', name: 'es-ES-Chirp3-HD-Achird' },      // Spanish male HD (very natural)
 }
 
 export const handler = async (event) => {
