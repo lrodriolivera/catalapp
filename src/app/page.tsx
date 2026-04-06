@@ -1,65 +1,228 @@
-import Image from "next/image";
+'use client'
+
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { getProgress, UserProgress } from '@/lib/progress'
+
+const unitData = [
+  {
+    id: 1,
+    title: 'Hola, com et dius?',
+    color: '#E8F5E9',
+    accent: '#66BB6A',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=1', key: 'gram-1' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=1', key: 'vocab-1' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=presentacions', key: 'conv-1' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-1' },
+    ],
+  },
+  {
+    id: 2,
+    title: 'Coneixes la meva família?',
+    color: '#E3F2FD',
+    accent: '#42A5F5',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=2', key: 'gram-2' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=2', key: 'vocab-2' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=familia', key: 'conv-2' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-2' },
+    ],
+  },
+  {
+    id: 3,
+    title: 'On vius?',
+    color: '#FFF3E0',
+    accent: '#FFA726',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=3', key: 'gram-3' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=3', key: 'vocab-3' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=habitatge', key: 'conv-3' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-3' },
+    ],
+  },
+]
+
+function getUnitProgress(unitId: number, progress: UserProgress): number {
+  const lessonKeys = [`gram-${unitId}`, `vocab-${unitId}`, `conv-${unitId}`, `ex-${unitId}`]
+  let completed = 0
+  for (const k of lessonKeys) {
+    if (progress.completedExercises[k] && progress.completedExercises[k] > 0) completed++
+    else if (progress.lessonScores[k]) completed++
+  }
+  return Math.round((completed / lessonKeys.length) * 100)
+}
+
+function isLessonCompleted(key: string, progress: UserProgress): boolean {
+  return (
+    (progress.completedExercises[key] !== undefined && progress.completedExercises[key] > 0) ||
+    progress.lessonScores[key] !== undefined
+  )
+}
 
 export default function Home() {
+  const [progress, setProgress] = useState<UserProgress | null>(null)
+
+  useEffect(() => {
+    setProgress(getProgress())
+  }, [])
+
+  const xp = progress?.xp ?? 0
+  const streak = progress?.streak ?? 0
+
+  // Determine which lesson is "current" (first incomplete)
+  const allLessons = unitData.flatMap((u) => u.lessons.map((l) => ({ ...l, unitId: u.id })))
+  const currentKey = progress
+    ? allLessons.find((l) => !isLessonCompleted(l.key, progress))?.key ?? null
+    : allLessons[0]?.key ?? null
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-white">
+      {/* Mobile header */}
+      <div className="md:hidden flex items-center justify-between px-5 pt-5 pb-2">
+        <span className="text-[18px] font-extrabold text-[#1a1a1a] tracking-tight">catalapp</span>
+        <div className="flex items-center gap-3">
+          <span className="inline-flex items-center gap-1.5 bg-[#F5F5F5] rounded-full px-3 py-1.5 text-[12px] font-bold text-[#1a1a1a]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFA726" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+            {xp} XP
+          </span>
+          <span className="inline-flex items-center gap-1.5 bg-[#F5F5F5] rounded-full px-3 py-1.5 text-[12px] font-bold text-[#1a1a1a]">
+            🔥 {streak}
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      <div className="px-5 md:px-10 lg:px-20 xl:px-32 py-8">
+        <div className="max-w-[700px] mx-auto">
+
+          {/* Hero */}
+          <div className="mb-12">
+            <p className="text-[13px] font-bold text-[#666] uppercase tracking-widest mb-3">Nivell A1 · Bàsic</p>
+            <h1 className="text-[32px] font-extrabold text-[#1a1a1a] leading-[1.1] mb-4">
+              Aprèn català,<br />pas a pas.
+            </h1>
+            <Link href="/avaluacio">
+              <span className="inline-flex items-center gap-2 bg-[#1a1a1a] text-white text-[14px] font-bold px-6 py-3 rounded-full hover:bg-[#333] transition-colors">
+                Avaluació dimarts
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              </span>
+            </Link>
+          </div>
+
+          {/* Learning Path */}
+          <div className="space-y-10">
+            {unitData.map((unit) => {
+              const pct = progress ? getUnitProgress(unit.id, progress) : 0
+              return (
+                <section key={unit.id}>
+                  {/* Unit header */}
+                  <div className="flex items-center gap-3 mb-5">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: unit.color }}
+                    >
+                      <span className="text-[15px] font-extrabold" style={{ color: unit.accent }}>
+                        {unit.id}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-[15px] font-extrabold text-[#1a1a1a]">Unitat {unit.id}</h2>
+                        <span className="text-[12px] font-bold text-[#666]">{pct}%</span>
+                      </div>
+                      <p className="text-[13px] font-semibold text-[#666]">{unit.title}</p>
+                    </div>
+                  </div>
+
+                  {/* Lesson nodes */}
+                  <div className="ml-[19px]">
+                    {unit.lessons.map((lesson, li) => {
+                      const completed = progress ? isLessonCompleted(lesson.key, progress) : false
+                      const isCurrent = lesson.key === currentKey
+                      const locked = !completed && !isCurrent
+
+                      let circleBg = 'bg-[#F5F5F5]'
+                      let circleOpacity = ''
+                      let textColor = 'text-[#1a1a1a]'
+                      let subtextColor = 'text-[#555]'
+
+                      if (completed) {
+                        circleBg = 'bg-[#E8F5E9]'
+                      } else if (isCurrent) {
+                        circleBg = 'bg-[#1a1a1a]'
+                      } else if (locked) {
+                        circleBg = 'bg-[#F5F5F5]'
+                        circleOpacity = 'opacity-40'
+                        textColor = 'text-[#555]'
+                        subtextColor = 'text-[#ddd]'
+                      }
+
+                      const isLast = li === unit.lessons.length - 1
+
+                      const inner = (
+                        <div className={`flex items-center gap-4 ${circleOpacity}`}>
+                          <div className="relative flex flex-col items-center">
+                            <div
+                              className={`w-11 h-11 rounded-full flex items-center justify-center ${circleBg} flex-shrink-0`}
+                            >
+                              <span className="text-[18px]">{lesson.emoji}</span>
+                            </div>
+                            {!isLast && (
+                              <div className="w-[2px] h-6 bg-gray-100 mt-1" />
+                            )}
+                          </div>
+                          <div className={isLast ? '' : 'pb-7'}>
+                            <p className={`text-[14px] font-bold ${textColor}`}>{lesson.label}</p>
+                            {isCurrent && (
+                              <p className={`text-[12px] font-semibold ${subtextColor}`}>Comença ara</p>
+                            )}
+                          </div>
+                        </div>
+                      )
+
+                      if (locked) {
+                        return (
+                          <div key={lesson.key} className="cursor-not-allowed">
+                            {inner}
+                          </div>
+                        )
+                      }
+
+                      return (
+                        <Link key={lesson.key} href={lesson.href} className="block hover:opacity-80 transition-opacity">
+                          {inner}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </section>
+              )
+            })}
+          </div>
+
+          {/* Accés ràpid */}
+          <div className="mt-14">
+            <h3 className="text-[13px] font-bold text-[#666] uppercase tracking-widest mb-4">Accés ràpid</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Link href="/avaluacio" className="group block">
+                <div className="rounded-2xl p-6 bg-[#1a1a1a] hover:bg-[#333] transition-colors">
+                  <span className="text-2xl block mb-3">✅</span>
+                  <h3 className="text-[15px] font-extrabold text-white mb-1">Mode Examen</h3>
+                  <p className="text-[13px] font-semibold text-[#555]">Simula l&apos;avaluació de dimarts</p>
+                </div>
+              </Link>
+              <Link href="/conversa" className="group block">
+                <div className="rounded-2xl p-6 bg-[#F5F5F5] hover:bg-[#eee] transition-colors">
+                  <span className="text-2xl block mb-3">💬</span>
+                  <h3 className="text-[15px] font-extrabold text-[#1a1a1a] mb-1">Conversa amb IA</h3>
+                  <p className="text-[13px] font-semibold text-[#666]">Practica parlant en català</p>
+                </div>
+              </Link>
+            </div>
+          </div>
+
         </div>
-      </main>
+      </div>
     </div>
-  );
+  )
 }
