@@ -16,18 +16,61 @@ interface Scenario {
   key: string; emoji: string; title: string; description: string; starter: string; suggestions: string[][]
 }
 
-const scenarios: Scenario[] = [
-  { key: 'presentacions', emoji: '👋', title: 'Presentar-se', description: 'Aprendre a saludar i dir qui ets', starter: "Hola! Jo soc la Clara. Com et dius? D'on ets?",
-    suggestions: [['Hola, em dic...', 'Soc de...', 'Tinc ... anys'], ['Em dic Joan', 'Soc de Colòmbia', 'Visc a Barcelona'], ['Faig de programador', 'Tinc trenta anys', 'Encantada!']] },
-  { key: 'familia', emoji: '👨‍👩‍👧', title: 'La família', description: 'Parlar de la teva família i relacions', starter: 'Hola! Avui parlarem de la família. Tens germans o germanes?',
-    suggestions: [['Tinc un germà', 'La meva mare és...', 'No tinc germans'], ['El meu pare es diu...', 'Viuen a...', 'Tinc dos fills'], ['La meva família és gran', 'Són molt simpàtics', 'Tenen ... anys']] },
-  { key: 'habitatge', emoji: '🏠', title: 'On vius?', description: 'Descriure on vius i el teu entorn', starter: 'Bon dia! On vius? Jo visc en un pis a Barcelona, al centre.',
-    suggestions: [['Visc a Barcelona', 'Tinc un pis', 'Al segon pis'], ['Hi ha tres habitacions', 'La cuina és gran', 'Té terrassa'], ['El meu barri és tranquil', 'Hi ha botigues a prop', "M'agrada molt"]] },
-  { key: 'telefon', emoji: '📞', title: 'Parlar per telèfon', description: 'Practicar converses telefòniques', starter: 'Ring ring! Hola, digui? Qui truca?',
-    suggestions: [['Hola, soc en Joan', 'Puc parlar amb...?', 'Truco per...'], ['Quin número tens?', 'Et truco després', 'Un moment, si us plau'], ['Gràcies, adéu!', 'Fins demà!', "D'acord, perfecte"]] },
-  { key: 'rutina', emoji: '⏰', title: 'La rutina diària', description: 'Parlar del que fas cada dia, les hores i els horaris', starter: 'Bon dia! Què fas normalment cada dia? A quina hora et lleves?',
-    suggestions: [["Em llevo a les set", "Esmorzo a les vuit", "Treballo de nou a cinc"], ["Dino a les dues", "Estudio al vespre", "Sopo a les nou"], ["Els dissabtes descanso", "Vaig al gimnàs", "Passejo pel parc"]] },
+interface ScenarioGroup {
+  unitId: number
+  unitTitle: string
+  scenarios: Scenario[]
+}
+
+const scenarioGroups: ScenarioGroup[] = [
+  {
+    unitId: 1, unitTitle: 'Hola, com et dius?',
+    scenarios: [
+      { key: 'presentacions', emoji: '👋', title: 'Presentar-se', description: 'Dir el nom, edat i procedència', starter: "Hola! Jo soc la Clara. Com et dius? D'on ets?",
+        suggestions: [['Hola, em dic...', 'Soc de...', 'Tinc ... anys'], ['Em dic Joan', 'Soc de Colòmbia', 'Visc a Barcelona'], ['Faig de programador', 'Tinc trenta anys', 'Encantada!']] },
+      { key: 'telefon', emoji: '📞', title: 'Parlar per telèfon', description: 'Trucar i donar informació', starter: 'Ring ring! Hola, digui? Qui truca?',
+        suggestions: [['Hola, soc en Joan', 'Puc parlar amb...?', 'Truco per...'], ['Quin número tens?', 'Et truco després', 'Un moment, si us plau'], ['Gràcies, adéu!', 'Fins demà!', "D'acord, perfecte"]] },
+      { key: 'oficina', emoji: '🏢', title: 'A la feina', description: 'Presentar-se en un lloc de treball', starter: "Bon dia! Ets el nou treballador? Benvingut! Com et dius i de què fas?",
+        suggestions: [['Soc enginyer', 'Treballo aquí des de...', 'Encantat!'], ['Faig de programador', 'La meva oficina és...', 'On és el bany?'], ['Moltes gràcies', 'A quina hora dinem?', 'Fins demà!']] },
+    ],
+  },
+  {
+    unitId: 2, unitTitle: 'Coneixes la meva família?',
+    scenarios: [
+      { key: 'familia', emoji: '👨‍👩‍👧', title: 'La meva família', description: 'Parlar dels membres de la família', starter: 'Hola! Avui parlarem de la família. Tens germans o germanes?',
+        suggestions: [['Tinc un germà', 'La meva mare és...', 'No tinc germans'], ['El meu pare es diu...', 'Viuen a...', 'Tinc dos fills'], ['La meva família és gran', 'Són molt simpàtics', 'Tenen ... anys']] },
+      { key: 'descriure', emoji: '🧑', title: 'Descriure persones', description: 'Característiques físiques i de caràcter', starter: "Avui practiquem les descripcions. Com ets tu? Descriu-te!",
+        suggestions: [['Soc alt i prim', 'Tinc els ulls marrons', 'Soc simpàtic'], ['Tinc els cabells negres', 'Soc treballador', 'La meva amiga és rossa'], ['Ell és molt divertit', 'Ella és intel·ligent', 'Són molt macos']] },
+      { key: 'felicitar', emoji: '🎂', title: 'Felicitar i convidar', description: 'Aniversaris, festes i invitacions', starter: "Hola! Saps que? Demà és el meu aniversari! Faig una festa!",
+        suggestions: [['Per molts anys!', 'Quants anys fas?', 'On és la festa?'], ['A quina hora?', 'Porto alguna cosa?', 'Hi ve tothom?'], ['Enhorabona!', 'Serà genial!', 'Ens veiem allà!']] },
+    ],
+  },
+  {
+    unitId: 3, unitTitle: 'On vius?',
+    scenarios: [
+      { key: 'habitatge', emoji: '🏠', title: 'El meu pis', description: 'Descriure on vius i les habitacions', starter: 'Bon dia! On vius? Jo visc en un pis a Barcelona, al centre.',
+        suggestions: [['Visc a Barcelona', 'Tinc un pis', 'Al segon pis'], ['Hi ha tres habitacions', 'La cuina és gran', 'Té terrassa'], ['El meu barri és tranquil', 'Hi ha botigues a prop', "M'agrada molt"]] },
+      { key: 'barri', emoji: '🏘️', title: 'El meu barri', description: 'Serveis, botigues i llocs del barri', starter: "Hola! Parlem del teu barri. Què hi ha a prop de casa teva?",
+        suggestions: [['Hi ha un supermercat', 'A prop hi ha un parc', 'El metro és al costat'], ['Hi ha una farmàcia', 'No hi ha hospital', 'Hi ha moltes botigues'], ["M'agrada el barri", 'És tranquil', 'Hi ha de tot']] },
+      { key: 'buscar_pis', emoji: '🔑', title: 'Buscar pis', description: 'Preguntar per un pis de lloguer', starter: "Bon dia! Truco per l'anunci del pis. Encara està disponible?",
+        suggestions: [['Quantes habitacions té?', 'Hi ha ascensor?', 'Quin pis és?'], ['Quant val el lloguer?', 'Hi ha terrassa?', 'Les despeses estan incloses?'], ['Puc anar a veure-el?', 'A quina hora?', 'Moltes gràcies!']] },
+    ],
+  },
+  {
+    unitId: 4, unitTitle: 'Què fas cada dia?',
+    scenarios: [
+      { key: 'rutina', emoji: '⏰', title: 'La rutina diària', description: 'Explicar què fas cada dia', starter: 'Bon dia! Què fas normalment cada dia? A quina hora et lleves?',
+        suggestions: [['Em llevo a les set', 'Esmorzo a les vuit', 'Treballo de nou a cinc'], ['Dino a les dues', 'Estudio al vespre', 'Sopo a les nou'], ['Els dissabtes descanso', 'Vaig al gimnàs', 'Passejo pel parc']] },
+      { key: 'hores', emoji: '🕐', title: 'Les hores', description: 'Practicar a dir i preguntar les hores', starter: "Hola! Practiquem les hores en català. Quina hora és ara?",
+        suggestions: [['Són les nou en punt', 'És un quart de deu', 'Són dos quarts de deu'], ['A quina hora comences?', 'A les vuit del matí', 'Són tres quarts de cinc'], ['Quina hora és?', 'Falten cinc minuts', 'Són les dues en punt']] },
+      { key: 'cap_setmana', emoji: '🌤️', title: 'El cap de setmana', description: 'Parlar del que fas els caps de setmana', starter: "Hola! Què fas normalment els caps de setmana? T'agrada sortir?",
+        suggestions: [['Dissabte em llevo tard', 'Vaig al mercat', 'Surto amb amics'], ['Diumenge descanso', 'Cuino a casa', 'Passejo per la platja'], ['Sempre vaig al cinema', 'De vegades llegeixo', 'Mai treballo el diumenge']] },
+    ],
+  },
 ]
+
+// Flat list for lookup
+const allScenarios = scenarioGroups.flatMap(g => g.scenarios)
 
 export default function ConversaPage() {
   const [selected, setSelected] = useState<Scenario | null>(null)
@@ -217,15 +260,24 @@ export default function ConversaPage() {
             </div>
           )}
 
-          <p className="text-[13px] font-bold text-[#666] uppercase tracking-[0.2em] mb-4">Tria un escenari</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {scenarios.map(s => (
-              <button key={s.key} onClick={() => startConversation(s)}
-                className="text-left bg-[#F8F8F8] rounded-2xl p-6 hover:bg-[#F0F0F0] active:bg-[#E8E8E8] transition-colors">
-                <span className="text-4xl block mb-3">{s.emoji}</span>
-                <p className="text-[17px] font-bold text-[#1a1a1a] mb-1">{s.title}</p>
-                <p className="text-[15px] text-[#666]">{s.description}</p>
-              </button>
+          <div className="space-y-8">
+            {scenarioGroups.map(group => (
+              <div key={group.unitId}>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white rounded-full w-8 h-8 flex items-center justify-center text-[14px] font-extrabold">{group.unitId}</span>
+                  <p className="text-[15px] font-bold text-[#1a1a1a]">{group.unitTitle}</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {group.scenarios.map(s => (
+                    <button key={s.key} onClick={() => startConversation(s)}
+                      className="text-left bg-[#F8F8F8] rounded-2xl p-5 hover:bg-[#F0F0F0] active:bg-[#E8E8E8] transition-colors">
+                      <span className="text-3xl block mb-2">{s.emoji}</span>
+                      <p className="text-[16px] font-bold text-[#1a1a1a] mb-1">{s.title}</p>
+                      <p className="text-[14px] text-[#666]">{s.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>

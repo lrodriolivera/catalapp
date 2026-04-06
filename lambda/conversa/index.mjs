@@ -9,11 +9,22 @@ const client = new BedrockRuntimeClient({
 });
 
 const SCENARIOS = {
+  // Unitat 1
   'presentacions': "L'alumne practica presentar-se: dir el nom, l'edat, la procedència i la professió.",
-  'familia': "L'alumne practica parlar de la seva família: membres, descripcions físiques i de caràcter.",
-  'habitatge': "L'alumne practica descriure on viu: adreça, tipus d'habitatge, parts de la casa.",
-  'rutina': "L'alumne practica parlar de la rutina diària: hores, dies de la setmana, activitats quotidianes, horaris de feina i estudi.",
   'telefon': "L'alumne practica parlar per telèfon: saludar, identificar-se, demanar informació.",
+  'oficina': "L'alumne practica presentar-se a la feina: dir el càrrec, preguntar per les instal·lacions.",
+  // Unitat 2
+  'familia': "L'alumne practica parlar de la seva família: membres, descripcions físiques i de caràcter.",
+  'descriure': "L'alumne practica descriure persones: aspecte físic, caràcter, roba.",
+  'felicitar': "L'alumne practica felicitar per aniversaris i convidar a festes.",
+  // Unitat 3
+  'habitatge': "L'alumne practica descriure on viu: adreça, tipus d'habitatge, parts de la casa.",
+  'barri': "L'alumne practica parlar del seu barri: serveis, botigues, transport.",
+  'buscar_pis': "L'alumne practica buscar pis: preguntar preu, habitacions, serveis.",
+  // Unitat 4
+  'rutina': "L'alumne practica parlar de la rutina diària: hores, dies de la setmana, activitats quotidianes.",
+  'hores': "L'alumne practica dir i preguntar les hores en català: sistema de quarts.",
+  'cap_setmana': "L'alumne practica parlar del que fa els caps de setmana: oci, esport, família.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };
 
