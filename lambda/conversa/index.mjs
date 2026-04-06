@@ -12,6 +12,7 @@ const SCENARIOS = {
   'presentacions': "L'alumne practica presentar-se: dir el nom, l'edat, la procedència i la professió.",
   'familia': "L'alumne practica parlar de la seva família: membres, descripcions físiques i de caràcter.",
   'habitatge': "L'alumne practica descriure on viu: adreça, tipus d'habitatge, parts de la casa.",
+  'rutina': "L'alumne practica parlar de la rutina diària: hores, dies de la setmana, activitats quotidianes, horaris de feina i estudi.",
   'telefon': "L'alumne practica parlar per telèfon: saludar, identificar-se, demanar informació.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };

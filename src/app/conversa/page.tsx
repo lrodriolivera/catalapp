@@ -25,6 +25,8 @@ const scenarios: Scenario[] = [
     suggestions: [['Visc a Barcelona', 'Tinc un pis', 'Al segon pis'], ['Hi ha tres habitacions', 'La cuina és gran', 'Té terrassa'], ['El meu barri és tranquil', 'Hi ha botigues a prop', "M'agrada molt"]] },
   { key: 'telefon', emoji: '📞', title: 'Parlar per telèfon', description: 'Practicar converses telefòniques', starter: 'Ring ring! Hola, digui? Qui truca?',
     suggestions: [['Hola, soc en Joan', 'Puc parlar amb...?', 'Truco per...'], ['Quin número tens?', 'Et truco després', 'Un moment, si us plau'], ['Gràcies, adéu!', 'Fins demà!', "D'acord, perfecte"]] },
+  { key: 'rutina', emoji: '⏰', title: 'La rutina diària', description: 'Parlar del que fas cada dia, les hores i els horaris', starter: 'Bon dia! Què fas normalment cada dia? A quina hora et lleves?',
+    suggestions: [["Em llevo a les set", "Esmorzo a les vuit", "Treballo de nou a cinc"], ["Dino a les dues", "Estudio al vespre", "Sopo a les nou"], ["Els dissabtes descanso", "Vaig al gimnàs", "Passejo pel parc"]] },
 ]
 
 export default function ConversaPage() {

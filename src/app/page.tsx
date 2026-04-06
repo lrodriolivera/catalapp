@@ -41,6 +41,18 @@ const unitData = [
       { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-3' },
     ],
   },
+  {
+    id: 4,
+    title: 'Què fas cada dia?',
+    color: '#F3E5F5',
+    accent: '#AB47BC',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=4', key: 'gram-4' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=4', key: 'vocab-4' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=rutina', key: 'conv-4' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-4' },
+    ],
+  },
 ]
 
 function getUnitProgress(unitId: number, progress: UserProgress): number {
