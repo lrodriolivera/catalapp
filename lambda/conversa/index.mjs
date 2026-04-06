@@ -37,6 +37,10 @@ const SCENARIOS = {
   'restaurant': "L'alumne practica demanar menjar i beure al restaurant: primer plat, segon plat, postres, begudes, el compte.",
   'plats_catalans': "L'alumne practica conèixer i parlar sobre plats típics catalans: pa amb tomàquet, escalivada, crema catalana, botifarra, calçots.",
   'feina_restaurant': "L'alumne practica parlar de la feina: horaris, sou, jornada, contracte, condicions laborals.",
+  // Unitat 8
+  'indicacions': "L'alumne practica demanar i donar indicacions per la ciutat: girar, continuar recte, creuar, preposicions de lloc.",
+  'serveis': "L'alumne practica trobar serveis públics: hospital, CAP, comissaria, correus, biblioteca, ajuntament.",
+  'emergencia': "L'alumne practica actuar en emergències: trucar al 112, demanar ambulància, policia, bombers.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };
 

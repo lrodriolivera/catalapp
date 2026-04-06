@@ -100,6 +100,17 @@ const scenarioGroups: ScenarioGroup[] = [
         suggestions: [['Treballo de cuiner', 'Tinc jornada completa', 'El meu sou és bo'], ['Treballo de cambrer', 'Tinc mitja jornada', 'Tinc els caps de setmana lliures'], ['M\'agrada treballar de cara al públic', 'Tinc contracte fix', 'Les vacances són al juliol']] },
     ],
   },
+  {
+    unitId: 8, unitTitle: 'Ens movem per la ciutat',
+    scenarios: [
+      { key: 'indicacions', emoji: '🗺️', title: 'Demanar indicacions', description: 'Com arribar a un lloc de la ciutat', starter: "Perdoni! Estic perdut. Sap on és la Sagrada Família?",
+        suggestions: [['Gira a la dreta', 'Continua recte', 'Creua la plaça'], ['On és l\'estació de metro?', 'Queda lluny?', 'Quants minuts a peu?'], ['A la primera a l\'esquerra', 'Al final del carrer', 'Al costat de la farmàcia']] },
+      { key: 'serveis', emoji: '🏥', title: 'Serveis de la ciutat', description: 'Trobar serveis públics al teu barri', starter: "Hola! Soc nou al barri i necessito trobar alguns serveis. On és l'hospital?",
+        suggestions: [['On és el CAP?', 'Hi ha una comissaria?', 'On és correus?'], ['L\'hospital és a prop', 'La biblioteca és al costat', 'L\'ajuntament és al centre'], ['Necessito anar al metge', 'On és la farmàcia?', 'Hi ha una escola a prop?']] },
+      { key: 'emergencia', emoji: '🚨', title: 'Emergències', description: 'Actuar en una situació d\'emergència', starter: "Emergència! Que ha passat? Has vist un accident? Necessites ajuda?",
+        suggestions: [['Necessito una ambulància!', 'Hi ha un accident!', 'Truqueu al 112!'], ['Estic perdut', 'On és l\'hospital?', 'Necessito ajuda'], ['Hi ha foc!', 'Necessito la policia', 'On són els bombers?']] },
+    ],
+  },
 ]
 
 // Flat list for lookup

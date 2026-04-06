@@ -89,6 +89,18 @@ const unitData = [
       { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-7' },
     ],
   },
+  {
+    id: 8,
+    title: 'Ens movem per la ciutat',
+    color: '#E0F2F1',
+    accent: '#26A69A',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=8', key: 'gram-8' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=8', key: 'vocab-8' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=indicacions', key: 'conv-8' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-8' },
+    ],
+  },
 ]
 
 function getUnitProgress(unitId: number, progress: UserProgress): number {
