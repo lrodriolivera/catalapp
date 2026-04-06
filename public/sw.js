@@ -1,4 +1,4 @@
-const CACHE_NAME = 'catalapp-v1'
+const CACHE_NAME = 'catalapp-v2'
 const STATIC_ASSETS = [
   '/',
   '/gramatica',
