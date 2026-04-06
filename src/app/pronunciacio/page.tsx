@@ -3,7 +3,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { units } from '@/data/units'
 import { addXP } from '@/lib/progress'
-import { speakNatural } from '@/lib/api'
 import UnitSelector from '@/components/UnitSelector'
 
 interface PronunciationWord {
@@ -76,7 +75,7 @@ export default function PronunciacioPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const w = window as any
     setHasSR(!!(w.SpeechRecognition || w.webkitSpeechRecognition))
-    setHasTTS(true) // Google Cloud TTS works on all browsers
+    setHasTTS(typeof speechSynthesis !== 'undefined')
   }, [])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null)
@@ -84,9 +83,18 @@ export default function PronunciacioPage() {
   const unitSections = allSections.filter((s) => s.unitId === units[selectedUnit]?.id)
 
   const speak = useCallback((text: string) => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined' || !window.speechSynthesis) return
+    window.speechSynthesis.cancel()
     setListeningWord(text)
-    speakNatural(text, 0.85, () => setListeningWord(null))
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = 'ca-ES'
+    utterance.rate = 0.85
+    const voices = window.speechSynthesis.getVoices()
+    const catalanVoice = voices.find((v) => v.lang === 'ca-ES' || v.lang.startsWith('ca'))
+    if (catalanVoice) utterance.voice = catalanVoice
+    utterance.onend = () => setListeningWord(null)
+    utterance.onerror = () => setListeningWord(null)
+    window.speechSynthesis.speak(utterance)
   }, [])
 
   const startRecording = useCallback((expectedWord: string) => {
