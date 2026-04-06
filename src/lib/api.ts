@@ -65,26 +65,30 @@ export async function speakWithGoogleTTS(text: string, speed: number = 0.9, gend
   })
 }
 
-// Speak with Google TTS if available, fallback to Web Speech API
+// Speak: Web Speech API first (better Catalan voices in Chrome), Google TTS as fallback
 export async function speakNatural(text: string, speed: number = 0.9, onEnd?: () => void, gender: 'male' | 'female' = 'female'): Promise<void> {
-  try {
-    await speakWithGoogleTTS(text, speed, gender)
-    onEnd?.()
-  } catch {
-    // Fallback to Web Speech API
-    if (typeof speechSynthesis !== 'undefined') {
+  // Try Web Speech API first — has native Catalan voices on Chrome/Edge
+  if (typeof speechSynthesis !== 'undefined') {
+    const voices = speechSynthesis.getVoices()
+    const catalanVoice = voices.find(v => v.lang.startsWith('ca'))
+    if (catalanVoice) {
       speechSynthesis.cancel()
       const u = new SpeechSynthesisUtterance(text)
       u.lang = 'ca-ES'
       u.rate = speed
-      const voices = speechSynthesis.getVoices()
-      const catalan = voices.find(v => v.lang.startsWith('ca'))
-      if (catalan) u.voice = catalan
-      u.onend = () => onEnd?.()
-      u.onerror = () => onEnd?.()
-      speechSynthesis.speak(u)
-    } else {
-      onEnd?.()
+      u.voice = catalanVoice
+      return new Promise<void>((resolve) => {
+        u.onend = () => { onEnd?.(); resolve() }
+        u.onerror = () => { onEnd?.(); resolve() }
+        speechSynthesis.speak(u)
+      })
     }
+  }
+  // Fallback to Google Cloud TTS (for Firefox and browsers without Catalan)
+  try {
+    await speakWithGoogleTTS(text, speed, gender)
+    onEnd?.()
+  } catch {
+    onEnd?.()
   }
 }
