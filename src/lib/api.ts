@@ -65,31 +65,35 @@ export async function speakWithGoogleTTS(text: string, speed: number = 0.9, gend
   })
 }
 
-// Speak: Web Speech API first (better Catalan voices in Chrome), Google TTS as fallback
+// Speak using Web Speech API with pitch-based gender
 export async function speakNatural(text: string, speed: number = 0.9, onEnd?: () => void, gender: 'male' | 'female' = 'female'): Promise<void> {
-  // Try Web Speech API first — has native Catalan voices on Chrome/Edge
-  if (typeof speechSynthesis !== 'undefined') {
-    const voices = speechSynthesis.getVoices()
-    const catalanVoice = voices.find(v => v.lang.startsWith('ca'))
-    if (catalanVoice) {
-      speechSynthesis.cancel()
-      const u = new SpeechSynthesisUtterance(text)
-      u.lang = 'ca-ES'
-      u.rate = speed
-      u.pitch = gender === 'male' ? 0.75 : 1.0
-      u.voice = catalanVoice
-      return new Promise<void>((resolve) => {
-        u.onend = () => { onEnd?.(); resolve() }
-        u.onerror = () => { onEnd?.(); resolve() }
-        speechSynthesis.speak(u)
-      })
-    }
+  if (typeof speechSynthesis === 'undefined') { onEnd?.(); return }
+
+  // Wait for voices to load (they load async on some browsers)
+  let voices = speechSynthesis.getVoices()
+  if (voices.length === 0) {
+    await new Promise<void>((resolve) => {
+      speechSynthesis.onvoiceschanged = () => resolve()
+      setTimeout(resolve, 500) // timeout fallback
+    })
+    voices = speechSynthesis.getVoices()
   }
-  // Fallback to Google Cloud TTS (for Firefox and browsers without Catalan)
-  try {
-    await speakWithGoogleTTS(text, speed, gender)
-    onEnd?.()
-  } catch {
-    onEnd?.()
-  }
+
+  speechSynthesis.cancel()
+  const u = new SpeechSynthesisUtterance(text)
+  u.lang = 'ca-ES'
+  u.rate = speed
+  u.pitch = gender === 'male' ? 0.75 : 1.0
+
+  // Find best voice: Catalan first, then Spanish
+  const catalanVoice = voices.find(v => v.lang.startsWith('ca'))
+  const spanishVoice = voices.find(v => v.lang === 'es-ES')
+  if (catalanVoice) u.voice = catalanVoice
+  else if (spanishVoice) u.voice = spanishVoice
+
+  return new Promise<void>((resolve) => {
+    u.onend = () => { onEnd?.(); resolve() }
+    u.onerror = () => { onEnd?.(); resolve() }
+    speechSynthesis.speak(u)
+  })
 }
