@@ -24,8 +24,10 @@ export default function DialegsPage() {
     }
   }, [currentLine])
 
-  const speakLine = useCallback((text: string): Promise<void> => {
-    return speakNatural(text, speed === 'slow' ? 0.65 : 0.82)
+  const speakLine = useCallback((text: string, speaker?: 'A' | 'B'): Promise<void> => {
+    // Speaker A = female, Speaker B = male (to differentiate voices)
+    const gender = speaker === 'B' ? 'male' : 'female'
+    return speakNatural(text, speed === 'slow' ? 0.65 : 0.82, undefined, gender)
   }, [speed])
 
   const playAll = useCallback(async () => {
@@ -35,7 +37,7 @@ export default function DialegsPage() {
     for (let i = 0; i < selected.lines.length; i++) {
       if (!playingRef.current) break
       setCurrentLine(i)
-      await speakLine(selected.lines[i].catalan)
+      await speakLine(selected.lines[i].catalan, selected.lines[i].speaker)
       // Pause between lines
       if (playingRef.current) await new Promise(r => setTimeout(r, speed === 'slow' ? 800 : 500))
     }
@@ -53,7 +55,7 @@ export default function DialegsPage() {
   const playSingleLine = useCallback((idx: number) => {
     if (!selected) return
     setCurrentLine(idx)
-    speakLine(selected.lines[idx].catalan).then(() => setCurrentLine(-1))
+    speakLine(selected.lines[idx].catalan, selected.lines[idx].speaker).then(() => setCurrentLine(-1))
   }, [selected, speakLine])
 
   const goBack = useCallback(() => {

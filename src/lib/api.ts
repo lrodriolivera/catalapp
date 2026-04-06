@@ -33,16 +33,16 @@ export async function callSonnet(action: string, data: Record<string, any>): Pro
 // Google Cloud TTS - returns base64 MP3 audio
 let ttsCache: Record<string, string> = {}
 
-export async function speakWithGoogleTTS(text: string, speed: number = 0.9): Promise<void> {
+export async function speakWithGoogleTTS(text: string, speed: number = 0.9, gender: 'male' | 'female' = 'female'): Promise<void> {
   // Check cache first
-  const cacheKey = `${text}-${speed}`
+  const cacheKey = `${text}-${speed}-${gender}`
   let audioBase64 = ttsCache[cacheKey]
 
   if (!audioBase64) {
     const res = await fetch(`${API_URL}/tts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text.slice(0, 1000), speed }),
+      body: JSON.stringify({ text: text.slice(0, 1000), speed, gender }),
     })
     if (!res.ok) throw new Error('TTS error')
     const json = await res.json()
@@ -66,9 +66,9 @@ export async function speakWithGoogleTTS(text: string, speed: number = 0.9): Pro
 }
 
 // Speak with Google TTS if available, fallback to Web Speech API
-export async function speakNatural(text: string, speed: number = 0.9, onEnd?: () => void): Promise<void> {
+export async function speakNatural(text: string, speed: number = 0.9, onEnd?: () => void, gender: 'male' | 'female' = 'female'): Promise<void> {
   try {
-    await speakWithGoogleTTS(text, speed)
+    await speakWithGoogleTTS(text, speed, gender)
     onEnd?.()
   } catch {
     // Fallback to Web Speech API
