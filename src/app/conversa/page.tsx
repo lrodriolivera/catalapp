@@ -111,6 +111,17 @@ const scenarioGroups: ScenarioGroup[] = [
         suggestions: [['Necessito una ambulància!', 'Hi ha un accident!', 'Truqueu al 112!'], ['Estic perdut', 'On és l\'hospital?', 'Necessito ajuda'], ['Hi ha foc!', 'Necessito la policia', 'On són els bombers?']] },
     ],
   },
+  {
+    unitId: 9, unitTitle: 'Què necessito?',
+    scenarios: [
+      { key: 'tramits', emoji: '🏛️', title: 'Fer tràmits', description: "Empadronar-se, targeta sanitària, NIE", starter: "Bon dia! Benvingut a l'oficina d'atenció ciutadana. En què el puc ajudar?",
+        suggestions: [['Necessito empadronar-me', 'Quins documents necessito?', 'He d\'omplir un formulari?'], ['Vull fer la targeta sanitària', 'Tinc cita a les deu', 'On he de signar?'], ['Quant de temps triga?', 'Puc demanar cita per internet?', 'Gràcies per la informació']] },
+      { key: 'metge', emoji: '🏥', title: 'Al metge', description: 'Explicar símptomes i demanar cita', starter: "Bon dia! Soc el doctor Garcia. Com es troba? Què li passa?",
+        suggestions: [['Em fa mal el cap', 'Tinc febre i tos', 'Em trobo malament'], ['Estic refredat', 'Necessito una recepta', 'Des de quan?'], ['Des de fa dos dies', 'M\'he pres un paracetamol', 'Gràcies, doctor']] },
+      { key: 'documents', emoji: '📄', title: 'Documents', description: 'Parlar de documents i papers necessaris', starter: "Hola! Acabes d'arribar a Barcelona? Necessites ajuda amb els papers i documents?",
+        suggestions: [['Necessito el NIE', 'On demano el certificat?', 'He de portar el passaport'], ['Com obro un compte bancari?', 'Necessito el contracte de lloguer', 'On és l\'oficina d\'estrangeria?'], ['Tinc el número de la SS', 'He d\'omplir el formulari', 'Quins papers necessito?']] },
+    ],
+  },
 ]
 
 // Flat list for lookup

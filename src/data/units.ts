@@ -3368,4 +3368,366 @@ export const units: Unit[] = [
       "Moure's per Barcelona amb transport públic",
     ],
   },
+  // =====================================================
+  // UNITAT 9: Què necessito?
+  // =====================================================
+  {
+    id: 9,
+    title: 'Unitat 9',
+    subtitle: 'Què necessito?',
+    description:
+      "Aprendre a fer tràmits a l'ajuntament, empadronar-se, demanar cita prèvia, anar al metge i conèixer els serveis públics de Barcelona.",
+    verbs: [
+      {
+        infinitive: 'necessitar',
+        translation: 'necesitar',
+        conjugations: {
+          jo: 'necessito',
+          tu: 'necessites',
+          'ell/ella/vostè': 'necessita',
+          nosaltres: 'necessitem',
+          vosaltres: 'necessiteu',
+          'ells/elles/vostès': 'necessiten',
+        },
+      },
+      {
+        infinitive: 'demanar',
+        translation: 'pedir',
+        conjugations: {
+          jo: 'demano',
+          tu: 'demanes',
+          'ell/ella/vostè': 'demana',
+          nosaltres: 'demanem',
+          vosaltres: 'demaneu',
+          'ells/elles/vostès': 'demanen',
+        },
+      },
+      {
+        infinitive: 'portar',
+        translation: 'llevar',
+        conjugations: {
+          jo: 'porto',
+          tu: 'portes',
+          'ell/ella/vostè': 'porta',
+          nosaltres: 'portem',
+          vosaltres: 'porteu',
+          'ells/elles/vostès': 'porten',
+        },
+      },
+      {
+        infinitive: 'omplir',
+        translation: 'rellenar',
+        conjugations: {
+          jo: 'omplo',
+          tu: 'omples',
+          'ell/ella/vostè': 'omple',
+          nosaltres: 'omplim',
+          vosaltres: 'ompliu',
+          'ells/elles/vostès': 'omplen',
+        },
+      },
+      {
+        infinitive: 'signar',
+        translation: 'firmar',
+        conjugations: {
+          jo: 'signo',
+          tu: 'signes',
+          'ell/ella/vostè': 'signa',
+          nosaltres: 'signem',
+          vosaltres: 'signeu',
+          'ells/elles/vostès': 'signen',
+        },
+      },
+    ],
+    vocabulary: {
+      'Documents': [
+        { catalan: 'el DNI', spanish: 'el DNI', example: 'Necessito el DNI per empadronar-me.' },
+        { catalan: 'el NIE', spanish: 'el NIE', example: 'He de renovar el NIE.' },
+        { catalan: 'el passaport', spanish: 'el pasaporte', example: 'He de portar el passaport.' },
+        { catalan: "el certificat d'empadronament", spanish: 'el certificado de empadronamiento', example: "Necessito el certificat d'empadronament." },
+        { catalan: 'el contracte de lloguer', spanish: 'el contrato de alquiler', example: 'He de portar el contracte de lloguer.' },
+        { catalan: 'la targeta sanitària', spanish: 'la tarjeta sanitaria', example: 'Vull fer-me la targeta sanitària.' },
+        { catalan: 'el formulari', spanish: 'el formulario', example: "He d'omplir el formulari." },
+        { catalan: 'la fotocòpia', spanish: 'la fotocopia', example: 'Necessito una fotocòpia del DNI.' },
+        { catalan: 'la signatura', spanish: 'la firma', example: 'Falta la seva signatura.' },
+        { catalan: 'el número de la Seguretat Social', spanish: 'el número de la Seguridad Social', example: 'Quin és el seu número de la Seguretat Social?' },
+      ],
+      'Tràmits': [
+        { catalan: 'empadronar-se', spanish: 'empadronarse', example: "M'he d'empadronar a Barcelona." },
+        { catalan: 'demanar cita prèvia', spanish: 'pedir cita previa', example: 'He de demanar cita prèvia.' },
+        { catalan: 'fer la targeta sanitària', spanish: 'hacer la tarjeta sanitaria', example: 'Vull fer la targeta sanitària.' },
+        { catalan: 'obrir un compte bancari', spanish: 'abrir una cuenta bancaria', example: 'Necessito obrir un compte bancari.' },
+        { catalan: "donar-se d'alta", spanish: 'darse de alta', example: "M'he de donar d'alta a la Seguretat Social." },
+        { catalan: 'fer una reclamació', spanish: 'hacer una reclamación', example: 'Vull fer una reclamació.' },
+        { catalan: 'renovar el NIE', spanish: 'renovar el NIE', example: 'He de renovar el NIE abans que caduqui.' },
+        { catalan: "sol·licitar un certificat", spanish: 'solicitar un certificado', example: "Vull sol·licitar un certificat d'empadronament." },
+        { catalan: "inscriure's a un curs", spanish: 'inscribirse en un curso', example: "M'he d'inscriure a un curs de català." },
+        { catalan: 'demanar informació', spanish: 'pedir información', example: 'Voldria demanar informació sobre els tràmits.' },
+      ],
+      'Al metge': [
+        { catalan: 'em fa mal el cap', spanish: 'me duele la cabeza', example: 'Em fa mal el cap des de fa dos dies.' },
+        { catalan: 'tinc febre', spanish: 'tengo fiebre', example: 'Tinc febre i em trobo malament.' },
+        { catalan: 'em trobo malament', spanish: 'me encuentro mal', example: 'Em trobo malament, necessito anar al metge.' },
+        { catalan: 'tinc tos', spanish: 'tengo tos', example: 'Tinc tos i mal de coll.' },
+        { catalan: 'estic refredat/refredada', spanish: 'estoy resfriado/a', example: 'Estic refredada i tinc febre.' },
+        { catalan: 'necessito una recepta', spanish: 'necesito una receta', example: 'Necessito una recepta per al medicament.' },
+        { catalan: 'la farmàcia', spanish: 'la farmacia', example: 'La farmàcia és al costat del CAP.' },
+        { catalan: 'el medicament', spanish: 'el medicamento', example: 'He de prendre el medicament tres cops al dia.' },
+        { catalan: 'la visita mèdica', spanish: 'la visita médica', example: 'Tinc una visita mèdica a les deu.' },
+        { catalan: 'el CAP', spanish: 'el centro de salud', example: 'He d\'anar al CAP per demanar hora.' },
+      ],
+      'Expressions útils per als tràmits': [
+        { catalan: 'Necessito empadronar-me', spanish: 'Necesito empadronarme' },
+        { catalan: 'Tinc cita a les...', spanish: 'Tengo cita a las...' },
+        { catalan: 'Quins documents necessito?', spanish: '¿Qué documentos necesito?' },
+        { catalan: "He d'omplir algun formulari?", spanish: '¿Tengo que rellenar algún formulario?' },
+        { catalan: 'On he de signar?', spanish: '¿Dónde tengo que firmar?' },
+        { catalan: 'Quant de temps triga?', spanish: '¿Cuánto tiempo tarda?' },
+        { catalan: 'Puc demanar cita per internet?', spanish: '¿Puedo pedir cita por internet?' },
+        { catalan: "On és l'oficina d'atenció ciutadana?", spanish: '¿Dónde está la oficina de atención ciudadana?' },
+      ],
+    },
+    grammar: [
+      {
+        id: 'u9-haver-de-infinitiu',
+        title: 'Haver de + infinitiu (obligació)',
+        explanation:
+          "Per expressar obligació s'utilitza \"haver de + infinitiu\": He de portar el passaport. Has d'omplir un formulari. Hem d'anar al CAP. Diferent de \"cal + infinitiu\" (impersonal): Cal portar el DNI.",
+        examples: [
+          { catalan: 'He de portar el contracte', spanish: 'Tengo que llevar el contrato' },
+          { catalan: 'Has de demanar cita prèvia', spanish: 'Tienes que pedir cita previa' },
+        ],
+      },
+      {
+        id: 'u9-pronoms-febles-reflexius',
+        title: 'Pronoms febles: em/et/es/ens/us/es (reflexius)',
+        explanation:
+          "Amb verbs com empadronar-se, inscriure's, donar-se d'alta. Abans de vocal s'apostrofen: m'empadrono, t'inscrius, s'ha donat d'alta.",
+        examples: [
+          { catalan: "M'empadrono a Barcelona", spanish: 'Me empadrono en Barcelona' },
+          { catalan: "T'has inscrit al curs?", spanish: '¿Te has inscrito al curso?' },
+        ],
+      },
+      {
+        id: 'u9-expressions-salut',
+        title: 'Expressions de salut',
+        explanation:
+          'Per parlar de com et trobes: Em fa mal el/la... (me duele), Tinc febre/tos/mal de cap. Em trobo malament/bé. El metge em recomana...',
+        examples: [
+          { catalan: 'Em fa mal el cap', spanish: 'Me duele la cabeza' },
+          { catalan: 'Tinc febre i tos', spanish: 'Tengo fiebre y tos' },
+        ],
+      },
+      {
+        id: 'u9-demanar-cita-previa',
+        title: 'Demanar cita prèvia',
+        explanation:
+          'Expressions per telèfon o presencialment: Voldria demanar una cita. Per a quin dia? Tinc cita amb el doctor... A quina hora? Com es diu? El seu número de targeta sanitària?',
+        examples: [
+          { catalan: 'Voldria una cita per a demà', spanish: 'Querría una cita para mañana' },
+          { catalan: 'A quina hora té lliure?', spanish: '¿A qué hora tiene libre?' },
+        ],
+      },
+    ],
+    exercises: [
+      // --- fill-blank ---
+      {
+        id: 'u9-ex01',
+        type: 'fill-blank',
+        question: 'Necessito ___ al CAP.',
+        correctAnswer: 'anar',
+        hint: 'Verb de moviment.',
+      },
+      {
+        id: 'u9-ex02',
+        type: 'fill-blank',
+        question: 'He de portar el ___.',
+        correctAnswer: 'passaport',
+        hint: 'Document per viatjar.',
+      },
+      {
+        id: 'u9-ex03',
+        type: 'fill-blank',
+        question: 'Em fa mal el ___.',
+        correctAnswer: 'cap',
+        hint: 'Part del cos, a dalt de tot.',
+      },
+      {
+        id: 'u9-ex04',
+        type: 'fill-blank',
+        question: 'Voldria ___ cita prèvia.',
+        correctAnswer: 'demanar',
+        hint: 'Sinònim de sol·licitar.',
+      },
+      {
+        id: 'u9-ex05',
+        type: 'fill-blank',
+        question: 'On he de ___?',
+        correctAnswer: 'signar',
+        hint: 'Posar la signatura.',
+      },
+      // --- multiple-choice ---
+      {
+        id: 'u9-ex06',
+        type: 'multiple-choice',
+        question: "Què necessites per empadronar-te?",
+        options: ['El contracte de lloguer i el passaport', 'La targeta sanitària', 'Una recepta mèdica', 'El carnet de conduir'],
+        correctAnswer: 'El contracte de lloguer i el passaport',
+      },
+      {
+        id: 'u9-ex07',
+        type: 'multiple-choice',
+        question: 'Com demanes cita prèvia?',
+        options: ['Per telèfon o per internet', 'Només per carta', 'Només presencialment', 'Per correu electrònic certificat'],
+        correctAnswer: 'Per telèfon o per internet',
+      },
+      {
+        id: 'u9-ex08',
+        type: 'multiple-choice',
+        question: 'Què és el CAP?',
+        options: ["El Centre d'Atenció Primària", "Un centre d'art públic", "Una oficina de l'ajuntament", 'Un centre esportiu'],
+        correctAnswer: "El Centre d'Atenció Primària",
+      },
+      {
+        id: 'u9-ex09',
+        type: 'multiple-choice',
+        question: "Quina forma és correcta per expressar obligació?",
+        options: ["He d'omplir el formulari", "Omplo d'haver el formulari", 'Formulari he omplir', 'De he omplir formulari'],
+        correctAnswer: "He d'omplir el formulari",
+      },
+      {
+        id: 'u9-ex10',
+        type: 'multiple-choice',
+        question: 'Què dius quan et trobes malament?',
+        options: ['Em trobo malament', 'Em trobo content', 'Tinc gana', 'Tinc son'],
+        correctAnswer: 'Em trobo malament',
+      },
+      // --- translate ---
+      {
+        id: 'u9-ex11',
+        type: 'translate',
+        question: 'Tradueix: Necesito empadronarme en Barcelona',
+        correctAnswer: "Necessito empadronar-me a Barcelona",
+      },
+      {
+        id: 'u9-ex12',
+        type: 'translate',
+        question: 'Tradueix: ¿Qué documentos necesito?',
+        correctAnswer: 'Quins documents necessito?',
+      },
+      {
+        id: 'u9-ex13',
+        type: 'translate',
+        question: 'Tradueix: Tengo cita con el médico a las diez',
+        correctAnswer: 'Tinc cita amb el metge a les deu',
+      },
+      // --- conjugate ---
+      {
+        id: 'u9-ex14',
+        type: 'conjugate',
+        question: "Conjuga 'necessitar' amb 'jo'",
+        correctAnswer: 'necessito',
+      },
+      {
+        id: 'u9-ex15',
+        type: 'conjugate',
+        question: "Conjuga 'omplir' amb 'tu'",
+        correctAnswer: 'omples',
+      },
+      {
+        id: 'u9-ex16',
+        type: 'conjugate',
+        question: "Conjuga 'signar' amb 'nosaltres'",
+        correctAnswer: 'signem',
+      },
+      {
+        id: 'u9-ex17',
+        type: 'conjugate',
+        question: "Conjuga 'portar' amb 'ells'",
+        correctAnswer: 'porten',
+      },
+      // --- word-order ---
+      {
+        id: 'u9-ex18',
+        type: 'word-order',
+        question: 'Ordena les paraules per formar una frase correcta.',
+        words: ['prèvia', 'cita', 'Voldria', 'demanar', '.'],
+        correctAnswer: 'Voldria demanar cita prèvia.',
+      },
+      {
+        id: 'u9-ex19',
+        type: 'word-order',
+        question: 'Ordena les paraules per formar una frase correcta.',
+        words: ['el', 'mal', 'Em', 'cap', 'fa', '.'],
+        correctAnswer: 'Em fa mal el cap.',
+      },
+      {
+        id: 'u9-ex20',
+        type: 'word-order',
+        question: 'Ordena les paraules per formar una frase correcta.',
+        words: ['documents', 'necessito', 'Quins', '?'],
+        correctAnswer: 'Quins documents necessito?',
+      },
+      // --- match-pairs ---
+      {
+        id: 'u9-ex21',
+        type: 'match-pairs',
+        question: 'Relaciona els documents amb la seva traducció.',
+        pairs: [
+          { a: 'el passaport', b: 'el pasaporte' },
+          { a: 'el formulari', b: 'el formulario' },
+          { a: 'la fotocòpia', b: 'la fotocopia' },
+          { a: 'la signatura', b: 'la firma' },
+          { a: 'el contracte de lloguer', b: 'el contrato de alquiler' },
+        ],
+        correctAnswer: 'completed',
+      },
+      {
+        id: 'u9-ex22',
+        type: 'match-pairs',
+        question: 'Relaciona els tràmits amb la seva traducció.',
+        pairs: [
+          { a: 'empadronar-se', b: 'empadronarse' },
+          { a: 'demanar cita prèvia', b: 'pedir cita previa' },
+          { a: 'renovar el NIE', b: 'renovar el NIE' },
+          { a: "donar-se d'alta", b: 'darse de alta' },
+          { a: "sol·licitar un certificat", b: 'solicitar un certificado' },
+        ],
+        correctAnswer: 'completed',
+      },
+      {
+        id: 'u9-ex23',
+        type: 'match-pairs',
+        question: 'Relaciona les expressions de salut amb la seva traducció.',
+        pairs: [
+          { a: 'em fa mal el cap', b: 'me duele la cabeza' },
+          { a: 'tinc febre', b: 'tengo fiebre' },
+          { a: 'em trobo malament', b: 'me encuentro mal' },
+          { a: 'tinc tos', b: 'tengo tos' },
+          { a: 'estic refredat', b: 'estoy resfriado' },
+        ],
+        correctAnswer: 'completed',
+      },
+      // --- listen-write ---
+      {
+        id: 'u9-ex24',
+        type: 'listen-write',
+        question: 'Escolta i escriu la frase.',
+        correctAnswer: 'Necessito empadronar-me a Barcelona',
+      },
+      {
+        id: 'u9-ex25',
+        type: 'listen-write',
+        question: 'Escolta i escriu la frase.',
+        correctAnswer: 'Em fa mal el cap i tinc febre',
+      },
+    ],
+    conversationTopics: [
+      "Empadronar-se a l'ajuntament de Barcelona",
+      'Demanar cita al metge (CAP)',
+      'Fer tràmits: targeta sanitària, NIE',
+      'Parlar amb el metge: símptomes i malalties',
+      "Demanar informació a l'oficina d'atenció ciutadana",
+    ],
+  },
 ];

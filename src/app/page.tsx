@@ -101,6 +101,18 @@ const unitData = [
       { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-8' },
     ],
   },
+  {
+    id: 9,
+    title: 'Què necessito?',
+    color: '#FBE9E7',
+    accent: '#FF7043',
+    lessons: [
+      { emoji: '📖', label: 'Gramàtica', href: '/gramatica?unit=9', key: 'gram-9' },
+      { emoji: '🔊', label: 'Vocabulari', href: '/pronunciacio?unit=9', key: 'vocab-9' },
+      { emoji: '💬', label: 'Conversa', href: '/conversa?scene=tramits', key: 'conv-9' },
+      { emoji: '✅', label: 'Exercicis', href: '/avaluacio', key: 'ex-9' },
+    ],
+  },
 ]
 
 function getUnitProgress(unitId: number, progress: UserProgress): number {

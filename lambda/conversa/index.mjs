@@ -41,6 +41,10 @@ const SCENARIOS = {
   'indicacions': "L'alumne practica demanar i donar indicacions per la ciutat: girar, continuar recte, creuar, preposicions de lloc.",
   'serveis': "L'alumne practica trobar serveis públics: hospital, CAP, comissaria, correus, biblioteca, ajuntament.",
   'emergencia': "L'alumne practica actuar en emergències: trucar al 112, demanar ambulància, policia, bombers.",
+  // Unitat 9
+  'tramits': "L'alumne practica fer tràmits: empadronar-se, targeta sanitària, NIE, demanar cita, omplir formularis.",
+  'metge': "L'alumne practica anar al metge: explicar símptomes, demanar cita al CAP, recepta, farmàcia.",
+  'documents': "L'alumne practica parlar de documents: DNI, NIE, passaport, certificats, contractes.",
   'default': "Conversa lliure de nivell A1 sobre temes quotidians.",
 };
 
