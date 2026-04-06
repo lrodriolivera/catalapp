@@ -261,7 +261,7 @@ export default function ConversaPage() {
   const speak = useCallback((text: string, onEnd?: () => void) => {
     if (!text || !hasTTS) { onEnd?.(); return }
     setIsSpeaking(true)
-    speakNatural(text, 0.9, () => { setIsSpeaking(false); onEnd?.() })
+    speakNatural(text, 0.85, () => { setIsSpeaking(false); onEnd?.() })
   }, [hasTTS])
 
   // PUSH-TO-TALK: record while holding, send on release
@@ -308,7 +308,7 @@ export default function ConversaPage() {
   const speakCorrection = useCallback((phrase: string) => {
     if (!hasTTS) return
     setIsSpeaking(true)
-    speakNatural(phrase, 0.7, () => setIsSpeaking(false))
+    speakNatural(phrase, 0.65, () => setIsSpeaking(false))
   }, [hasTTS])
 
   const sendDirect = useCallback(async (text: string) => {

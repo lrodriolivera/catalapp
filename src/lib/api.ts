@@ -30,7 +30,7 @@ export async function callSonnet(action: string, data: Record<string, any>): Pro
 }
 
 // Speak using Web Speech API only — pitch 0.75 for male, 1.0 for female
-export async function speakNatural(text: string, speed: number = 0.9, onEnd?: () => void, gender: 'male' | 'female' = 'female'): Promise<void> {
+export async function speakNatural(text: string, speed: number = 0.85, onEnd?: () => void, gender: 'male' | 'female' = 'female'): Promise<void> {
   if (typeof speechSynthesis === 'undefined') { onEnd?.(); return }
 
   // Wait for voices to load

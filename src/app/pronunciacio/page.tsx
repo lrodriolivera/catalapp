@@ -86,7 +86,7 @@ export default function PronunciacioPage() {
   const speak = useCallback((text: string) => {
     if (typeof window === 'undefined') return
     setListeningWord(text)
-    speakNatural(text, 0.9, () => setListeningWord(null))
+    speakNatural(text, 0.85, () => setListeningWord(null))
   }, [])
 
   const startRecording = useCallback((expectedWord: string) => {

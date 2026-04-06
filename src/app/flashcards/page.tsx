@@ -57,7 +57,7 @@ function shuffle<T>(arr: T[]): T[] {
 
 function speak(text: string) {
   if (typeof window === 'undefined') return
-  speakNatural(text, 0.9)
+  speakNatural(text, 0.85)
 }
 
 // ── Component ───────────────────────────────────────────────────────
