@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import { shuffle } from '@/lib/utils'
 
 interface Pair {
   a: string
@@ -10,15 +11,6 @@ interface Pair {
 interface MatchPairsProps {
   pairs: Pair[]
   onComplete: (correct: boolean) => void
-}
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
 }
 
 export default function MatchPairs({ pairs, onComplete }: MatchPairsProps) {
@@ -62,25 +54,17 @@ export default function MatchPairs({ pairs, onComplete }: MatchPairsProps) {
     }
   }, [selectedLeft, selectedRight, pairMap, matched, pairs.length, onComplete])
 
-  const getLeftStyle = (item: string) => {
+  const getItemStyle = (item: string, selected: string | null, flashItem: string | undefined) => {
     if (matched.has(item)) return 'bg-[#E8F5E9] text-[#2E7D32]'
-    if (flash?.left === item) return 'bg-red-50 text-red-600 animate-pulse'
-    if (selectedLeft === item) return 'bg-[#1a1a1a] text-white'
-    return 'bg-[#F5F5F5] text-[#1a1a1a]'
-  }
-
-  const getRightStyle = (item: string) => {
-    if (matched.has(item)) return 'bg-[#E8F5E9] text-[#2E7D32]'
-    if (flash?.right === item) return 'bg-red-50 text-red-600 animate-pulse'
-    if (selectedRight === item) return 'bg-[#1a1a1a] text-white'
+    if (flashItem === item) return 'bg-red-50 text-red-600 animate-pulse'
+    if (selected === item) return 'bg-[#1a1a1a] text-white'
     return 'bg-[#F5F5F5] text-[#1a1a1a]'
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm text-gray-500">Emparella cada paraula en catala amb la seva traduccion</p>
+      <p className="text-sm text-gray-500">Emparella cada paraula en catala amb la seva traduccio</p>
       <div className="grid grid-cols-2 gap-3">
-        {/* Columna izquierda - Catalan */}
         <div className="flex flex-col gap-2">
           {leftItems.map((item) => (
             <button
@@ -89,14 +73,13 @@ export default function MatchPairs({ pairs, onComplete }: MatchPairsProps) {
                 if (!matched.has(item) && !flash) setSelectedLeft(item)
               }}
               disabled={matched.has(item)}
-              className={`rounded-2xl py-3 px-4 text-sm font-medium text-left transition-all ${getLeftStyle(item)} disabled:cursor-default`}
+              className={`rounded-2xl py-3 px-4 text-sm font-medium text-left transition-all ${getItemStyle(item, selectedLeft, flash?.left)} disabled:cursor-default`}
             >
               {item}
             </button>
           ))}
         </div>
 
-        {/* Columna derecha - Castellano */}
         <div className="flex flex-col gap-2">
           {rightItems.map((item) => (
             <button
@@ -105,7 +88,7 @@ export default function MatchPairs({ pairs, onComplete }: MatchPairsProps) {
                 if (!matched.has(item) && !flash) setSelectedRight(item)
               }}
               disabled={matched.has(item)}
-              className={`rounded-2xl py-3 px-4 text-sm font-medium text-left transition-all ${getRightStyle(item)} disabled:cursor-default`}
+              className={`rounded-2xl py-3 px-4 text-sm font-medium text-left transition-all ${getItemStyle(item, selectedRight, flash?.right)} disabled:cursor-default`}
             >
               {item}
             </button>

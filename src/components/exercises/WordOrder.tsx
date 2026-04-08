@@ -46,7 +46,6 @@ export default function WordOrder({ words, correctSentence, onComplete }: WordOr
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Zona de respuesta */}
       <div
         className={`min-h-[60px] flex flex-wrap items-center gap-2 pb-3 border-b-2 border-dashed ${
           feedback === 'correct'
@@ -87,7 +86,6 @@ export default function WordOrder({ words, correctSentence, onComplete }: WordOr
         </div>
       )}
 
-      {/* Banco de palabras */}
       <div className="flex flex-wrap gap-2">
         {bank.map((word, i) => (
           <button
@@ -100,7 +98,6 @@ export default function WordOrder({ words, correctSentence, onComplete }: WordOr
         ))}
       </div>
 
-      {/* Botones */}
       <div className="flex gap-3">
         <button
           onClick={handleReset}

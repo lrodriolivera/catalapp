@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { dialogues, Dialogue } from '@/data/dialogues'
+import { units } from '@/data/units'
 
 export default function DialegsPage() {
   const [selected, setSelected] = useState<Dialogue | null>(null)
@@ -36,6 +37,7 @@ export default function DialegsPage() {
     if (typeof speechSynthesis !== 'undefined') {
       speechSynthesis.getVoices()
       speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices()
+      return () => { speechSynthesis.onvoiceschanged = null }
     }
   }, [])
 
@@ -88,11 +90,11 @@ export default function DialegsPage() {
     setSelected(null)
   }, [stopPlaying])
 
-  const unitGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].map(uid => ({
-    unitId: uid,
-    title: ['', 'Hola, com et dius?', 'Coneixes la meva família?', 'On vius?', 'Què fas cada dia?', "T'agrada el cinema?", 'Anem a comprar', 'Què vol prendre?', 'Ens movem per la ciutat', 'Què necessito?', 'Qui és qui?', 'El pis a punt', 'Avui és festa!', 'Ens formem', 'Anem a comprar (ampliació)', 'Com et trobes?', 'Sortim!', 'Tinc una entrevista!', 'Tinc temps lliure'][uid] || '',
-    items: dialogues.filter(d => d.unitId === uid),
-  }))
+  const unitGroups = useMemo(() => units.map(u => ({
+    unitId: u.id,
+    title: u.subtitle,
+    items: dialogues.filter(d => d.unitId === u.id),
+  })), [])
 
   const W = 'px-5 md:px-10 lg:px-20 xl:px-32 pt-8 pb-44 md:pb-12'
   const C = 'max-w-[800px] mx-auto'

@@ -9,6 +9,7 @@ import ListenWrite from '@/components/exercises/ListenWrite'
 import { addXP, completeExercise, saveLessonScore, updateStreak } from '@/lib/progress'
 import UnitSelector from '@/components/UnitSelector'
 import { callSonnet } from '@/lib/api'
+import { speakCatalan, checkAnswer } from '@/lib/utils'
 
 type View =
   | { mode: 'home' }
@@ -48,9 +49,7 @@ export default function GramaticaPage() {
 
   const check = useCallback(() => {
     const ex = exercises[exIdx]
-    const ok = Array.isArray(ex.correctAnswer)
-      ? ex.correctAnswer.some(a => a.toLowerCase().trim() === answer.toLowerCase().trim())
-      : ex.correctAnswer.toLowerCase().trim() === answer.toLowerCase().trim()
+    const ok = checkAnswer(ex.correctAnswer, answer)
     setFb(ok ? 'correct' : 'incorrect')
     setAnswers(p => [...p, { exercise: ex, userAnswer: answer, isCorrect: ok }])
     if (ok) { addXP(10); completeExercise(ex.id) }
@@ -118,13 +117,7 @@ export default function GramaticaPage() {
 
   // === VERB CONJUGATION TABLE ===
   if (view.mode === 'verbs') {
-    const speakVerb = (text: string) => {
-      if (typeof speechSynthesis === 'undefined') return
-      speechSynthesis.cancel()
-      const u = new SpeechSynthesisUtterance(text)
-      u.lang = 'ca-ES'; u.rate = 0.75
-      speechSynthesis.speak(u)
-    }
+    const speakVerb = (text: string) => speakCatalan(text, 0.75)
     const persons = ['jo', 'tu', 'ell/ella/vostè', 'nosaltres', 'vosaltres', 'ells/elles/vostès'] as const
     const personShort: Record<string, string> = { 'jo': 'Jo', 'tu': 'Tu', 'ell/ella/vostè': 'Ell/Ella', 'nosaltres': 'Nosaltres', 'vosaltres': 'Vosaltres', 'ells/elles/vostès': 'Ells/Elles' }
 
@@ -183,13 +176,7 @@ export default function GramaticaPage() {
 
   // === VOCABULARY ===
   if (view.mode === 'vocab') {
-    const speakWord = (text: string) => {
-      if (typeof speechSynthesis === 'undefined') return
-      speechSynthesis.cancel()
-      const u = new SpeechSynthesisUtterance(text)
-      u.lang = 'ca-ES'; u.rate = 0.75
-      speechSynthesis.speak(u)
-    }
+    const speakWord = (text: string) => speakCatalan(text, 0.75)
 
     return (
       <div className={W}><div className={C}>

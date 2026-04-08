@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { callSonnet } from '@/lib/api'
+import { wordCount } from '@/lib/utils'
 
 type View = 'home' | 'writing' | 'results'
 
@@ -35,10 +36,6 @@ const tasks: Task[] = [
   { id: 'carta', emoji: '\u{2709}\uFE0F', title: 'Una carta', description: 'Escriu una carta a un amic' },
   { id: 'lliure', emoji: '\u{270D}\uFE0F', title: 'Text lliure', description: 'Escriu sobre el que vulguis' },
 ]
-
-function wordCount(text: string): number {
-  return text.trim() === '' ? 0 : text.trim().split(/\s+/).length
-}
 
 function ScoreCircle({ score }: { score: number }) {
   const radius = 54
@@ -154,6 +151,7 @@ export default function EscripturaPage() {
 
   // Writing view
   if (view === 'writing') {
+    const wc = wordCount(text)
     return (
       <div className="min-h-screen bg-white">
         <div className="px-5 md:px-10 lg:px-20 xl:px-32 pt-8 pb-44 md:pb-12">
@@ -178,11 +176,11 @@ export default function EscripturaPage() {
 
             <div className="flex items-center justify-between mt-4">
               <span className="text-[13px] font-bold text-[#999]">
-                {wordCount(text)} {wordCount(text) === 1 ? 'paraula' : 'paraules'}
+                {wc} {wc === 1 ? 'paraula' : 'paraules'}
               </span>
               <button
                 onClick={handleCorrect}
-                disabled={loading || wordCount(text) < 3}
+                disabled={loading || wc < 3}
                 className="flex items-center gap-2 bg-[#1a1a1a] text-white text-[14px] font-bold px-6 py-3 rounded-full hover:bg-[#333] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {loading ? (

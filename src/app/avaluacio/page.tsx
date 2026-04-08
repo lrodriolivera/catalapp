@@ -7,13 +7,10 @@ import WordOrder from '@/components/exercises/WordOrder'
 import MatchPairs from '@/components/exercises/MatchPairs'
 import ListenWrite from '@/components/exercises/ListenWrite'
 import { addXP, completeExercise, saveLessonScore, updateStreak } from '@/lib/progress'
+import { shuffle, checkAnswer } from '@/lib/utils'
 
 type Mode = 'setup' | 'practice' | 'exam' | 'results'
 interface AnswerRecord { exercise: Exercise; userAnswer: string; isCorrect: boolean }
-
-function shuffle<T>(arr: T[]): T[] {
-  const s = [...arr]; for (let i = s.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [s[i], s[j]] = [s[j], s[i]] }; return s
-}
 
 export default function AvaluacioPage() {
   const [selectedUnits, setSelectedUnits] = useState<number[]>([1, 2, 3])
@@ -29,11 +26,10 @@ export default function AvaluacioPage() {
   const questions = useMemo(() => shuffle(units.filter((u) => selectedUnits.includes(u.id)).flatMap((u) => u.exercises)), [selectedUnits])
   const toggleUnit = useCallback((id: number) => { setSelectedUnits((p) => p.includes(id) ? (p.length > 1 ? p.filter((u) => u !== id) : p) : [...p, id]) }, [])
   const startEval = useCallback((type: 'exam' | 'practice') => { setExamMode(type); setMode(type); setCurrentIndex(0); setUserAnswer(''); setFeedback(null); setAnswers([]); setExamAnswers(new Array(questions.length).fill('')); setXpEarned(0) }, [questions.length])
-  const isCorrect = (ex: Exercise, ans: string) => { const n = ans.toLowerCase().trim(); return Array.isArray(ex.correctAnswer) ? ex.correctAnswer.some((a) => a.toLowerCase().trim() === n) : ex.correctAnswer.toLowerCase().trim() === n }
 
   const checkPractice = useCallback(() => {
     const ex = questions[currentIndex]
-    const c = isCorrect(ex, userAnswer)
+    const c = checkAnswer(ex.correctAnswer, userAnswer)
     setFeedback(c ? 'correct' : 'incorrect')
     setAnswers((p) => [...p, { exercise: ex, userAnswer, isCorrect: c }])
     if (c) {
@@ -45,7 +41,7 @@ export default function AvaluacioPage() {
 
   const pickOption = useCallback((opt: string) => {
     const ex = questions[currentIndex]
-    const c = isCorrect(ex, opt)
+    const c = checkAnswer(ex.correctAnswer, opt)
     setUserAnswer(opt); setFeedback(c ? 'correct' : 'incorrect')
     setAnswers((p) => [...p, { exercise: ex, userAnswer: opt, isCorrect: c }])
     if (c) {
@@ -83,7 +79,7 @@ export default function AvaluacioPage() {
   const nextExam = useCallback(() => { if (!examAnswers[currentIndex] && !userAnswer.trim()) return; storeExam(examAnswers[currentIndex] || userAnswer); if (currentIndex < questions.length - 1) { setCurrentIndex((p) => p + 1); setUserAnswer('') } }, [currentIndex, questions.length, examAnswers, userAnswer, storeExam])
 
   const submitExam = useCallback(() => {
-    const finalAnswers = examAnswers.map((a, i) => ({ exercise: questions[i], userAnswer: a || '', isCorrect: a ? isCorrect(questions[i], a) : false }))
+    const finalAnswers = examAnswers.map((a, i) => ({ exercise: questions[i], userAnswer: a || '', isCorrect: a ? checkAnswer(questions[i].correctAnswer, a) : false }))
     const score = finalAnswers.filter((a) => a.isCorrect).length
     const earnedXP = score * 10
     finalAnswers.forEach((a) => {

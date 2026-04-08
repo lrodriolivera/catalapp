@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { getProgress, UserProgress } from '@/lib/progress'
+import { getProgress, UserProgress, isLessonCompleted, getUnitProgress } from '@/lib/progress'
 
 const unitData = [
   {
@@ -194,23 +194,6 @@ const unitData = [
     ],
   },
 ]
-
-function getUnitProgress(unitId: number, progress: UserProgress): number {
-  const lessonKeys = [`gram-${unitId}`, `vocab-${unitId}`, `conv-${unitId}`, `ex-${unitId}`]
-  let completed = 0
-  for (const k of lessonKeys) {
-    if (progress.completedExercises[k] && progress.completedExercises[k] > 0) completed++
-    else if (progress.lessonScores[k]) completed++
-  }
-  return Math.round((completed / lessonKeys.length) * 100)
-}
-
-function isLessonCompleted(key: string, progress: UserProgress): boolean {
-  return (
-    (progress.completedExercises[key] !== undefined && progress.completedExercises[key] > 0) ||
-    progress.lessonScores[key] !== undefined
-  )
-}
 
 export default function Home() {
   const [progress, setProgress] = useState<UserProgress | null>(null)

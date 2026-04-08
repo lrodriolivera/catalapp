@@ -26,7 +26,7 @@ export default function BottomNav() {
   }, [])
 
   return (
-    <div>
+    <>
       {/* DESKTOP */}
       <header className="hidden md:block fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-gray-100" aria-label="Navegació principal">
         <div className="h-[60px] px-6 lg:px-10 flex items-center justify-between">
@@ -78,6 +78,6 @@ export default function BottomNav() {
         </div>
         <div className="h-[env(safe-area-inset-bottom)]" />
       </nav>
-    </div>
+    </>
   )
 }

@@ -10,8 +10,7 @@ import {
   reviewCard,
   getWordIdsForUnit,
 } from '@/lib/spacedRepetition'
-
-// ── Types ───────────────────────────────────────────────────────────
+import { shuffle, speakCatalan } from '@/lib/utils'
 
 interface FlashcardData {
   wordId: string
@@ -23,8 +22,6 @@ interface FlashcardData {
 
 type View = 'home' | 'session' | 'results'
 type Quality = 0 | 1 | 2 | 3 | 4 | 5
-
-// ── Helpers ─────────────────────────────────────────────────────────
 
 function parseWordId(wordId: string): { unitId: number; catIdx: number; itemIdx: number } | null {
   const m = wordId.match(/^u(\d+)-(\d+)-(\d+)$/)
@@ -44,26 +41,6 @@ function resolveCard(wordId: string): FlashcardData | null {
   if (!item) return null
   return { wordId, item, category: cat, unitId: unit.id, unitTitle: unit.subtitle }
 }
-
-function shuffle<T>(arr: T[]): T[] {
-  const s = [...arr]
-  for (let i = s.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[s[i], s[j]] = [s[j], s[i]]
-  }
-  return s
-}
-
-function speak(text: string) {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return
-  window.speechSynthesis.cancel()
-  const utt = new SpeechSynthesisUtterance(text)
-  utt.lang = 'ca-ES'
-  utt.rate = 0.85
-  window.speechSynthesis.speak(utt)
-}
-
-// ── Component ───────────────────────────────────────────────────────
 
 export default function FlashcardsPage() {
   const [view, setView] = useState<View>('home')
@@ -330,7 +307,7 @@ export default function FlashcardsPage() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
-                    speak(currentCard.item.catalan)
+                    speakCatalan(currentCard.item.catalan)
                   }}
                   className="mt-4 w-11 h-11 rounded-full bg-[#F5F5F5] flex items-center justify-center hover:bg-[#EBEBEB] transition-colors"
                   aria-label="Escoltar pronunciació"

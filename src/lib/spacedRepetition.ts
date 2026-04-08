@@ -1,6 +1,5 @@
-import { units } from '@/data/units'
-
-// ── Interfaces ──────────────────────────────────────────────────────
+import { units, type Unit } from '@/data/units'
+import { today } from './utils'
 
 export interface CardState {
   wordId: string // "u{unitId}-{categoryIndex}-{itemIndex}"
@@ -18,8 +17,6 @@ export interface FlashcardProgress {
   lastSessionDate: string // ISO date
 }
 
-// ── Constants ───────────────────────────────────────────────────────
-
 const STORAGE_KEY = 'catalapp-flashcards'
 
 const defaultProgress: FlashcardProgress = {
@@ -29,31 +26,7 @@ const defaultProgress: FlashcardProgress = {
   lastSessionDate: '',
 }
 
-// ── Helpers ─────────────────────────────────────────────────────────
-
-function today(): string {
-  return new Date().toISOString().slice(0, 10)
-}
-
-/** Return all possible wordIds from units data. */
-export function getAllWordIds(): string[] {
-  const ids: string[] = []
-  for (const unit of units) {
-    const categories = Object.keys(unit.vocabulary)
-    categories.forEach((cat, catIdx) => {
-      const items = unit.vocabulary[cat]
-      items.forEach((_, itemIdx) => {
-        ids.push(`u${unit.id}-${catIdx}-${itemIdx}`)
-      })
-    })
-  }
-  return ids
-}
-
-/** Return all wordIds belonging to a specific unit. */
-export function getWordIdsForUnit(unitId: number): string[] {
-  const unit = units.find((u) => u.id === unitId)
-  if (!unit) return []
+function wordIdsForUnit(unit: Unit): string[] {
   const ids: string[] = []
   const categories = Object.keys(unit.vocabulary)
   categories.forEach((cat, catIdx) => {
@@ -65,7 +38,20 @@ export function getWordIdsForUnit(unitId: number): string[] {
   return ids
 }
 
-// ── Storage ─────────────────────────────────────────────────────────
+let _allWordIdsCache: string[] | null = null
+
+export function getAllWordIds(): string[] {
+  if (!_allWordIdsCache) {
+    _allWordIdsCache = units.flatMap(wordIdsForUnit)
+  }
+  return _allWordIdsCache
+}
+
+export function getWordIdsForUnit(unitId: number): string[] {
+  const unit = units.find((u) => u.id === unitId)
+  if (!unit) return []
+  return wordIdsForUnit(unit)
+}
 
 export function getFlashcardProgress(): FlashcardProgress {
   if (typeof window === 'undefined') return { ...defaultProgress }
@@ -89,8 +75,6 @@ export function saveFlashcardProgress(progress: FlashcardProgress): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
 }
 
-// ── Due & New cards ─────────────────────────────────────────────────
-
 export function getDueCards(limit?: number): CardState[] {
   const progress = getFlashcardProgress()
   const now = today()
@@ -110,8 +94,6 @@ export function getNewCards(unitId?: number, limit?: number): string[] {
 
   return limit ? newIds.slice(0, limit) : newIds
 }
-
-// ── SM-2 Review ─────────────────────────────────────────────────────
 
 export function reviewCard(wordId: string, quality: 0 | 1 | 2 | 3 | 4 | 5): void {
   const progress = getFlashcardProgress()
@@ -173,8 +155,6 @@ export function reviewCard(wordId: string, quality: 0 | 1 | 2 | 3 | 4 | 5): void
   saveFlashcardProgress(progress)
 }
 
-// ── Stats ───────────────────────────────────────────────────────────
-
 export function getCardStats(): {
   total: number
   mastered: number
@@ -189,6 +169,7 @@ export function getCardStats(): {
   const total = allIds.length
   let mastered = 0
   let learning = 0
+  let dueToday = 0
 
   for (const card of Object.values(progress.cards)) {
     if (card.interval >= 21 && card.repetitions >= 3) {
@@ -196,10 +177,10 @@ export function getCardStats(): {
     } else {
       learning++
     }
+    if (card.nextReview <= now) dueToday++
   }
 
   const newCount = total - mastered - learning
-  const dueToday = Object.values(progress.cards).filter((c) => c.nextReview <= now).length
 
   return { total, mastered, learning, new: newCount, dueToday }
 }

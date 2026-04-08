@@ -2,42 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { getProgress, type UserProgress } from '@/lib/progress'
+import { getProgress, type UserProgress, getUnitProgress } from '@/lib/progress'
 import { getAllBadges, getBadges, type UserBadges } from '@/lib/badges'
-
-const unitData = [
-  { id: 1, title: 'Hola, com et dius?' },
-  { id: 2, title: 'Coneixes la meva familia?' },
-  { id: 3, title: 'On vius?' },
-  { id: 4, title: 'Que fas cada dia?' },
-  { id: 5, title: "T'agrada el cinema?" },
-  { id: 6, title: 'Anem a comprar' },
-  { id: 7, title: 'Que vol prendre?' },
-  { id: 8, title: 'Ens movem per la ciutat' },
-  { id: 9, title: 'Que necessito?' },
-  { id: 10, title: 'Qui es qui?' },
-  { id: 11, title: 'El pis a punt' },
-  { id: 12, title: 'Avui es festa!' },
-  { id: 13, title: 'Ens formem' },
-  { id: 14, title: 'Anem a comprar (ampliacio)' },
-  { id: 15, title: 'Com et trobes?' },
-  { id: 16, title: 'Sortim!' },
-  { id: 17, title: 'Tinc una entrevista!' },
-  { id: 18, title: 'Tinc temps lliure' },
-]
-
-function getUnitProgress(unitId: number, progress: UserProgress): number {
-  const keys = [`gram-${unitId}`, `vocab-${unitId}`, `conv-${unitId}`, `ex-${unitId}`]
-  let completed = 0
-  for (const k of keys) {
-    if (
-      (progress.completedExercises[k] !== undefined && progress.completedExercises[k] > 0) ||
-      progress.lessonScores[k] !== undefined
-    )
-      completed++
-  }
-  return Math.round((completed / keys.length) * 100)
-}
+import { units } from '@/data/units'
 
 function getUnitBestScore(unitId: number, progress: UserProgress): string | null {
   const key = `ex-${unitId}`
@@ -142,14 +109,14 @@ export default function Estadistiques() {
           <div className="mb-10">
             <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-4">Progres per unitat</h2>
             <div className="space-y-3">
-              {unitData.map((unit) => {
+              {units.map((unit) => {
                 const pct = progress ? getUnitProgress(unit.id, progress) : 0
                 const score = progress ? getUnitBestScore(unit.id, progress) : null
                 return (
                   <div key={unit.id} className="bg-[#F9F9F9] rounded-xl px-4 py-3">
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-[13px] font-semibold text-[#1a1a1a]">
-                        {unit.id}. {unit.title}
+                        {unit.id}. {unit.subtitle}
                       </span>
                       <span className="text-[12px] text-[#888] font-medium">
                         {pct}%{score ? ` · ${score}` : ''}

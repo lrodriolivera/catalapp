@@ -1,4 +1,4 @@
-// CatalApp Analytics — localStorage-based tracking
+import { today } from './utils'
 
 interface AnalyticsEvent {
   type: string
@@ -21,6 +21,9 @@ const STORAGE_KEY = 'catalapp-analytics'
 const SESSION_KEY = 'catalapp-session-start'
 const MAX_EVENTS = 500
 
+let _pendingEvents: AnalyticsEvent[] = []
+let _flushScheduled = false
+
 function readEvents(): AnalyticsEvent[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -37,15 +40,33 @@ function writeEvents(events: AnalyticsEvent[]): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed))
 }
 
-export function trackEvent(type: string, data?: Record<string, any>): void {
+function flushPendingEvents(): void {
+  if (_pendingEvents.length === 0) return
   const events = readEvents()
+  events.push(..._pendingEvents)
+  writeEvents(events)
+  _pendingEvents = []
+  _flushScheduled = false
+}
+
+function scheduleFlush(): void {
+  if (_flushScheduled) return
+  _flushScheduled = true
+  setTimeout(flushPendingEvents, 2000)
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', flushPendingEvents)
+}
+
+export function trackEvent(type: string, data?: Record<string, any>): void {
   const event: AnalyticsEvent = {
     type,
     timestamp: new Date().toISOString(),
     ...(data ? { data } : {}),
   }
-  events.push(event)
-  writeEvents(events)
+  _pendingEvents.push(event)
+  scheduleFlush()
 }
 
 export function trackPageView(page: string): void {
@@ -53,6 +74,7 @@ export function trackPageView(page: string): void {
 }
 
 export function getAnalytics(): AnalyticsData {
+  flushPendingEvents()
   const events = readEvents()
 
   const sessionsCount = events.filter((e) => e.type === 'session_start').length
@@ -60,7 +82,6 @@ export function getAnalytics(): AnalyticsData {
   const firstVisit = timestamps[0] || new Date().toISOString()
   const lastVisit = timestamps[timestamps.length - 1] || new Date().toISOString()
 
-  // Total time from session pairs
   let totalTimeMinutes = 0
   const starts = events.filter((e) => e.type === 'session_start')
   const ends = events.filter((e) => e.type === 'session_end')
@@ -73,7 +94,6 @@ export function getAnalytics(): AnalyticsData {
   }
   totalTimeMinutes = Math.round(totalTimeMinutes * 10) / 10
 
-  // Page views
   const pageViews: Record<string, number> = {}
   events
     .filter((e) => e.type === 'page_view' && e.data?.page)
@@ -82,7 +102,6 @@ export function getAnalytics(): AnalyticsData {
       pageViews[page] = (pageViews[page] || 0) + 1
     })
 
-  // Exercises per day
   const exerciseTypes = [
     'exercise_complete',
     'flashcard_review',
@@ -131,7 +150,9 @@ export function getStreakHistory(): number[] {
 }
 
 export function startSession(): void {
+  flushPendingEvents()
   trackEvent('session_start')
+  flushPendingEvents()
   localStorage.setItem(SESSION_KEY, new Date().toISOString())
 }
 
@@ -141,6 +162,7 @@ export function endSession(): void {
     const startMs = new Date(startStr).getTime()
     const minutes = Math.round((Date.now() - startMs) / 60000 * 10) / 10
     trackEvent('session_end', { durationMinutes: minutes })
+    flushPendingEvents()
     localStorage.removeItem(SESSION_KEY)
   }
 }

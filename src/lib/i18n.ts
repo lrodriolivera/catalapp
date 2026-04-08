@@ -175,6 +175,8 @@ export const translations: Record<Lang, Translations> = {
 const LANG_KEY = 'catalapp-lang'
 const VALID_LANGS: Lang[] = ['ca', 'es', 'en']
 
+let _cachedLang: Lang | null = null
+
 function detectLang(): Lang {
   if (typeof navigator !== 'undefined') {
     const browserLang = navigator.language.slice(0, 2).toLowerCase()
@@ -186,18 +188,22 @@ function detectLang(): Lang {
 }
 
 export function getLang(): Lang {
+  if (_cachedLang) return _cachedLang
   try {
     const stored = localStorage.getItem(LANG_KEY) as Lang | null
     if (stored && VALID_LANGS.includes(stored)) {
+      _cachedLang = stored
       return stored
     }
   } catch {
     // localStorage unavailable
   }
-  return detectLang()
+  _cachedLang = detectLang()
+  return _cachedLang
 }
 
 export function setLang(lang: Lang): void {
+  _cachedLang = lang
   localStorage.setItem(LANG_KEY, lang)
 }
 

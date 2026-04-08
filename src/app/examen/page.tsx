@@ -3,6 +3,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { callSonnet } from '@/lib/api'
+import { wordCount } from '@/lib/utils'
 
 type Stage = 'setup' | 'part1' | 'part2' | 'part3' | 'part4' | 'results'
 
@@ -84,10 +85,6 @@ const preguntesOral = [
     correct: 1,
   },
 ]
-
-function wordCount(text: string): number {
-  return text.trim() === '' ? 0 : text.trim().split(/\s+/).length
-}
 
 function ScoreCircle({ score, total, size = 120 }: { score: number; total: number; size?: number }) {
   const pct = total > 0 ? Math.round((score / total) * 100) : 0

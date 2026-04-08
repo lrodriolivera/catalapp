@@ -1,3 +1,5 @@
+import { today } from './utils'
+
 export interface UserProgress {
   xp: number
   streak: number
@@ -41,10 +43,9 @@ export function addXP(amount: number): UserProgress {
 
 export function updateStreak(): UserProgress {
   const progress = getProgress()
-  const today = new Date().toISOString().slice(0, 10)
+  const t = today()
 
-  if (progress.lastPracticeDate === today) {
-    // Ya practicamos hoy, no cambiar nada
+  if (progress.lastPracticeDate === t) {
     return progress
   }
 
@@ -56,7 +57,7 @@ export function updateStreak(): UserProgress {
     progress.streak = 1
   }
 
-  progress.lastPracticeDate = today
+  progress.lastPracticeDate = t
   saveProgress(progress)
   return progress
 }
@@ -84,8 +85,24 @@ export function saveLessonScore(
   progress.lessonScores[lessonId] = {
     score,
     total,
-    date: new Date().toISOString().slice(0, 10),
+    date: today(),
   }
   saveProgress(progress)
   return progress
+}
+
+export function isLessonCompleted(key: string, progress: UserProgress): boolean {
+  return (
+    (progress.completedExercises[key] !== undefined && progress.completedExercises[key] > 0) ||
+    progress.lessonScores[key] !== undefined
+  )
+}
+
+export function getUnitProgress(unitId: number, progress: UserProgress): number {
+  const keys = [`gram-${unitId}`, `vocab-${unitId}`, `conv-${unitId}`, `ex-${unitId}`]
+  let completed = 0
+  for (const k of keys) {
+    if (isLessonCompleted(k, progress)) completed++
+  }
+  return Math.round((completed / keys.length) * 100)
 }

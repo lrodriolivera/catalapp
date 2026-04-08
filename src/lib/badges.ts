@@ -1,4 +1,5 @@
 import { type UserProgress, getProgress } from './progress'
+import { today } from './utils'
 
 export interface Badge {
   id: string
@@ -164,12 +165,12 @@ function saveBadges(badges: UserBadges): void {
 export function checkAndAwardBadges(progress: UserProgress): Badge[] {
   const userBadges = getBadges()
   const newlyEarned: Badge[] = []
-  const today = new Date().toISOString().slice(0, 10)
+  const t = today()
 
   for (const badge of allBadges) {
     if (userBadges.earned[badge.id]) continue
     if (badge.condition(progress)) {
-      userBadges.earned[badge.id] = today
+      userBadges.earned[badge.id] = t
       newlyEarned.push(badge)
     }
   }
