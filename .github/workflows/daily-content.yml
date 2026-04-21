@@ -1,0 +1,36 @@
+name: Daily content refresh
+
+# Genera la lliçó del dia invocant la Lambda catalapp-daily.
+# Schedule: 07:00 UTC (09:00 hora de Barcelona a l'estiu, 08:00 a l'hivern).
+# També es pot disparar manualment des de Actions → Run workflow.
+
+on:
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  invoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.DAILY_INVOKER_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DAILY_INVOKER_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Invoke catalapp-daily
+        run: |
+          aws lambda invoke \
+            --function-name catalapp-daily \
+            --cli-binary-format raw-in-base64-out \
+            --payload '{}' \
+            response.json
+          echo "---response---"
+          cat response.json
+          grep -q '"statusCode":200' response.json
