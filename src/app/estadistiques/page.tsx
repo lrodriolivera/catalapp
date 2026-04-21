@@ -5,6 +5,18 @@ import Link from 'next/link'
 import { getProgress, type UserProgress, getUnitProgress } from '@/lib/progress'
 import { getAllBadges, getBadges, type UserBadges } from '@/lib/badges'
 import { units } from '@/data/units'
+import { getTopWeaknesses, getUnclassifiedErrors, type ErrorCategory, type WeaknessSummary } from '@/lib/errorLog'
+import { classifyPendingErrors } from '@/lib/errorClassifier'
+
+const WEAKNESS_COLORS: Record<ErrorCategory, string> = {
+  ortografia: '#FCE4EC',
+  conjugacio: '#FFF3E0',
+  genere_nombre: '#E3F2FD',
+  lexic: '#FFF8E1',
+  ordre: '#E8F5E9',
+  pronunciacio: '#F5F5F5',
+  altre: '#F5F5F5',
+}
 
 function getUnitBestScore(unitId: number, progress: UserProgress): string | null {
   const key = `ex-${unitId}`
@@ -17,10 +29,18 @@ export default function Estadistiques() {
   const [progress, setProgress] = useState<UserProgress | null>(null)
   const [badges, setBadges] = useState<UserBadges>({ earned: {} })
   const [shared, setShared] = useState(false)
+  const [weaknesses, setWeaknesses] = useState<WeaknessSummary[]>([])
 
   useEffect(() => {
     setProgress(getProgress())
     setBadges(getBadges())
+    setWeaknesses(getTopWeaknesses(3))
+
+    if (getUnclassifiedErrors().length > 0) {
+      classifyPendingErrors().then((n) => {
+        if (n > 0) setWeaknesses(getTopWeaknesses(3))
+      })
+    }
   }, [])
 
   const xp = progress?.xp ?? 0
@@ -104,6 +124,44 @@ export default function Estadistiques() {
               <div className="text-[12px] text-[#888] font-medium mt-0.5">Lliçons avaluades</div>
             </div>
           </div>
+
+          {/* Weakness areas */}
+          {weaknesses.length > 0 && (
+            <div className="mb-10">
+              <h2 className="text-[18px] font-bold text-[#1a1a1a] mb-4">Àrees a millorar</h2>
+              <div className="space-y-3">
+                {weaknesses.map((w) => (
+                  <div
+                    key={w.category}
+                    className="rounded-2xl px-5 py-4"
+                    style={{ backgroundColor: WEAKNESS_COLORS[w.category] }}
+                  >
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <div>
+                        <p className="text-[15px] font-extrabold text-[#1a1a1a]">{w.label}</p>
+                        <p className="text-[12px] text-[#666] font-semibold mt-0.5">
+                          {w.count} {w.count === 1 ? 'error registrat' : 'errors registrats'}
+                        </p>
+                      </div>
+                      <Link
+                        href="/gramatica"
+                        className="shrink-0 bg-[#1a1a1a] text-white text-[12px] font-bold px-4 py-2 rounded-full hover:bg-[#333] transition-colors"
+                      >
+                        Reforça-ho
+                      </Link>
+                    </div>
+                    {w.recentExamples[0] && (
+                      <p className="text-[12px] text-[#666] font-medium mt-2 leading-relaxed">
+                        Exemple: <span className="line-through text-[#991B1B]">{w.recentExamples[0].userAnswer}</span>
+                        <span className="mx-1.5">→</span>
+                        <span className="text-[#065F46] font-bold">{w.recentExamples[0].correctAnswer}</span>
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Progress per unit */}
           <div className="mb-10">

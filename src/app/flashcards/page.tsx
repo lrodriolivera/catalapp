@@ -11,6 +11,7 @@ import {
   getWordIdsForUnit,
 } from '@/lib/spacedRepetition'
 import { shuffle, speakCatalan } from '@/lib/utils'
+import { recordError } from '@/lib/errorLog'
 
 interface FlashcardData {
   wordId: string
@@ -113,6 +114,16 @@ export default function FlashcardsPage() {
       reviewCard(card.wordId, quality)
       setSessionResults((prev) => [...prev, { wordId: card.wordId, quality }])
       setRated(true)
+      if (quality < 3) {
+        recordError({
+          context: card.item.spanish,
+          userAnswer: '(no recordat)',
+          correctAnswer: card.item.catalan,
+          source: 'exercise',
+          category: 'lexic',
+          rule: `flashcard-u${card.unitId}`,
+        })
+      }
 
       // Auto-advance after short delay
       setTimeout(() => {

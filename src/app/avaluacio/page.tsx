@@ -8,6 +8,7 @@ import MatchPairs from '@/components/exercises/MatchPairs'
 import ListenWrite from '@/components/exercises/ListenWrite'
 import { addXP, completeExercise, saveLessonScore, updateStreak } from '@/lib/progress'
 import { shuffle, checkAnswer } from '@/lib/utils'
+import { recordError } from '@/lib/errorLog'
 
 type Mode = 'setup' | 'practice' | 'exam' | 'results'
 interface AnswerRecord { exercise: Exercise; userAnswer: string; isCorrect: boolean }
@@ -36,6 +37,9 @@ export default function AvaluacioPage() {
       addXP(10)
       completeExercise(ex.id)
       setXpEarned((p) => p + 10)
+    } else {
+      const ca = Array.isArray(ex.correctAnswer) ? ex.correctAnswer[0] : ex.correctAnswer
+      recordError({ context: ex.question, userAnswer, correctAnswer: ca, source: 'exercise', rule: 'avaluacio' })
     }
   }, [questions, currentIndex, userAnswer])
 
@@ -48,10 +52,13 @@ export default function AvaluacioPage() {
       addXP(10)
       completeExercise(ex.id)
       setXpEarned((p) => p + 10)
+    } else {
+      const ca = Array.isArray(ex.correctAnswer) ? ex.correctAnswer[0] : ex.correctAnswer
+      recordError({ context: ex.question, userAnswer: opt, correctAnswer: ca, source: 'exercise', rule: 'avaluacio' })
     }
   }, [questions, currentIndex])
 
-  const handleNewExerciseComplete = useCallback((correct: boolean) => {
+  const handleNewExerciseComplete = useCallback((correct: boolean, attempt?: string) => {
     const ex = questions[currentIndex]
     const correctAnswerStr = Array.isArray(ex.correctAnswer) ? ex.correctAnswer[0] : ex.correctAnswer
     setFeedback(correct ? 'correct' : 'incorrect')
@@ -61,6 +68,8 @@ export default function AvaluacioPage() {
       addXP(10)
       completeExercise(ex.id)
       setXpEarned((p) => p + 10)
+    } else {
+      recordError({ context: ex.question, userAnswer: attempt ?? '(incorrecte)', correctAnswer: correctAnswerStr, source: 'exercise', rule: 'avaluacio' })
     }
   }, [questions, currentIndex])
 
@@ -86,6 +95,9 @@ export default function AvaluacioPage() {
       if (a.isCorrect) {
         addXP(10)
         completeExercise(a.exercise.id)
+      } else if (a.userAnswer) {
+        const ca = Array.isArray(a.exercise.correctAnswer) ? a.exercise.correctAnswer[0] : a.exercise.correctAnswer
+        recordError({ context: a.exercise.question, userAnswer: a.userAnswer, correctAnswer: ca, source: 'exercise', rule: 'avaluacio-exam' })
       }
     })
     updateStreak()

@@ -3,6 +3,17 @@
 import { useState } from 'react'
 import { callSonnet } from '@/lib/api'
 import { wordCount } from '@/lib/utils'
+import { recordError, type ErrorCategory } from '@/lib/errorLog'
+
+function mapEscripturaType(type: string): ErrorCategory | undefined {
+  const t = type.toLowerCase()
+  if (t.includes('ortograf')) return 'ortografia'
+  if (t.includes('vocabul') || t.includes('lexic') || t.includes('lèxic')) return 'lexic'
+  if (t.includes('genere') || t.includes('gènere') || t.includes('nombre')) return 'genere_nombre'
+  if (t.includes('conjug')) return 'conjugacio'
+  if (t.includes('ordre') || t.includes('sintax')) return 'ordre'
+  return undefined
+}
 
 type View = 'home' | 'writing' | 'results'
 
@@ -96,6 +107,18 @@ export default function EscripturaPage() {
         feedback: res.feedback ?? res.comentari ?? '',
       }
       setResult(parsed)
+      for (const err of parsed.errors) {
+        if (err.original && err.corrected) {
+          recordError({
+            context: selectedTask?.title ?? 'Text lliure',
+            userAnswer: err.original,
+            correctAnswer: err.corrected,
+            source: 'escriptura',
+            category: mapEscripturaType(err.type),
+            rule: err.type,
+          })
+        }
+      }
       setView('results')
     } catch {
       alert('Error de connexi\u00f3 amb la IA. Torna-ho a provar.')

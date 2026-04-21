@@ -5,7 +5,7 @@ import { useState } from 'react'
 interface WordOrderProps {
   words: string[]
   correctSentence: string
-  onComplete: (correct: boolean) => void
+  onComplete: (correct: boolean, attempt?: string) => void
 }
 
 export default function WordOrder({ words, correctSentence, onComplete }: WordOrderProps) {
@@ -34,7 +34,7 @@ export default function WordOrder({ words, correctSentence, onComplete }: WordOr
     const isCorrect = builtSentence.trim() === correctSentence.trim()
     setFeedback(isCorrect ? 'correct' : 'incorrect')
     setTimeout(() => {
-      onComplete(isCorrect)
+      onComplete(isCorrect, builtSentence)
     }, 1500)
   }
 

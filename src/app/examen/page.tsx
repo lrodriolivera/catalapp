@@ -4,6 +4,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { callSonnet } from '@/lib/api'
 import { wordCount } from '@/lib/utils'
+import { recordError } from '@/lib/errorLog'
 
 type Stage = 'setup' | 'part1' | 'part2' | 'part3' | 'part4' | 'results'
 
@@ -197,6 +198,12 @@ export default function ExamenPage() {
   const submitPart1 = () => {
     setP1Submitted(true)
     const correct = p1Answers.filter((a, i) => a === preguntesEscrita[i].correct).length
+    p1Answers.forEach((a, i) => {
+      if (a !== null && a !== preguntesEscrita[i].correct) {
+        const q = preguntesEscrita[i]
+        recordError({ context: q.question, userAnswer: q.options[a], correctAnswer: q.options[q.correct], source: 'exercise', rule: 'examen-comprensio-escrita' })
+      }
+    })
     setScores((s) => [...s, { label: 'Comprensi\u00f3 escrita', emoji: '\uD83D\uDCD6', score: correct, total: preguntesEscrita.length }])
   }
 
@@ -204,6 +211,12 @@ export default function ExamenPage() {
     window.speechSynthesis?.cancel()
     setP2Submitted(true)
     const correct = p2Answers.filter((a, i) => a === preguntesOral[i].correct).length
+    p2Answers.forEach((a, i) => {
+      if (a !== null && a !== preguntesOral[i].correct) {
+        const q = preguntesOral[i]
+        recordError({ context: q.question, userAnswer: q.options[a], correctAnswer: q.options[q.correct], source: 'exercise', rule: 'examen-comprensio-oral' })
+      }
+    })
     setScores((s) => [...s, { label: 'Comprensi\u00f3 oral', emoji: '\uD83D\uDD0A', score: correct, total: preguntesOral.length }])
   }
 

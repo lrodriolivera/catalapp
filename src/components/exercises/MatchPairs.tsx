@@ -10,7 +10,7 @@ interface Pair {
 
 interface MatchPairsProps {
   pairs: Pair[]
-  onComplete: (correct: boolean) => void
+  onComplete: (correct: boolean, attempt?: string) => void
 }
 
 export default function MatchPairs({ pairs, onComplete }: MatchPairsProps) {

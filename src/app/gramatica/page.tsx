@@ -10,6 +10,7 @@ import { addXP, completeExercise, saveLessonScore, updateStreak } from '@/lib/pr
 import UnitSelector from '@/components/UnitSelector'
 import { callSonnet } from '@/lib/api'
 import { speakCatalan, checkAnswer } from '@/lib/utils'
+import { recordError } from '@/lib/errorLog'
 
 type View =
   | { mode: 'home' }
@@ -52,25 +53,39 @@ export default function GramaticaPage() {
     const ok = checkAnswer(ex.correctAnswer, answer)
     setFb(ok ? 'correct' : 'incorrect')
     setAnswers(p => [...p, { exercise: ex, userAnswer: answer, isCorrect: ok }])
-    if (ok) { addXP(10); completeExercise(ex.id) }
-  }, [exercises, exIdx, answer])
+    if (ok) {
+      addXP(10); completeExercise(ex.id)
+    } else {
+      const ca = Array.isArray(ex.correctAnswer) ? ex.correctAnswer[0] : ex.correctAnswer
+      recordError({ context: ex.question, userAnswer: answer, correctAnswer: ca, source: 'exercise', rule: `grammar-unit-${unit.id}` })
+    }
+  }, [exercises, exIdx, answer, unit.id])
 
   const pickOption = useCallback((opt: string) => {
     const ex = exercises[exIdx]
     const ok = Array.isArray(ex.correctAnswer) ? ex.correctAnswer.includes(opt) : ex.correctAnswer === opt
     setAnswer(opt); setFb(ok ? 'correct' : 'incorrect')
     setAnswers(p => [...p, { exercise: ex, userAnswer: opt, isCorrect: ok }])
-    if (ok) { addXP(10); completeExercise(ex.id) }
-  }, [exercises, exIdx])
+    if (ok) {
+      addXP(10); completeExercise(ex.id)
+    } else {
+      const ca = Array.isArray(ex.correctAnswer) ? ex.correctAnswer[0] : ex.correctAnswer
+      recordError({ context: ex.question, userAnswer: opt, correctAnswer: ca, source: 'exercise', rule: `grammar-unit-${unit.id}` })
+    }
+  }, [exercises, exIdx, unit.id])
 
-  const onNewComplete = useCallback((ok: boolean) => {
+  const onNewComplete = useCallback((ok: boolean, userAttempt?: string) => {
     const ex = exercises[exIdx]
     const ca = Array.isArray(ex.correctAnswer) ? ex.correctAnswer[0] : ex.correctAnswer
     setFb(ok ? 'correct' : 'incorrect')
     setAnswer(ok ? ca : '(incorrecte)')
     setAnswers(p => [...p, { exercise: ex, userAnswer: ok ? ca : '(incorrecte)', isCorrect: ok }])
-    if (ok) { addXP(10); completeExercise(ex.id) }
-  }, [exercises, exIdx])
+    if (ok) {
+      addXP(10); completeExercise(ex.id)
+    } else {
+      recordError({ context: ex.question, userAnswer: userAttempt ?? '(incorrecte)', correctAnswer: ca, source: 'exercise', rule: `grammar-unit-${unit.id}` })
+    }
+  }, [exercises, exIdx, unit.id])
 
   const next = useCallback(() => {
     if (exIdx < exercises.length - 1) { setExIdx(p => p + 1); setAnswer(''); setFb(null) }
@@ -100,11 +115,15 @@ export default function GramaticaPage() {
     }
   }, [grammar, unit])
 
-  const checkAiAnswer = useCallback((idx: number, answer: string, correctAnswer: string) => {
+  const checkAiAnswer = useCallback((idx: number, answer: string, correctAnswer: string, question?: string) => {
     const isCorrect = answer.toLowerCase().trim() === correctAnswer.toLowerCase().trim()
     setAiAnswers(prev => ({ ...prev, [idx]: { answer, correct: isCorrect } }))
-    if (isCorrect) addXP(10)
-  }, [])
+    if (isCorrect) {
+      addXP(10)
+    } else {
+      recordError({ context: question ?? '', userAnswer: answer, correctAnswer, source: 'exercise', rule: `grammar-ai-unit-${unit.id}` })
+    }
+  }, [unit.id])
 
   const W = 'px-5 md:px-10 lg:px-20 xl:px-32 pt-8 pb-44 md:pb-12'
   const C = 'max-w-[800px] mx-auto'
@@ -487,7 +506,7 @@ export default function GramaticaPage() {
                         }
                         return (
                           <button key={oi} disabled={!!answered}
-                            onClick={() => checkAiAnswer(i, opt, ca)}
+                            onClick={() => checkAiAnswer(i, opt, ca, ex.question)}
                             className={`w-full text-left px-4 py-3 rounded-xl text-[15px] font-semibold transition-all disabled:cursor-not-allowed ${cls}`}>
                             {opt}
                           </button>
@@ -502,13 +521,13 @@ export default function GramaticaPage() {
                           className="flex-1 bg-[#F5F5F5] rounded-xl px-4 py-3 text-[15px] focus:ring-2 focus:ring-[#C7D2FE] focus:outline-none"
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim()) {
-                              checkAiAnswer(i, (e.target as HTMLInputElement).value, ca)
+                              checkAiAnswer(i, (e.target as HTMLInputElement).value, ca, ex.question)
                             }
                           }}
                         />
                         <button onClick={(e) => {
                           const input = (e.target as HTMLElement).parentElement?.querySelector('input') as HTMLInputElement
-                          if (input?.value.trim()) checkAiAnswer(i, input.value, ca)
+                          if (input?.value.trim()) checkAiAnswer(i, input.value, ca, ex.question)
                         }}
                           className="bg-[#1a1a1a] text-white font-bold px-5 py-3 rounded-xl text-[14px] hover:bg-[#333] transition-colors">
                           Comprovar

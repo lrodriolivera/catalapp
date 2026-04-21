@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react'
 
 interface ListenWriteProps {
   text: string
-  onComplete: (correct: boolean) => void
+  onComplete: (correct: boolean, attempt?: string) => void
 }
 
 export default function ListenWrite({ text, onComplete }: ListenWriteProps) {
@@ -31,7 +31,7 @@ export default function ListenWrite({ text, onComplete }: ListenWriteProps) {
     const isCorrect = input.trim().toLowerCase() === text.trim().toLowerCase()
     setFeedback(isCorrect ? 'correct' : 'incorrect')
     setTimeout(() => {
-      onComplete(isCorrect)
+      onComplete(isCorrect, input)
     }, 1500)
   }
 

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { sendConversaMessage } from '@/lib/api'
+import { recordError } from '@/lib/errorLog'
 
 interface Message {
   id: string
@@ -331,6 +332,9 @@ export default function ConversaPage() {
       const data = await sendConversaMessage(history, selected.key)
       const aMsg: Message = { id: `a-${Date.now()}`, role: 'assistant', content: data.response, correction: data.correction || undefined, correctedPhrase: data.correction || undefined }
       setMessages(prev => [...prev, aMsg])
+      if (data.correction) {
+        recordError({ context: selected.key, userAnswer: text.trim(), correctAnswer: data.correction, source: 'conversa' })
+      }
       if (audioMode) {
         // Speak response, then if there's a correction, speak it slowly, then listen again
         speak(data.response, () => {

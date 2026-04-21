@@ -3,6 +3,9 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getProgress, UserProgress, isLessonCompleted, getUnitProgress } from '@/lib/progress'
+import { getTopWeaknesses, type WeaknessSummary } from '@/lib/errorLog'
+
+const WEAKNESS_MIN = 5
 
 const unitData = [
   {
@@ -197,9 +200,12 @@ const unitData = [
 
 export default function Home() {
   const [progress, setProgress] = useState<UserProgress | null>(null)
+  const [topWeakness, setTopWeakness] = useState<WeaknessSummary | null>(null)
 
   useEffect(() => {
     setProgress(getProgress())
+    const top = getTopWeaknesses(1)[0]
+    if (top && top.count >= WEAKNESS_MIN) setTopWeakness(top)
   }, [])
 
   const xp = progress?.xp ?? 0
@@ -243,6 +249,26 @@ export default function Home() {
               </span>
             </Link>
           </div>
+
+          {/* Weakness recommendation */}
+          {topWeakness && (
+            <div className="mb-12 bg-[#FFF8E1] rounded-2xl p-5">
+              <p className="text-[12px] font-bold text-[#8B6F00] uppercase tracking-widest mb-2">La teva àrea a millorar</p>
+              <p className="text-[18px] font-extrabold text-[#1a1a1a] leading-tight mb-1">
+                {topWeakness.label}
+              </p>
+              <p className="text-[13px] text-[#666] font-semibold mb-4">
+                {topWeakness.count} errors registrats · 5 min de repàs?
+              </p>
+              <Link
+                href="/gramatica"
+                className="inline-flex items-center gap-2 bg-[#1a1a1a] text-white text-[13px] font-bold px-5 py-2.5 rounded-full hover:bg-[#333] transition-colors"
+              >
+                Reforça-ho
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              </Link>
+            </div>
+          )}
 
           {/* Learning Path */}
           <div className="space-y-10">

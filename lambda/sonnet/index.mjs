@@ -70,6 +70,26 @@ Respon en JSON estricte:
 
 Respon NOMÉS amb el JSON.`,
 
+  // Classify a batch of error records
+  classify_error: (data) => `Ets un professor de català especialitzat en classificar errors d'aprenents A1.
+
+Per cada error registrat, assigna UNA categoria i una regla concisa:
+
+Categories permeses (valor exacte):
+- "ortografia": accents, lletres incorrectes
+- "conjugacio": conjugació verbal (temps, persona, mode)
+- "genere_nombre": gènere (masculí/femení) o nombre (singular/plural)
+- "lexic": paraula o vocabulari incorrecte
+- "ordre": ordre de paraules o sintaxi
+- "altre": qualsevol altre tipus
+
+La "rule" ha de ser un identificador curt (kebab-case) que descriu el patró concret, p.ex. "accent-obert-e", "verb-ser-present-1sg", "plural-masc-s", "article-el-la".
+
+Errors:
+${JSON.stringify(data.errors || [], null, 2)}
+
+Respon NOMÉS amb JSON: [{"id":"...","category":"...","rule":"..."}]`,
+
   // Evaluate oral expression (transcribed)
   evaluate_oral: (data) => `Ets un examinador del CPNL (nivell A1). L'alumne ha parlat sobre: "${data.task}"
 
@@ -113,7 +133,7 @@ export const handler = async (event) => {
     const { action, data } = body;
 
     if (!action || !ACTIONS[action]) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid action. Use: generate_exercises, correct_writing, evaluate_exam, evaluate_oral' }) };
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid action. Use: generate_exercises, correct_writing, evaluate_exam, evaluate_oral, classify_error' }) };
     }
 
     const systemPrompt = ACTIONS[action](data || {});
