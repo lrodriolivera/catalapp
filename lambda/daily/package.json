@@ -1,0 +1,9 @@
+{
+  "name": "catalapp-daily",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1024.0",
+    "@aws-sdk/client-s3": "^3.1024.0"
+  }
+}

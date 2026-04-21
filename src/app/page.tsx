@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getProgress, UserProgress, isLessonCompleted, getUnitProgress } from '@/lib/progress'
 import { getTopWeaknesses, type WeaknessSummary } from '@/lib/errorLog'
+import DailyCard from '@/components/DailyCard'
 
 const WEAKNESS_MIN = 5
 
@@ -249,6 +250,8 @@ export default function Home() {
               </span>
             </Link>
           </div>
+
+          <DailyCard />
 
           {/* Weakness recommendation */}
           {topWeakness && (
