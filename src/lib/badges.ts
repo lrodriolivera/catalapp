@@ -1,5 +1,6 @@
 import { type UserProgress, getProgress } from './progress'
 import { today } from './utils'
+import { readStorage, writeStorage, type StorageSchema } from './storage'
 
 export interface Badge {
   id: string
@@ -13,7 +14,15 @@ export interface UserBadges {
   earned: Record<string, string> // badgeId -> date earned (ISO)
 }
 
-const STORAGE_KEY = 'catalapp-badges'
+const schema: StorageSchema<UserBadges> = {
+  key: 'catalapp-badges',
+  version: 1,
+  defaultValue: { earned: {} },
+  migrate: (old) => {
+    const safe = (old ?? {}) as Partial<UserBadges>
+    return { earned: safe.earned ?? {} }
+  },
+}
 
 const allBadges: Badge[] = [
   {
@@ -147,19 +156,11 @@ const allBadges: Badge[] = [
 ]
 
 export function getBadges(): UserBadges {
-  if (typeof window === 'undefined') return { earned: {} }
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { earned: {} }
-    return JSON.parse(raw) as UserBadges
-  } catch {
-    return { earned: {} }
-  }
+  return readStorage(schema)
 }
 
 function saveBadges(badges: UserBadges): void {
-  if (typeof window === 'undefined') return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(badges))
+  writeStorage(schema, badges)
 }
 
 export function checkAndAwardBadges(progress: UserProgress): Badge[] {

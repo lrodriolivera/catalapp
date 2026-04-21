@@ -1,4 +1,5 @@
 import { today } from './utils'
+import { readStorage, writeStorage, type StorageSchema } from './storage'
 
 export interface UserProgress {
   xp: number
@@ -8,30 +9,35 @@ export interface UserProgress {
   lessonScores: Record<string, { score: number; total: number; date: string }>
 }
 
-const STORAGE_KEY = 'catalapp-progress'
-
-const defaultProgress: UserProgress = {
-  xp: 0,
-  streak: 0,
-  lastPracticeDate: '',
-  completedExercises: {},
-  lessonScores: {},
+const schema: StorageSchema<UserProgress> = {
+  key: 'catalapp-progress',
+  version: 1,
+  defaultValue: {
+    xp: 0,
+    streak: 0,
+    lastPracticeDate: '',
+    completedExercises: {},
+    lessonScores: {},
+  },
+  migrate: (old) => {
+    const safe = (old ?? {}) as Partial<UserProgress>
+    return {
+      xp: typeof safe.xp === 'number' ? safe.xp : 0,
+      streak: typeof safe.streak === 'number' ? safe.streak : 0,
+      lastPracticeDate:
+        typeof safe.lastPracticeDate === 'string' ? safe.lastPracticeDate : '',
+      completedExercises: safe.completedExercises ?? {},
+      lessonScores: safe.lessonScores ?? {},
+    }
+  },
 }
 
 export function getProgress(): UserProgress {
-  if (typeof window === 'undefined') return { ...defaultProgress }
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { ...defaultProgress }
-    return JSON.parse(raw) as UserProgress
-  } catch {
-    return { ...defaultProgress }
-  }
+  return readStorage(schema)
 }
 
 export function saveProgress(progress: UserProgress): void {
-  if (typeof window === 'undefined') return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
+  writeStorage(schema, progress)
 }
 
 export function addXP(amount: number): UserProgress {

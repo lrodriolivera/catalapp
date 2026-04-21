@@ -1,5 +1,6 @@
 import { units, type Unit } from '@/data/units'
 import { today } from './utils'
+import { readStorage, writeStorage, type StorageSchema } from './storage'
 
 export interface CardState {
   wordId: string // "u{unitId}-{categoryIndex}-{itemIndex}"
@@ -17,13 +18,25 @@ export interface FlashcardProgress {
   lastSessionDate: string // ISO date
 }
 
-const STORAGE_KEY = 'catalapp-flashcards'
-
-const defaultProgress: FlashcardProgress = {
-  cards: {},
-  totalReviews: 0,
-  correctToday: 0,
-  lastSessionDate: '',
+const schema: StorageSchema<FlashcardProgress> = {
+  key: 'catalapp-flashcards',
+  version: 1,
+  defaultValue: {
+    cards: {},
+    totalReviews: 0,
+    correctToday: 0,
+    lastSessionDate: '',
+  },
+  migrate: (old) => {
+    const safe = (old ?? {}) as Partial<FlashcardProgress>
+    return {
+      cards: safe.cards ?? {},
+      totalReviews: typeof safe.totalReviews === 'number' ? safe.totalReviews : 0,
+      correctToday: typeof safe.correctToday === 'number' ? safe.correctToday : 0,
+      lastSessionDate:
+        typeof safe.lastSessionDate === 'string' ? safe.lastSessionDate : '',
+    }
+  },
 }
 
 function wordIdsForUnit(unit: Unit): string[] {
@@ -54,25 +67,16 @@ export function getWordIdsForUnit(unitId: number): string[] {
 }
 
 export function getFlashcardProgress(): FlashcardProgress {
-  if (typeof window === 'undefined') return { ...defaultProgress }
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { ...defaultProgress }
-    const parsed = JSON.parse(raw) as FlashcardProgress
-    // Reset daily counter if it's a new day
-    if (parsed.lastSessionDate !== today()) {
-      parsed.correctToday = 0
-      parsed.lastSessionDate = today()
-    }
-    return parsed
-  } catch {
-    return { ...defaultProgress }
+  const progress = readStorage(schema)
+  if (progress.lastSessionDate !== today()) {
+    progress.correctToday = 0
+    progress.lastSessionDate = today()
   }
+  return progress
 }
 
 export function saveFlashcardProgress(progress: FlashcardProgress): void {
-  if (typeof window === 'undefined') return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
+  writeStorage(schema, progress)
 }
 
 export function getDueCards(limit?: number): CardState[] {

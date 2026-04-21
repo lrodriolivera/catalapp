@@ -1,4 +1,5 @@
 import { today } from './utils'
+import { readStorage, writeStorage, type StorageSchema } from './storage'
 
 interface AnalyticsEvent {
   type: string
@@ -17,27 +18,25 @@ interface AnalyticsData {
   exercisesPerDay: Record<string, number>
 }
 
-const STORAGE_KEY = 'catalapp-analytics'
 const SESSION_KEY = 'catalapp-session-start'
 const MAX_EVENTS = 500
+
+const schema: StorageSchema<AnalyticsEvent[]> = {
+  key: 'catalapp-analytics',
+  version: 1,
+  defaultValue: [],
+  migrate: (old) => (Array.isArray(old) ? (old as AnalyticsEvent[]) : []),
+}
 
 let _pendingEvents: AnalyticsEvent[] = []
 let _flushScheduled = false
 
 function readEvents(): AnalyticsEvent[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
+  return readStorage(schema)
 }
 
 function writeEvents(events: AnalyticsEvent[]): void {
-  const trimmed = events.slice(-MAX_EVENTS)
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed))
+  writeStorage(schema, events.slice(-MAX_EVENTS))
 }
 
 function flushPendingEvents(): void {

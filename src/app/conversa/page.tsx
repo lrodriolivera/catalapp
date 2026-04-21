@@ -241,18 +241,14 @@ export default function ConversaPage() {
   const [evaluation, setEvaluation] = useState('')
   const [isEvaluating, setIsEvaluating] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null)
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
   const pendingTranscriptRef = useRef<string>('')
   const audioModeRef = useRef(audioMode)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sendDirectRef = useRef<(text: string) => void>(() => {})
   useEffect(() => { audioModeRef.current = audioMode }, [audioMode])
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const w = window as any
-    setHasSR(!!(w.SpeechRecognition || w.webkitSpeechRecognition))
+    setHasSR(!!(window.SpeechRecognition || window.webkitSpeechRecognition))
     setHasTTS(typeof speechSynthesis !== 'undefined')
     if (typeof speechSynthesis !== 'undefined') { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices() }
   }, [])
@@ -279,9 +275,7 @@ export default function ConversaPage() {
   // PUSH-TO-TALK: record while holding, send on release
   const startListening = useCallback(() => {
     if (!hasSR) return
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const w = window as any
-    const SR = w.SpeechRecognition || w.webkitSpeechRecognition
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition
     if (!SR) return
     if (recognitionRef.current) { try { recognitionRef.current.abort() } catch {} }
     const r = new SR()
@@ -292,8 +286,7 @@ export default function ConversaPage() {
     recognitionRef.current = r
     pendingTranscriptRef.current = ''
     setIsRecording(true)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    r.onresult = (e: any) => {
+    r.onresult = (e: SpeechRecognitionEvent) => {
       const text = e.results[0][0].transcript
       pendingTranscriptRef.current = text
     }
