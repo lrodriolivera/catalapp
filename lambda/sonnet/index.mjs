@@ -70,6 +70,33 @@ Respon en JSON estricte:
 
 Respon NOMÉS amb el JSON.`,
 
+  // Analyze pronunciation of a target phrase against ASR transcript
+  analyze_pronunciation: (data) => `Ets un professor de català. L'alumne és hispanoparlant (nivell A1).
+
+Ha intentat pronunciar: "${data.target}"
+Transcripció automàtica del que ha dit: "${data.transcription}"
+
+Analitza quins sons o fonemes del català probablement ha pronunciat malament. Enfoca't en els dolors típics del castellanoparlant:
+- vocal neutra (ə) en síl·labes àtones
+- la "ll" palatal (/ʎ/) — no com la "y" castellana
+- la "x" (/ʃ/) i la "tx" (/tʃ/)
+- la "l·l" geminada
+- la "ny" (/ɲ/)
+- e/o obertes vs. tancades (cafè vs. café; bo vs. ós)
+- la "r" final sovint muda
+- les vocals finals àtones (-a, -e)
+
+Respon en JSON estricte:
+{
+  "overallScore": 75,
+  "phonemeErrors": [
+    {"phoneme": "ll", "word": "milió", "explanation": "explicació breu en català", "tip": "consell pràctic curt en català"}
+  ],
+  "tip": "consell general breu"
+}
+
+Si no detectes errors, phonemeErrors buit i score alt. Respon NOMÉS amb JSON.`,
+
   // Classify a batch of error records
   classify_error: (data) => `Ets un professor de català especialitzat en classificar errors d'aprenents A1.
 
@@ -133,7 +160,7 @@ export const handler = async (event) => {
     const { action, data } = body;
 
     if (!action || !ACTIONS[action]) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid action. Use: generate_exercises, correct_writing, evaluate_exam, evaluate_oral, classify_error' }) };
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid action. Use: generate_exercises, correct_writing, evaluate_exam, evaluate_oral, classify_error, analyze_pronunciation' }) };
     }
 
     const systemPrompt = ACTIONS[action](data || {});
