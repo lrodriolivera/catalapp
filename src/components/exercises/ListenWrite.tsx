@@ -1,6 +1,9 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { Volume2, Turtle } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import FeedbackBanner from './ui/FeedbackBanner'
 
 interface ListenWriteProps {
   text: string
@@ -24,53 +27,51 @@ export default function ListenWrite({ text, onComplete }: ListenWriteProps) {
       utterance.onerror = () => setIsPlaying(false)
       window.speechSynthesis.speak(utterance)
     },
-    [text]
+    [text],
   )
 
   const handleCheck = () => {
-    const isCorrect = input.trim().toLowerCase() === text.trim().toLowerCase()
-    setFeedback(isCorrect ? 'correct' : 'incorrect')
-    setTimeout(() => {
-      onComplete(isCorrect, input)
-    }, 1500)
+    const ok = input.trim().toLowerCase() === text.trim().toLowerCase()
+    setFeedback(ok ? 'correct' : 'incorrect')
+    setTimeout(() => onComplete(ok, input), 1500)
   }
+
+  const inputRing =
+    feedback === 'correct'
+      ? 'ring-2 ring-success bg-success-soft'
+      : feedback === 'incorrect'
+        ? 'ring-2 ring-error bg-error-soft'
+        : 'focus:ring-2 focus:ring-accent bg-paper-2'
 
   return (
     <div className="flex flex-col gap-6 items-center">
-      {/* Botones de audio */}
-      <div className="flex gap-4 items-center">
+      <div className="flex items-center gap-4">
         <button
-          onClick={() => speak(0.8)}
+          type="button"
+          onClick={() => speak(0.85)}
           disabled={isPlaying}
-          className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
+          className={cn(
+            'w-16 h-16 rounded-full flex items-center justify-center transition-all',
             isPlaying
-              ? 'bg-[#1a1a1a] text-white animate-pulse'
-              : 'bg-[#F5F5F5] text-[#1a1a1a] hover:bg-gray-200'
-          }`}
+              ? 'bg-red text-white animate-pulse btn-3d border-red-dark'
+              : 'bg-accent-soft text-accent hover:bg-accent hover:text-ink-inverse',
+          )}
           aria-label="Reproduir"
         >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-          </svg>
+          <Volume2 size={28} strokeWidth={2} aria-hidden="true" />
         </button>
 
         <button
-          onClick={() => speak(0.5)}
+          type="button"
+          onClick={() => speak(0.55)}
           disabled={isPlaying}
-          className="w-12 h-12 rounded-full bg-[#F5F5F5] text-[#1a1a1a] flex items-center justify-center transition-all hover:bg-gray-200"
-          aria-label="Reproduir lent"
+          className="w-12 h-12 rounded-full bg-paper-3 text-ink flex items-center justify-center transition-colors hover:bg-paper-4"
+          aria-label="Reproduir a velocitat lenta"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-          </svg>
+          <Turtle size={22} strokeWidth={2} aria-hidden="true" />
         </button>
-
-        <span className="text-xs text-gray-400">Lent</span>
       </div>
 
-      {/* Input */}
       <input
         type="text"
         value={input}
@@ -80,33 +81,26 @@ export default function ListenWrite({ text, onComplete }: ListenWriteProps) {
         }}
         placeholder="Escriu el que has sentit..."
         disabled={feedback !== null}
-        className={`w-full bg-[#F5F5F5] rounded-2xl px-4 py-3 text-sm outline-none transition-all ${
-          feedback === 'correct'
-            ? 'ring-2 ring-[#2E7D32] bg-[#E8F5E9]'
-            : feedback === 'incorrect'
-            ? 'ring-2 ring-red-400 bg-red-50'
-            : 'focus:ring-2 focus:ring-[#1a1a1a]'
-        }`}
+        className={cn(
+          'w-full rounded-xl px-4 py-3 text-base outline-none transition-all text-ink placeholder:text-ink-subtle',
+          inputRing,
+        )}
       />
 
-      {/* Feedback */}
       {feedback && (
-        <div
-          className={`text-sm font-medium w-full ${
-            feedback === 'correct' ? 'text-[#2E7D32]' : 'text-red-600'
-          }`}
-        >
-          {feedback === 'correct'
-            ? 'Correcte!'
-            : `Incorrecte. La resposta correcta: "${text}"`}
+        <div className="w-full">
+          <FeedbackBanner
+            status={feedback}
+            message={feedback === 'incorrect' ? `Resposta correcta: "${text}"` : undefined}
+          />
         </div>
       )}
 
-      {/* Boton comprovar */}
       <button
+        type="button"
         onClick={handleCheck}
         disabled={!input.trim() || feedback !== null}
-        className="w-full py-3 rounded-2xl text-sm font-semibold bg-[#1a1a1a] text-white transition-all hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full h-12 rounded-xl text-sm font-extrabold uppercase tracking-wider bg-primary text-white btn-3d border-primary-dark disabled:opacity-40 disabled:cursor-not-allowed"
       >
         Comprovar
       </button>

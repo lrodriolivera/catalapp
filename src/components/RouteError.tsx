@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
+import { RotateCw } from 'lucide-react'
+import { Mascot } from '@/components/ui/Mascot'
 
 interface Props {
   error: Error & { digest?: string }
@@ -14,17 +16,21 @@ export default function RouteError({ error, retry, title = 'Alguna cosa ha falla
   }, [error])
 
   return (
-    <main className="min-h-screen bg-white dark:bg-[#0f0f0f] flex items-center justify-center px-6">
+    <main className="min-h-screen bg-paper flex items-center justify-center px-6">
       <div className="max-w-md text-center">
-        <div className="text-5xl mb-6" aria-hidden>🌀</div>
-        <h1 className="text-2xl font-bold text-[#1a1a1a] dark:text-white mb-3">{title}</h1>
-        <p className="text-[#888] dark:text-[#aaa] mb-8 leading-relaxed">
+        <div className="mb-6 flex justify-center">
+          <Mascot expression="sad" size="lg" />
+        </div>
+        <h1 className="text-2xl md:text-3xl text-ink mb-3">{title}</h1>
+        <p className="text-lg text-ink-soft mb-8 leading-relaxed font-medium">
           No hem pogut carregar aquesta secció. Torna-ho a provar d&apos;aquí a uns segons.
         </p>
         <button
+          type="button"
           onClick={retry}
-          className="px-6 py-3 rounded-full bg-[#1a1a1a] text-white font-medium hover:bg-black transition-colors dark:bg-white dark:text-[#1a1a1a] dark:hover:bg-[#eee]"
+          className="inline-flex items-center gap-2 px-7 h-14 rounded-2xl bg-primary text-white font-extrabold uppercase tracking-wider btn-3d border-primary-dark text-base"
         >
+          <RotateCw size={18} strokeWidth={3} aria-hidden="true" />
           Torna-ho a provar
         </button>
       </div>

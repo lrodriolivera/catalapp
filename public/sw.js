@@ -1,4 +1,4 @@
-const CACHE_NAME = 'catalapp-v3'
+const CACHE_NAME = 'catalapp-v4'
 const STATIC_ASSETS = [
   '/manifest.json',
   '/icon-192.png',
@@ -73,5 +73,45 @@ self.addEventListener('fetch', (event) => {
           return Response.error()
         })
       )
+  )
+})
+
+// ───── Push notifications ─────
+
+self.addEventListener('push', (event) => {
+  let data = {}
+  try {
+    data = event.data ? event.data.json() : {}
+  } catch {
+    data = { title: 'CatalApp', body: event.data ? event.data.text() : '' }
+  }
+  const title = data.title || 'CatalApp'
+  const options = {
+    body: data.body || '',
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    data: { url: data.url || '/' },
+    requireInteraction: false,
+    tag: data.tag || 'catalapp-push',
+  }
+  event.waitUntil(self.registration.showNotification(title, options))
+})
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  const target = (event.notification.data && event.notification.data.url) || '/'
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      // Reuse an existing tab if same origin
+      for (const c of list) {
+        try {
+          const url = new URL(c.url)
+          if (url.origin === self.location.origin) {
+            return c.focus().then(() => c.navigate(target)).catch(() => c.focus())
+          }
+        } catch {}
+      }
+      return self.clients.openWindow(target)
+    }),
   )
 })

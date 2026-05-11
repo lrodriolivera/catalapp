@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { ArrowRight, Volume2, X } from 'lucide-react'
 import { speakCatalan } from '@/lib/utils'
+import { Button } from '@/components/ui/Button'
 
 interface VocabItem {
   catalan: string
@@ -52,39 +54,43 @@ export default function DailyCard() {
   if (!lesson) return null
 
   return (
-    <div className="mb-12 bg-[#E3F2FD] rounded-2xl p-6">
-      <div className="flex items-start justify-between gap-3 mb-2">
-        <p className="text-[12px] font-bold text-[#1E40AF] uppercase tracking-widest">
-          {lesson.festivity ? `Avui · ${lesson.festivity}` : 'El català d’avui'}
+    <section
+      aria-labelledby="daily-title"
+      className="rounded-2xl p-6 md:p-8 bg-blue-soft border-2 border-blue/30 border-b-[5px]"
+    >
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <p className="text-xs font-extrabold uppercase tracking-widest text-blue-dark">
+          {lesson.festivity ? `Avui · ${lesson.festivity}` : "El català d'avui"}
         </p>
-        <span className="text-[11px] text-[#1E40AF]/70 font-semibold shrink-0">
+        <span className="text-sm font-bold text-blue-dark shrink-0 bg-white/60 px-2 py-0.5 rounded-full">
           {new Date(lesson.date).toLocaleDateString('ca', { day: 'numeric', month: 'short' })}
         </span>
       </div>
 
-      <h2 className="text-[20px] font-extrabold text-[#1a1a1a] leading-tight mb-3">
+      <h2
+        id="daily-title"
+        className="text-xl md:text-2xl text-ink leading-tight mb-5"
+      >
         {lesson.headline}
       </h2>
 
       {!expanded ? (
-        <button
+        <Button
           onClick={() => setExpanded(true)}
-          className="inline-flex items-center gap-2 bg-[#1a1a1a] text-white text-[13px] font-bold px-5 py-2.5 rounded-full hover:bg-[#333] transition-colors"
+          size="md"
+          trailing={<ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" />}
         >
           Llegeix-ho
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </button>
+        </Button>
       ) : (
-        <div className="space-y-5">
-          <p className="text-[15px] text-[#1a1a1a] leading-relaxed whitespace-pre-line">
+        <div className="space-y-6">
+          <p className="text-base md:text-lg text-ink leading-relaxed whitespace-pre-line">
             {lesson.text}
           </p>
 
           {lesson.vocabulary.length > 0 && (
             <div>
-              <p className="text-[11px] font-bold text-[#1E40AF] uppercase tracking-widest mb-2">
+              <p className="text-sm font-semibold uppercase tracking-widest text-accent mb-3">
                 Vocabulari nou
               </p>
               <div className="flex flex-wrap gap-2">
@@ -92,10 +98,12 @@ export default function DailyCard() {
                   <button
                     key={i}
                     onClick={() => speakCatalan(v.catalan)}
-                    className="bg-white rounded-full px-3 py-1.5 text-[13px] font-semibold text-[#1a1a1a] hover:bg-[#F5F5F5] transition-colors"
+                    className="inline-flex items-center gap-2 bg-paper rounded-full pl-4 pr-3 py-2 text-base font-semibold text-ink hover:bg-paper-2 transition-colors"
                     aria-label={`Escolta ${v.catalan}`}
                   >
-                    {v.catalan} <span className="text-[#888] font-normal">· {v.spanish}</span>
+                    <span>{v.catalan}</span>
+                    <span className="text-ink-muted font-normal">· {v.spanish}</span>
+                    <Volume2 size={16} strokeWidth={1.75} className="text-ink-muted" aria-hidden="true" />
                   </button>
                 ))}
               </div>
@@ -104,36 +112,36 @@ export default function DailyCard() {
 
           {lesson.exercises.length > 0 && (
             <div>
-              <p className="text-[11px] font-bold text-[#1E40AF] uppercase tracking-widest mb-2">
+              <p className="text-sm font-semibold uppercase tracking-widest text-accent mb-3">
                 Practica
               </p>
               <div className="space-y-3">
                 {lesson.exercises.map((ex, i) => (
-                  <div key={i} className="bg-white rounded-xl p-4">
-                    <p className="text-[14px] font-bold text-[#1a1a1a] mb-2">{ex.question}</p>
+                  <div key={i} className="bg-paper rounded-xl p-5">
+                    <p className="text-base font-bold text-ink mb-3">{ex.question}</p>
                     {ex.options && (
-                      <ul className="space-y-1 text-[13px] text-[#666] mb-2">
+                      <ul className="space-y-1.5 text-base text-ink-soft mb-3">
                         {ex.options.map((opt, oi) => (
                           <li key={oi}>
-                            <span className="font-mono text-[#999] mr-2">{String.fromCharCode(65 + oi)}.</span>
+                            <span className="font-mono text-ink-muted mr-2">{String.fromCharCode(65 + oi)}.</span>
                             {opt}
                           </li>
                         ))}
                       </ul>
                     )}
                     {revealed[i] ? (
-                      <div className="mt-2 pt-2 border-t border-[#F0F0F0]">
-                        <p className="text-[13px] text-[#065F46] font-bold">
+                      <div className="mt-3 pt-3 border-t border-line">
+                        <p className="text-base text-success font-bold">
                           Resposta: {ex.correctAnswer}
                         </p>
                         {ex.explanation && (
-                          <p className="text-[12px] text-[#666] mt-1">{ex.explanation}</p>
+                          <p className="text-sm text-ink-muted mt-1">{ex.explanation}</p>
                         )}
                       </div>
                     ) : (
                       <button
                         onClick={() => setRevealed((p) => ({ ...p, [i]: true }))}
-                        className="text-[12px] font-bold text-[#1E40AF] hover:underline"
+                        className="text-sm font-semibold text-accent hover:underline"
                       >
                         Mostra la resposta
                       </button>
@@ -145,9 +153,14 @@ export default function DailyCard() {
           )}
 
           {lesson.sourceUrl && (
-            <p className="text-[11px] text-[#666]">
+            <p className="text-sm text-ink-muted">
               Inspirat en:{' '}
-              <a href={lesson.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-[#1E40AF]">
+              <a
+                href={lesson.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-accent"
+              >
                 {lesson.sourceHeadline}
               </a>
             </p>
@@ -155,12 +168,13 @@ export default function DailyCard() {
 
           <button
             onClick={() => setExpanded(false)}
-            className="text-[12px] font-bold text-[#1E40AF] hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-soft hover:text-ink"
           >
+            <X size={16} strokeWidth={2} aria-hidden="true" />
             Tancar
           </button>
         </div>
       )}
-    </div>
+    </section>
   )
 }

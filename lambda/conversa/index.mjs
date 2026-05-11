@@ -1,12 +1,21 @@
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
+import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
 
-const client = new BedrockRuntimeClient({
-  region: 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.BEDROCK_ACCESS_KEY_ID,
-    secretAccessKey: process.env.BEDROCK_SECRET_ACCESS_KEY,
-  },
-});
+const SECRET_NAME = 'catalapp/bedrock-credentials';
+const smClient = new SecretsManagerClient({ region: 'us-east-1' });
+
+let cachedClient = null;
+
+async function getBedrockClient() {
+  if (cachedClient) return cachedClient;
+  const resp = await smClient.send(new GetSecretValueCommand({ SecretId: SECRET_NAME }));
+  const { accessKeyId, secretAccessKey } = JSON.parse(resp.SecretString);
+  cachedClient = new BedrockRuntimeClient({
+    region: 'us-east-1',
+    credentials: { accessKeyId, secretAccessKey },
+  });
+  return cachedClient;
+}
 
 const SCENARIOS = {
   // Unitat 1
@@ -139,6 +148,7 @@ export const handler = async (event) => {
       accept: 'application/json',
     });
 
+    const client = await getBedrockClient();
     const response = await client.send(command);
     const result = JSON.parse(new TextDecoder().decode(response.body));
     const text = result.content?.[0]?.text || '';

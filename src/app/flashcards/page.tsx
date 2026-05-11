@@ -1,17 +1,22 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { units } from '@/data/units'
-import type { VocabularyItem } from '@/data/units'
+import { Volume2, CheckCircle2, ArrowLeft, Sparkles, Info } from 'lucide-react'
+import { units, type VocabularyItem } from '@/data/units'
 import {
   getCardStats,
   getDueCards,
   getNewCards,
   reviewCard,
-  getWordIdsForUnit,
 } from '@/lib/spacedRepetition'
-import { shuffle, speakCatalan } from '@/lib/utils'
+import { shuffle, speakCatalan, cn } from '@/lib/utils'
 import { recordError } from '@/lib/errorLog'
+import { loseHeart } from '@/lib/stats'
+import { NoHeartsModal } from '@/components/ui/NoHeartsModal'
+import { HeaderStats } from '@/components/ui/HeaderStats'
+import BackLink from '@/components/exercises/ui/BackLink'
+import ResultsScore from '@/components/exercises/ui/ResultsScore'
+import { Mascot } from '@/components/ui/Mascot'
 
 interface FlashcardData {
   wordId: string
@@ -48,35 +53,26 @@ export default function FlashcardsPage() {
   const [selectedUnit, setSelectedUnit] = useState<number | null>(null)
   const [stats, setStats] = useState({ total: 0, mastered: 0, learning: 0, new: 0, dueToday: 0 })
 
-  // Session state
   const [sessionCards, setSessionCards] = useState<FlashcardData[]>([])
   const [currentIdx, setCurrentIdx] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [rated, setRated] = useState(false)
   const [sessionResults, setSessionResults] = useState<{ wordId: string; quality: Quality }[]>([])
+  const [showNoHearts, setShowNoHearts] = useState(false)
 
-  // Load stats
-  const refreshStats = useCallback(() => {
-    setStats(getCardStats())
-  }, [])
+  const refreshStats = useCallback(() => setStats(getCardStats()), [])
 
-  useEffect(() => {
-    refreshStats()
-  }, [refreshStats])
-
-  // ── Build session ─────────────────────────────────────────────────
+  useEffect(() => { refreshStats() }, [refreshStats])
 
   const startSession = useCallback(
     (onlyNew: boolean) => {
       const MAX_SESSION = 20
-
       let cardIds: string[] = []
 
       if (onlyNew) {
         const newIds = getNewCards(selectedUnit ?? undefined, MAX_SESSION)
         cardIds = shuffle(newIds)
       } else {
-        // Due cards first, then new cards to fill
         const due = getDueCards()
         const dueIds = selectedUnit
           ? due.filter((c) => c.wordId.startsWith(`u${selectedUnit}-`)).map((c) => c.wordId)
@@ -91,7 +87,6 @@ export default function FlashcardsPage() {
       }
 
       const resolved = cardIds.map(resolveCard).filter(Boolean) as FlashcardData[]
-
       if (resolved.length === 0) return
 
       setSessionCards(resolved)
@@ -101,10 +96,8 @@ export default function FlashcardsPage() {
       setSessionResults([])
       setView('session')
     },
-    [selectedUnit]
+    [selectedUnit],
   )
-
-  // ── Rate card ─────────────────────────────────────────────────────
 
   const rateCard = useCallback(
     (quality: Quality) => {
@@ -123,9 +116,10 @@ export default function FlashcardsPage() {
           category: 'lexic',
           rule: `flashcard-u${card.unitId}`,
         })
+        const s = loseHeart()
+        if (s.hearts === 0) setShowNoHearts(true)
       }
 
-      // Auto-advance after short delay
       setTimeout(() => {
         if (currentIdx < sessionCards.length - 1) {
           setCurrentIdx((i) => i + 1)
@@ -137,281 +131,266 @@ export default function FlashcardsPage() {
         }
       }, 300)
     },
-    [sessionCards, currentIdx, refreshStats]
+    [sessionCards, currentIdx, refreshStats],
   )
-
-  // ── Results calculations ──────────────────────────────────────────
 
   const correctCount = useMemo(
     () => sessionResults.filter((r) => r.quality >= 3).length,
-    [sessionResults]
+    [sessionResults],
   )
-
-  // ── Current card ──────────────────────────────────────────────────
 
   const currentCard = sessionCards[currentIdx] ?? null
 
-  // ── Render ────────────────────────────────────────────────────────
-
   return (
-    <div className="px-5 md:px-10 pt-8 pb-44 md:pb-12 max-w-[500px] mx-auto">
-      {/* ═══ HOME VIEW ═══ */}
+    <div className="mx-auto w-full max-w-[720px] px-5 md:px-8 py-8 md:py-12">
       {view === 'home' && (
         <div>
-          <h1 className="text-[32px] font-extrabold text-[#1a1a1a] leading-tight mb-6">
-            Flashcards
-          </h1>
+          <header className="mb-8">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-primary mb-2">
+              Repàs espaiat
+            </p>
+            <div className="flex items-center gap-3 mb-3">
+            <Mascot expression="happy" size="sm" />
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Flashcards</h1>
+          </div>
+          </header>
 
-          {/* Stats grid */}
+          {stats.mastered === 0 && stats.learning === 0 && stats.dueToday === 0 && (
+            <div className="mb-6 bg-accent-soft rounded-2xl p-5 flex items-start gap-3">
+              <Sparkles size={20} strokeWidth={2} className="text-accent shrink-0 mt-0.5" aria-hidden="true" />
+              <div>
+                <p className="text-base font-bold text-accent mb-1">Comença amb 10 paraules noves</p>
+                <p className="text-sm text-ink-soft leading-relaxed">
+                  Cada paraula que reveses torna a aparèixer segons el que la recordes. En 7 dies ja tindràs una base sòlida.
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-3 mb-8">
-            <StatCard label="Dominades" value={stats.mastered} color="#22C55E" />
-            <StatCard label="Aprenent" value={stats.learning} color="#F59E0B" />
-            <StatCard label="Noves" value={stats.new} color="#8B5CF6" />
-            <StatCard label="Per repassar avui" value={stats.dueToday} color="#EF4444" />
+            <StatCard label="Dominades" value={stats.mastered} tone="success" />
+            <StatCard label="Aprenent" value={stats.learning} tone="warning" />
+            <StatCard label="Noves" value={stats.new} tone="accent" />
+            <StatCard label="Per repassar avui" value={stats.dueToday} tone="error" />
           </div>
 
-          {/* Unit filter */}
-          <div className="mb-6">
-            <label className="block text-[13px] font-bold text-[#888] mb-2 uppercase tracking-wide">
+          <div className="mb-8">
+            <label className="block text-sm font-semibold text-ink-muted mb-3 uppercase tracking-widest">
               Filtra per unitat
             </label>
             <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setSelectedUnit(null)}
-                className={`px-4 py-2 rounded-full text-[13px] font-bold transition-all min-h-[44px] ${
-                  selectedUnit === null
-                    ? 'bg-[#1a1a1a] text-white'
-                    : 'bg-[#F5F5F5] text-[#555] hover:bg-[#EBEBEB]'
-                }`}
-              >
+              <UnitChip selected={selectedUnit === null} onClick={() => setSelectedUnit(null)}>
                 Totes
-              </button>
+              </UnitChip>
               {units.map((u) => (
-                <button
+                <UnitChip
                   key={u.id}
+                  selected={selectedUnit === u.id}
                   onClick={() => setSelectedUnit(u.id)}
-                  className={`px-4 py-2 rounded-full text-[13px] font-bold transition-all min-h-[44px] ${
-                    selectedUnit === u.id
-                      ? 'bg-[#1a1a1a] text-white'
-                      : 'bg-[#F5F5F5] text-[#555] hover:bg-[#EBEBEB]'
-                  }`}
                 >
-                  {u.title}
-                </button>
+                  {u.id}. {u.title}
+                </UnitChip>
               ))}
             </div>
           </div>
 
-          {/* Action buttons */}
           <div className="space-y-3">
-            <button
-              onClick={() => startSession(false)}
-              className="w-full py-4 rounded-full bg-[#1a1a1a] text-white text-[15px] font-bold transition-all hover:bg-[#333] active:scale-[0.98] min-h-[52px]"
-            >
-              Començar sessió
-            </button>
-            <button
-              onClick={() => startSession(true)}
-              className="w-full py-4 rounded-full bg-[#F5F5F5] text-[#1a1a1a] text-[15px] font-bold transition-all hover:bg-[#EBEBEB] active:scale-[0.98] min-h-[52px]"
-            >
-              Només noves
-            </button>
+            {stats.mastered === 0 && stats.learning === 0 ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => startSession(true)}
+                  className="w-full h-14 rounded-2xl bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark inline-flex items-center justify-center gap-2"
+                >
+                  <Sparkles size={18} strokeWidth={2} aria-hidden="true" />
+                  Comença amb paraules noves
+                </button>
+                <button
+                  type="button"
+                  onClick={() => startSession(false)}
+                  className="w-full h-14 rounded-2xl bg-paper text-ink text-base font-extrabold uppercase tracking-wider btn-3d border-line-strong"
+                >
+                  Començar sessió mixta
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => startSession(false)}
+                  className="w-full h-14 rounded-2xl bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark"
+                >
+                  Començar sessió
+                </button>
+                <button
+                  type="button"
+                  onClick={() => startSession(true)}
+                  className="w-full h-14 rounded-2xl bg-paper text-ink text-base font-extrabold uppercase tracking-wider btn-3d border-line-strong"
+                >
+                  Només noves
+                </button>
+              </>
+            )}
           </div>
 
           {stats.total > 0 && (
-            <p className="mt-6 text-center text-[13px] text-[#999]">
+            <p className="mt-6 text-center text-sm text-ink-muted">
               {stats.total} paraules en total
             </p>
           )}
         </div>
       )}
 
-      {/* ═══ SESSION VIEW ═══ */}
       {view === 'session' && currentCard && (
         <div>
-          {/* Progress bar */}
+          <NoHeartsModal open={showNoHearts} onClose={() => setShowNoHearts(false)} />
+          <div className="flex items-center justify-end mb-3">
+            <HeaderStats />
+          </div>
           <div className="flex items-center gap-3 mb-6">
             <button
-              onClick={() => {
-                refreshStats()
-                setView('home')
-              }}
-              className="text-[#999] hover:text-[#1a1a1a] transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+              type="button"
+              onClick={() => { refreshStats(); setView('home') }}
               aria-label="Tornar"
+              className="shrink-0 w-11 h-11 flex items-center justify-center rounded-lg text-ink-soft hover:bg-paper-2 hover:text-ink transition-colors"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
+              <ArrowLeft size={20} strokeWidth={2} aria-hidden="true" />
             </button>
             <div className="flex-1">
-              <div className="h-[6px] bg-[#F0F0F0] rounded-full overflow-hidden">
+              <div className="h-1.5 bg-paper-3 rounded-full overflow-hidden"
+                role="progressbar"
+                aria-valuenow={currentIdx + 1}
+                aria-valuemin={0}
+                aria-valuemax={sessionCards.length}
+              >
                 <div
-                  className="h-full bg-[#1a1a1a] rounded-full transition-all duration-500"
+                  className="h-full bg-accent rounded-full transition-all duration-500"
                   style={{ width: `${((currentIdx + 1) / sessionCards.length) * 100}%` }}
                 />
               </div>
             </div>
-            <span className="text-[13px] font-bold text-[#999] tabular-nums min-w-[40px] text-right">
+            <span className="text-sm font-semibold text-ink-muted tabular-nums min-w-[48px] text-right">
               {currentIdx + 1}/{sessionCards.length}
             </span>
           </div>
 
-          {/* Card */}
           <div className="perspective-[1000px] mb-6">
             <div
               onClick={() => !flipped && setFlipped(true)}
-              className={`relative w-full min-h-[320px] cursor-pointer transition-transform duration-500 [transform-style:preserve-3d] ${
-                flipped ? '[transform:rotateY(180deg)]' : ''
-              }`}
+              className={cn(
+                'relative w-full min-h-[340px] cursor-pointer transition-transform duration-500 [transform-style:preserve-3d]',
+                flipped && '[transform:rotateY(180deg)]',
+              )}
             >
-              {/* Front */}
-              <div className="absolute inset-0 rounded-3xl bg-[#F8F8F8] flex flex-col items-center justify-center p-8 [backface-visibility:hidden]">
+              <div className="absolute inset-0 rounded-3xl bg-paper-2 border-2 border-line flex flex-col items-center justify-center p-8 [backface-visibility:hidden]">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="text-[11px] font-bold text-[#BBB] uppercase tracking-wider">
+                  <span className="text-sm font-semibold text-ink-muted uppercase tracking-wider">
                     {currentCard.unitTitle}
                   </span>
-                  <span className="w-1 h-1 rounded-full bg-[#DDD]" />
-                  <span className="text-[11px] font-bold text-[#BBB] uppercase tracking-wider">
+                  <span className="w-1 h-1 rounded-full bg-ink-subtle" aria-hidden="true" />
+                  <span className="text-sm font-semibold text-ink-muted uppercase tracking-wider">
                     {currentCard.category}
                   </span>
                 </div>
-                <p className="text-[28px] font-extrabold text-[#1a1a1a] text-center leading-tight">
+                <p className="text-3xl md:text-4xl font-extrabold text-ink text-center leading-tight">
                   {currentCard.item.catalan}
                 </p>
                 {!flipped && (
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setFlipped(true)
-                    }}
-                    className="mt-8 px-6 py-2.5 rounded-full bg-[#1a1a1a] text-white text-[13px] font-bold transition-all hover:bg-[#333] active:scale-[0.97] min-h-[44px]"
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setFlipped(true) }}
+                    className="mt-8 px-6 h-11 rounded-full bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark"
                   >
                     Girar
                   </button>
                 )}
               </div>
 
-              {/* Back */}
-              <div className="absolute inset-0 rounded-3xl bg-white border-2 border-[#F0F0F0] flex flex-col items-center justify-center p-8 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                <p className="text-[13px] font-bold text-[#BBB] uppercase tracking-wider mb-2">
+              <div className="absolute inset-0 rounded-3xl bg-paper border-2 border-line flex flex-col items-center justify-center p-8 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                <p className="text-sm font-semibold text-ink-muted uppercase tracking-wider mb-2">
                   Traducció
                 </p>
-                <p className="text-[24px] font-extrabold text-[#1a1a1a] text-center mb-4">
+                <p className="text-2xl md:text-3xl font-extrabold text-ink text-center mb-4">
                   {currentCard.item.spanish}
                 </p>
 
                 {currentCard.item.pronunciation && (
-                  <p className="text-[14px] text-[#888] mb-2 italic">
+                  <p className="text-base text-ink-muted mb-2 italic">
                     /{currentCard.item.pronunciation}/
                   </p>
                 )}
 
                 {currentCard.item.example && (
-                  <div className="mt-2 px-4 py-3 rounded-2xl bg-[#F8F8F8] max-w-full">
-                    <p className="text-[13px] text-[#666] text-center leading-relaxed">
+                  <div className="mt-2 px-4 py-3 rounded-xl bg-paper-2 max-w-full">
+                    <p className="text-sm text-ink-soft text-center leading-relaxed">
                       {currentCard.item.example}
                     </p>
                   </div>
                 )}
 
-                {/* Audio button */}
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    speakCatalan(currentCard.item.catalan)
-                  }}
-                  className="mt-4 w-11 h-11 rounded-full bg-[#F5F5F5] flex items-center justify-center hover:bg-[#EBEBEB] transition-colors"
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); speakCatalan(currentCard.item.catalan) }}
                   aria-label="Escoltar pronunciació"
+                  className="mt-5 w-12 h-12 rounded-full bg-accent-soft text-accent flex items-center justify-center hover:bg-accent hover:text-ink-inverse transition-colors"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                  </svg>
+                  <Volume2 size={20} strokeWidth={2} aria-hidden="true" />
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Rating buttons — only visible when flipped */}
           {flipped && !rated && (
             <div className="grid grid-cols-4 gap-2">
-              <RatingButton label="No ho sé" color="#EF4444" quality={1} onRate={rateCard} />
-              <RatingButton label="Difícil" color="#F59E0B" quality={3} onRate={rateCard} />
-              <RatingButton label="Bé" color="#22C55E" quality={4} onRate={rateCard} />
-              <RatingButton label="Fàcil" color="#3B82F6" quality={5} onRate={rateCard} />
+              <RatingButton label="No ho sé" tone="error" quality={1} onRate={rateCard} />
+              <RatingButton label="Difícil" tone="warning" quality={3} onRate={rateCard} />
+              <RatingButton label="Bé" tone="success" quality={4} onRate={rateCard} />
+              <RatingButton label="Fàcil" tone="accent" quality={5} onRate={rateCard} />
             </div>
           )}
         </div>
       )}
 
-      {/* ═══ RESULTS VIEW ═══ */}
       {view === 'results' && (
         <div className="text-center">
-          <div className="mb-8 mt-4">
-            <div className="w-20 h-20 rounded-full bg-[#F0FDF4] flex items-center justify-center mx-auto mb-5">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 6L9 17l-5-5" />
-              </svg>
-            </div>
-            <h2 className="text-[28px] font-extrabold text-[#1a1a1a] mb-2">Sessió completada!</h2>
-            <p className="text-[15px] text-[#888]">
-              {correctCount} correctes de {sessionResults.length}
-            </p>
+          <ResultsScore
+            score={correctCount}
+            total={sessionResults.length}
+            title="Sessió completada!"
+            subtitle={`${correctCount} correctes de ${sessionResults.length}`}
+          />
+
+          <div className="grid grid-cols-2 gap-3 max-w-[360px] mx-auto my-8">
+            <BreakdownCard
+              count={sessionResults.filter((r) => r.quality >= 4).length}
+              label="Bé / Fàcil"
+              tone="success"
+            />
+            <BreakdownCard
+              count={sessionResults.filter((r) => r.quality === 3).length}
+              label="Difícil"
+              tone="warning"
+            />
+            <BreakdownCard
+              count={sessionResults.filter((r) => r.quality < 3).length}
+              label="No ho sé"
+              tone="error"
+            />
+            <BreakdownCard count={sessionResults.length} label="Total" tone="accent" />
           </div>
 
-          {/* Score bar */}
-          <div className="mb-8">
-            <div className="h-3 bg-[#F0F0F0] rounded-full overflow-hidden max-w-[280px] mx-auto">
-              <div
-                className="h-full bg-[#22C55E] rounded-full transition-all duration-700"
-                style={{
-                  width: `${sessionResults.length > 0 ? (correctCount / sessionResults.length) * 100 : 0}%`,
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Breakdown */}
-          <div className="grid grid-cols-2 gap-3 max-w-[320px] mx-auto mb-10">
-            <div className="rounded-2xl bg-[#F0FDF4] p-4">
-              <p className="text-[24px] font-extrabold text-[#22C55E]">
-                {sessionResults.filter((r) => r.quality >= 4).length}
-              </p>
-              <p className="text-[12px] font-bold text-[#22C55E]/70">Bé / Fàcil</p>
-            </div>
-            <div className="rounded-2xl bg-[#FFF7ED] p-4">
-              <p className="text-[24px] font-extrabold text-[#F59E0B]">
-                {sessionResults.filter((r) => r.quality === 3).length}
-              </p>
-              <p className="text-[12px] font-bold text-[#F59E0B]/70">Difícil</p>
-            </div>
-            <div className="rounded-2xl bg-[#FEF2F2] p-4">
-              <p className="text-[24px] font-extrabold text-[#EF4444]">
-                {sessionResults.filter((r) => r.quality < 3).length}
-              </p>
-              <p className="text-[12px] font-bold text-[#EF4444]/70">No ho sé</p>
-            </div>
-            <div className="rounded-2xl bg-[#F5F3FF] p-4">
-              <p className="text-[24px] font-extrabold text-[#8B5CF6]">{sessionResults.length}</p>
-              <p className="text-[12px] font-bold text-[#8B5CF6]/70">Total</p>
-            </div>
-          </div>
-
-          {/* Actions */}
           <div className="space-y-3">
             <button
+              type="button"
               onClick={() => startSession(false)}
-              className="w-full py-4 rounded-full bg-[#1a1a1a] text-white text-[15px] font-bold transition-all hover:bg-[#333] active:scale-[0.98] min-h-[52px]"
+              className="w-full h-14 rounded-2xl bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark"
             >
               Continuar
             </button>
             <button
-              onClick={() => {
-                refreshStats()
-                setView('home')
-              }}
-              className="w-full py-4 rounded-full bg-[#F5F5F5] text-[#1a1a1a] text-[15px] font-bold transition-all hover:bg-[#EBEBEB] active:scale-[0.98] min-h-[52px]"
+              type="button"
+              onClick={() => { refreshStats(); setView('home') }}
+              className="w-full h-14 rounded-2xl bg-paper text-ink text-base font-extrabold uppercase tracking-wider btn-3d border-line-strong"
             >
               Tornar
             </button>
@@ -422,37 +401,108 @@ export default function FlashcardsPage() {
   )
 }
 
-// ── Sub-components ──────────────────────────────────────────────────
+type Tone = 'success' | 'warning' | 'error' | 'accent'
 
-function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
+function StatCard({ label, value, tone }: { label: string; value: number; tone: Tone }) {
+  const color: Record<Tone, string> = {
+    success: 'text-success',
+    warning: 'text-warning',
+    error: 'text-error',
+    accent: 'text-accent',
+  }
   return (
-    <div className="rounded-2xl bg-[#FAFAFA] p-4 flex flex-col items-start">
-      <p className="text-[28px] font-extrabold leading-none" style={{ color }}>
+    <div className="rounded-2xl bg-paper-2 border border-line p-5">
+      <p className={cn('text-3xl font-extrabold leading-none tabular-nums', color[tone])}>
         {value}
       </p>
-      <p className="text-[12px] font-bold text-[#999] mt-1 uppercase tracking-wide">{label}</p>
+      <p className="text-sm font-semibold text-ink-muted mt-2 uppercase tracking-wide">
+        {label}
+      </p>
     </div>
+  )
+}
+
+function UnitChip({
+  selected,
+  onClick,
+  children,
+}: {
+  selected: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'h-11 px-4 rounded-full text-sm font-semibold transition-colors',
+        selected
+          ? 'bg-primary text-white'
+          : 'bg-paper-3 text-ink-soft hover:bg-paper-4 hover:text-ink',
+      )}
+    >
+      {children}
+    </button>
   )
 }
 
 function RatingButton({
   label,
-  color,
+  tone,
   quality,
   onRate,
 }: {
   label: string
-  color: string
+  tone: Tone
   quality: Quality
   onRate: (q: Quality) => void
 }) {
+  const bg: Record<Tone, string> = {
+    error: 'bg-error hover:opacity-90',
+    warning: 'bg-warning hover:opacity-90',
+    success: 'bg-success hover:opacity-90',
+    accent: 'bg-accent hover:bg-accent-hover',
+  }
   return (
     <button
+      type="button"
       onClick={() => onRate(quality)}
-      className="py-3 rounded-2xl text-[12px] font-bold text-white transition-all hover:opacity-90 active:scale-[0.95] min-h-[52px]"
-      style={{ backgroundColor: color }}
+      className={cn(
+        'h-14 rounded-2xl text-sm font-semibold text-ink-inverse transition-all active:scale-[0.97]',
+        bg[tone],
+      )}
     >
       {label}
     </button>
+  )
+}
+
+function BreakdownCard({
+  count,
+  label,
+  tone,
+}: {
+  count: number
+  label: string
+  tone: Tone
+}) {
+  const bg: Record<Tone, string> = {
+    success: 'bg-success-soft',
+    warning: 'bg-warning-soft',
+    error: 'bg-error-soft',
+    accent: 'bg-accent-soft',
+  }
+  const fg: Record<Tone, string> = {
+    success: 'text-success',
+    warning: 'text-warning',
+    error: 'text-error',
+    accent: 'text-accent',
+  }
+  return (
+    <div className={cn('rounded-2xl p-5', bg[tone])}>
+      <p className={cn('text-3xl font-extrabold tabular-nums', fg[tone])}>{count}</p>
+      <p className={cn('text-sm font-semibold mt-1', fg[tone], 'opacity-80')}>{label}</p>
+    </div>
   )
 }

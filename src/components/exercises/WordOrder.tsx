@@ -1,6 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { RotateCcw } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import FeedbackBanner from './ui/FeedbackBanner'
 
 interface WordOrderProps {
   words: string[]
@@ -13,29 +16,27 @@ export default function WordOrder({ words, correctSentence, onComplete }: WordOr
   const [sentence, setSentence] = useState<string[]>([])
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null)
 
-  const handleBankClick = (word: string, index: number) => {
+  const handleBankClick = (_word: string, index: number) => {
     if (feedback) return
     const newBank = [...bank]
-    newBank.splice(index, 1)
+    const [w] = newBank.splice(index, 1)
     setBank(newBank)
-    setSentence([...sentence, word])
+    setSentence((s) => [...s, w])
   }
 
-  const handleSentenceClick = (word: string, index: number) => {
+  const handleSentenceClick = (_word: string, index: number) => {
     if (feedback) return
     const newSentence = [...sentence]
-    newSentence.splice(index, 1)
+    const [w] = newSentence.splice(index, 1)
     setSentence(newSentence)
-    setBank([...bank, word])
+    setBank((b) => [...b, w])
   }
 
   const handleCheck = () => {
-    const builtSentence = sentence.join(' ')
-    const isCorrect = builtSentence.trim() === correctSentence.trim()
-    setFeedback(isCorrect ? 'correct' : 'incorrect')
-    setTimeout(() => {
-      onComplete(isCorrect, builtSentence)
-    }, 1500)
+    const built = sentence.join(' ')
+    const ok = built.trim() === correctSentence.trim()
+    setFeedback(ok ? 'correct' : 'incorrect')
+    setTimeout(() => onComplete(ok, built), 1500)
   }
 
   const handleReset = () => {
@@ -44,54 +45,60 @@ export default function WordOrder({ words, correctSentence, onComplete }: WordOr
     setFeedback(null)
   }
 
+  const sentenceBorderClass =
+    feedback === 'correct'
+      ? 'border-success'
+      : feedback === 'incorrect'
+        ? 'border-error'
+        : 'border-line-strong'
+
   return (
     <div className="flex flex-col gap-6">
       <div
-        className={`min-h-[60px] flex flex-wrap items-center gap-2 pb-3 border-b-2 border-dashed ${
-          feedback === 'correct'
-            ? 'border-[#2E7D32]'
-            : feedback === 'incorrect'
-            ? 'border-red-400'
-            : 'border-gray-200'
-        }`}
+        className={cn(
+          'min-h-[72px] flex flex-wrap items-center gap-2 pb-3 border-b-2 border-dashed',
+          sentenceBorderClass,
+        )}
       >
         {sentence.length === 0 && (
-          <span className="text-gray-400 text-sm">Toca les paraules per construir la frase</span>
+          <span className="text-base text-ink-muted">
+            Toca les paraules per construir la frase
+          </span>
         )}
         {sentence.map((word, i) => (
           <button
             key={`s-${i}`}
+            type="button"
             onClick={() => handleSentenceClick(word, i)}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
+            disabled={!!feedback}
+            className={cn(
+              'rounded-full px-4 py-2 text-base font-semibold transition-all',
               feedback === 'correct'
-                ? 'bg-[#E8F5E9] text-[#2E7D32]'
+                ? 'bg-success-soft text-success'
                 : feedback === 'incorrect'
-                ? 'bg-red-50 text-red-600'
-                : 'bg-[#1a1a1a] text-white'
-            }`}
+                  ? 'bg-error-soft text-error'
+                  : 'bg-primary text-white',
+            )}
           >
             {word}
           </button>
         ))}
       </div>
 
-      {/* Feedback */}
       {feedback && (
-        <div
-          className={`text-sm font-medium ${
-            feedback === 'correct' ? 'text-[#2E7D32]' : 'text-red-600'
-          }`}
-        >
-          {feedback === 'correct' ? 'Correcte!' : `Incorrecte. La resposta correcta: ${correctSentence}`}
-        </div>
+        <FeedbackBanner
+          status={feedback}
+          message={feedback === 'incorrect' ? `Resposta correcta: ${correctSentence}` : undefined}
+        />
       )}
 
       <div className="flex flex-wrap gap-2">
         {bank.map((word, i) => (
           <button
             key={`b-${i}`}
+            type="button"
             onClick={() => handleBankClick(word, i)}
-            className="bg-[#F5F5F5] rounded-full px-4 py-2 text-sm font-medium text-[#1a1a1a] transition-all hover:bg-gray-200 active:scale-95"
+            className="rounded-full px-4 py-2 text-base font-semibold bg-paper-3 text-ink transition-colors hover:bg-paper-4 active:scale-95"
           >
             {word}
           </button>
@@ -100,15 +107,18 @@ export default function WordOrder({ words, correctSentence, onComplete }: WordOr
 
       <div className="flex gap-3">
         <button
+          type="button"
           onClick={handleReset}
-          className="flex-1 py-3 rounded-2xl text-sm font-medium bg-[#F5F5F5] text-[#1a1a1a] transition-all hover:bg-gray-200"
+          className="flex-1 h-12 rounded-xl text-base font-semibold bg-paper-3 text-ink hover:bg-paper-4 transition-colors inline-flex items-center justify-center gap-2"
         >
+          <RotateCcw size={18} strokeWidth={2} aria-hidden="true" />
           Esborrar
         </button>
         <button
+          type="button"
           onClick={handleCheck}
           disabled={sentence.length === 0 || feedback !== null}
-          className="flex-1 py-3 rounded-2xl text-sm font-semibold bg-[#1a1a1a] text-white transition-all hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex-1 h-12 rounded-xl text-sm font-extrabold uppercase tracking-wider bg-primary text-white btn-3d border-primary-dark disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Comprovar
         </button>

@@ -1,145 +1,88 @@
-// eslint-disable @typescript-eslint/no-explicit-any
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
+import {
+  ArrowRight,
+  BookOpen,
+  Headphones,
+  PenLine,
+  Mic,
+  Volume2,
+  Pause,
+  Play,
+  Loader2,
+  Share2,
+  GraduationCap,
+  Trophy,
+  Clock,
+  Sparkles,
+  type LucideIcon,
+} from 'lucide-react'
 import { callSonnet } from '@/lib/api'
-import { wordCount } from '@/lib/utils'
+import { wordCount, cn } from '@/lib/utils'
 import { recordError } from '@/lib/errorLog'
+import OptionButton, { type OptionState } from '@/components/exercises/ui/OptionButton'
+import FeedbackBanner from '@/components/exercises/ui/FeedbackBanner'
+import ResultsScore from '@/components/exercises/ui/ResultsScore'
+import { Mascot } from '@/components/ui/Mascot'
 
 type Stage = 'setup' | 'part1' | 'part2' | 'part3' | 'part4' | 'results'
 
 interface PartScore {
   label: string
-  emoji: string
+  Icon: LucideIcon
   score: number
   total: number
 }
 
-// --- Part 1: Comprensio escrita ---
-const textComprensioEscrita = `La Marta viu a Barcelona, al barri de Gr\u00e0cia. T\u00e9 un pis petit amb dues habitacions, un bany i una cuina. Cada dia es lleva a les set del mat\u00ed, esmorza un caf\u00e8 amb llet i va a treballar en metro. Treballa de professora en una escola. A la tarda, estudia catal\u00e0 al CPNL. Els caps de setmana li agrada passejar per la platja i anar al cinema amb amics.`
+const textComprensioEscrita = `La Marta viu a Barcelona, al barri de Gràcia. Té un pis petit amb dues habitacions, un bany i una cuina. Cada dia es lleva a les set del matí, esmorza un cafè amb llet i va a treballar en metro. Treballa de professora en una escola. A la tarda, estudia català al CPNL. Els caps de setmana li agrada passejar per la platja i anar al cinema amb amics.`
 
 const preguntesEscrita = [
-  {
-    question: 'On viu la Marta?',
-    options: ['A Madrid', 'A Barcelona, al barri de Gr\u00e0cia', 'A Girona', 'A Val\u00e8ncia'],
-    correct: 1,
-  },
-  {
-    question: 'Quantes habitacions t\u00e9 el pis?',
-    options: ['Una', 'Dues', 'Tres', 'Quatre'],
-    correct: 1,
-  },
-  {
-    question: 'Com va a la feina?',
-    options: ['En cotxe', 'A peu', 'En metro', 'En bicicleta'],
-    correct: 2,
-  },
-  {
-    question: 'De qu\u00e8 treballa la Marta?',
-    options: ['De metgessa', 'De professora', 'De cambrera', 'De venedora'],
-    correct: 1,
-  },
-  {
-    question: 'Qu\u00e8 fa els caps de setmana?',
-    options: [
-      'Treballa a l\u2019escola',
-      'Estudia catal\u00e0',
-      'Passeja per la platja i va al cinema',
-      'Cuina a casa',
-    ],
-    correct: 2,
-  },
+  { question: 'On viu la Marta?', options: ['A Madrid', 'A Barcelona, al barri de Gràcia', 'A Girona', 'A València'], correct: 1 },
+  { question: 'Quantes habitacions té el pis?', options: ['Una', 'Dues', 'Tres', 'Quatre'], correct: 1 },
+  { question: 'Com va a la feina?', options: ['En cotxe', 'A peu', 'En metro', 'En bicicleta'], correct: 2 },
+  { question: 'De què treballa la Marta?', options: ['De metgessa', 'De professora', 'De cambrera', 'De venedora'], correct: 1 },
+  { question: 'Què fa els caps de setmana?', options: ["Treballa a l'escola", 'Estudia català', 'Passeja per la platja i va al cinema', 'Cuina a casa'], correct: 2 },
 ]
 
-// --- Part 2: Comprensio oral ---
-const textComprensioOral = `En Jordi t\u00e9 vint-i-cinc anys i viu a Tarragona amb la seva germana. Treballa de cuiner en un restaurant del centre. Es lleva a les nou del mat\u00ed i va a treballar en bicicleta. Li agrada molt cuinar plats de peix. Els diumenges va al mercat a comprar fruita i verdura fresca. A la nit, li agrada llegir llibres i escoltar m\u00fasica.`
+const textComprensioOral = `En Jordi té vint-i-cinc anys i viu a Tarragona amb la seva germana. Treballa de cuiner en un restaurant del centre. Es lleva a les nou del matí i va a treballar en bicicleta. Li agrada molt cuinar plats de peix. Els diumenges va al mercat a comprar fruita i verdura fresca. A la nit, li agrada llegir llibres i escoltar música.`
 
 const preguntesOral = [
-  {
-    question: 'Quants anys t\u00e9 en Jordi?',
-    options: ['Vint anys', 'Vint-i-cinc anys', 'Trenta anys', 'Vint-i-dos anys'],
-    correct: 1,
-  },
-  {
-    question: 'Amb qui viu en Jordi?',
-    options: ['Amb els pares', 'Sol', 'Amb la seva germana', 'Amb un amic'],
-    correct: 2,
-  },
-  {
-    question: 'De qu\u00e8 treballa?',
-    options: ['De professor', 'De cambrer', 'De cuiner', 'De metge'],
-    correct: 2,
-  },
-  {
-    question: 'Com va a treballar?',
-    options: ['En metro', 'A peu', 'En cotxe', 'En bicicleta'],
-    correct: 3,
-  },
-  {
-    question: 'Qu\u00e8 fa els diumenges?',
-    options: [
-      'Treballa al restaurant',
-      'Va al mercat a comprar',
-      'Juga a futbol',
-      'Va a la platja',
-    ],
-    correct: 1,
-  },
+  { question: 'Quants anys té en Jordi?', options: ['Vint anys', 'Vint-i-cinc anys', 'Trenta anys', 'Vint-i-dos anys'], correct: 1 },
+  { question: 'Amb qui viu en Jordi?', options: ['Amb els pares', 'Sol', 'Amb la seva germana', 'Amb un amic'], correct: 2 },
+  { question: 'De què treballa?', options: ['De professor', 'De cambrer', 'De cuiner', 'De metge'], correct: 2 },
+  { question: 'Com va a treballar?', options: ['En metro', 'A peu', 'En cotxe', 'En bicicleta'], correct: 3 },
+  { question: 'Què fa els diumenges?', options: ['Treballa al restaurant', 'Va al mercat a comprar', 'Juga a futbol', 'Va a la platja'], correct: 1 },
 ]
 
-function ScoreCircle({ score, total, size = 120 }: { score: number; total: number; size?: number }) {
-  const pct = total > 0 ? Math.round((score / total) * 100) : 0
-  const radius = (size / 2) - 8
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference - (pct / 100) * circumference
-  const color = pct >= 80 ? '#4CAF50' : pct >= 50 ? '#FFA726' : '#EF5350'
+const container = 'mx-auto w-full max-w-[860px] px-5 md:px-8 py-8 md:py-12'
 
+function StageBadge({ current }: { current: number }) {
   return (
-    <div className="relative mx-auto" style={{ width: size, height: size }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#F5F5F5" strokeWidth="8" />
-        <circle
-          cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={color} strokeWidth="8"
-          strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset}
-          transform={`rotate(-90 ${size / 2} ${size / 2})`} className="transition-all duration-1000"
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-[28px] font-extrabold" style={{ color }}>{pct}%</span>
-      </div>
-    </div>
+    <span className="inline-flex items-center h-7 px-3 rounded-full bg-primary text-white text-sm font-extrabold tabular-nums">
+      {current}/4
+    </span>
   )
 }
 
 export default function ExamenPage() {
   const [stage, setStage] = useState<Stage>('setup')
-
-  // Part 1 state
   const [p1Answers, setP1Answers] = useState<(number | null)[]>(new Array(preguntesEscrita.length).fill(null))
   const [p1Submitted, setP1Submitted] = useState(false)
-
-  // Part 2 state
   const [p2Answers, setP2Answers] = useState<(number | null)[]>(new Array(preguntesOral.length).fill(null))
   const [p2Submitted, setP2Submitted] = useState(false)
   const [p2Playing, setP2Playing] = useState(false)
-
-  // Part 3 state
   const [p3Text, setP3Text] = useState('')
   const [p3Loading, setP3Loading] = useState(false)
   const [p3Result, setP3Result] = useState<{ score: number; feedback: string } | null>(null)
-
-  // Part 4 state
   const [p4Recording, setP4Recording] = useState(false)
   const [p4Transcription, setP4Transcription] = useState('')
   const [p4Loading, setP4Loading] = useState(false)
   const [p4Result, setP4Result] = useState<{ score: number; feedback: string } | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null)
-
-  // Scores
   const [scores, setScores] = useState<PartScore[]>([])
 
-  // --- TTS for Part 2 ---
   const speakText = useCallback(() => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return
     window.speechSynthesis.cancel()
@@ -151,31 +94,30 @@ export default function ExamenPage() {
     window.speechSynthesis.speak(utter)
   }, [])
 
-  // --- Speech Recognition for Part 4 ---
   const toggleRecording = useCallback(() => {
     if (p4Recording) {
       recognitionRef.current?.stop()
       setP4Recording(false)
       return
     }
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    if (!SpeechRecognition) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SR) {
       alert('El teu navegador no suporta reconeixement de veu.')
       return
     }
-    const recognition = new (SpeechRecognition as any)()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const recognition = new SR()
     recognition.lang = 'ca-ES'
     recognition.continuous = true
     recognition.interimResults = true
     let finalTranscript = p4Transcription
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recognition.onresult = (event: any) => {
       let interim = ''
       for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript + ' '
-        } else {
-          interim += event.results[i][0].transcript
-        }
+        if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript + ' '
+        else interim += event.results[i][0].transcript
       }
       setP4Transcription(finalTranscript + interim)
     }
@@ -186,7 +128,6 @@ export default function ExamenPage() {
     setP4Recording(true)
   }, [p4Recording, p4Transcription])
 
-  // Auto-play TTS when entering part 2
   useEffect(() => {
     if (stage === 'part2') {
       const timer = setTimeout(() => speakText(), 500)
@@ -194,7 +135,6 @@ export default function ExamenPage() {
     }
   }, [stage, speakText])
 
-  // --- Part handlers ---
   const submitPart1 = () => {
     setP1Submitted(true)
     const correct = p1Answers.filter((a, i) => a === preguntesEscrita[i].correct).length
@@ -204,7 +144,7 @@ export default function ExamenPage() {
         recordError({ context: q.question, userAnswer: q.options[a], correctAnswer: q.options[q.correct], source: 'exercise', rule: 'examen-comprensio-escrita' })
       }
     })
-    setScores((s) => [...s, { label: 'Comprensi\u00f3 escrita', emoji: '\uD83D\uDCD6', score: correct, total: preguntesEscrita.length }])
+    setScores((s) => [...s, { label: 'Comprensió escrita', Icon: BookOpen, score: correct, total: preguntesEscrita.length }])
   }
 
   const submitPart2 = () => {
@@ -217,23 +157,23 @@ export default function ExamenPage() {
         recordError({ context: q.question, userAnswer: q.options[a], correctAnswer: q.options[q.correct], source: 'exercise', rule: 'examen-comprensio-oral' })
       }
     })
-    setScores((s) => [...s, { label: 'Comprensi\u00f3 oral', emoji: '\uD83D\uDD0A', score: correct, total: preguntesOral.length }])
+    setScores((s) => [...s, { label: 'Comprensió oral', Icon: Headphones, score: correct, total: preguntesOral.length }])
   }
 
   const submitPart3 = async () => {
     setP3Loading(true)
     try {
       const res = await callSonnet('evaluate_exam', {
-        task: 'Escriu un text sobre la teva rutina di\u00e0ria. Explica qu\u00e8 fas cada dia, a quina hora et lleves, on treballes o estudies, i qu\u00e8 fas el cap de setmana. (m\u00ednim 50 paraules)',
+        task: 'Escriu un text sobre la teva rutina diària. Explica què fas cada dia, a quina hora et lleves, on treballes o estudies, i què fas el cap de setmana. (mínim 50 paraules)',
         answer: p3Text,
       })
       const score = res.score ?? res.puntuacio ?? 50
       const feedback = res.feedback ?? res.comentari ?? ''
       const normalized = Math.round((score / 100) * 5)
       setP3Result({ score: normalized, feedback })
-      setScores((s) => [...s, { label: 'Expressi\u00f3 escrita', emoji: '\u270D\uFE0F', score: normalized, total: 5 }])
+      setScores((s) => [...s, { label: 'Expressió escrita', Icon: PenLine, score: normalized, total: 5 }])
     } catch {
-      setP3Result({ score: 0, feedback: 'Error de connexi\u00f3. Torna-ho a provar.' })
+      setP3Result({ score: 0, feedback: 'Error de connexió. Torna-ho a provar.' })
     } finally {
       setP3Loading(false)
     }
@@ -247,16 +187,16 @@ export default function ExamenPage() {
     setP4Loading(true)
     try {
       const res = await callSonnet('evaluate_oral', {
-        task: 'Parla sobre la teva fam\u00edlia. Digues quantes persones hi ha, com es diuen i com s\u00f3n.',
+        task: 'Parla sobre la teva família. Digues quantes persones hi ha, com es diuen i com són.',
         transcription: p4Transcription,
       })
       const score = res.score ?? res.puntuacio ?? 50
       const feedback = res.feedback ?? res.comentari ?? ''
       const normalized = Math.round((score / 100) * 5)
       setP4Result({ score: normalized, feedback })
-      setScores((s) => [...s, { label: 'Expressi\u00f3 oral', emoji: '\uD83C\uDF99\uFE0F', score: normalized, total: 5 }])
+      setScores((s) => [...s, { label: 'Expressió oral', Icon: Mic, score: normalized, total: 5 }])
     } catch {
-      setP4Result({ score: 0, feedback: 'Error de connexi\u00f3. Torna-ho a provar.' })
+      setP4Result({ score: 0, feedback: 'Error de connexió. Torna-ho a provar.' })
     } finally {
       setP4Loading(false)
     }
@@ -284,459 +224,550 @@ export default function ExamenPage() {
   const pctGlobal = totalMax > 0 ? Math.round((totalScore / totalMax) * 100) : 0
   const apte = pctGlobal >= 60
 
-  const wrapper = 'min-h-screen bg-white'
-  const container = 'px-5 md:px-10 lg:px-20 xl:px-32 pt-8 pb-44 md:pb-12'
-  const inner = 'max-w-[800px] mx-auto'
-
-  // ==================== SETUP ====================
+  // ══ SETUP ══
   if (stage === 'setup') {
-    const parts = [
-      { emoji: '\uD83D\uDCD6', title: 'Comprensi\u00f3 escrita', desc: 'Llegir un text i respondre preguntes' },
-      { emoji: '\uD83D\uDD0A', title: 'Comprensi\u00f3 oral', desc: 'Escoltar un text i respondre preguntes' },
-      { emoji: '\u270D\uFE0F', title: 'Expressi\u00f3 escrita', desc: 'Escriure un text sobre un tema (corregit per IA)' },
-      { emoji: '\uD83C\uDF99\uFE0F', title: 'Expressi\u00f3 oral', desc: 'Parlar sobre un tema (gravar i avaluar per IA)' },
+    const parts: {
+      Icon: LucideIcon
+      title: string
+      desc: string
+      minutes: number
+      maxScore: string
+    }[] = [
+      { Icon: BookOpen,   title: 'Comprensió escrita', desc: 'Llegir un text i respondre preguntes', minutes: 5,  maxScore: '5/5' },
+      { Icon: Headphones, title: 'Comprensió oral',    desc: 'Escoltar un text i respondre preguntes', minutes: 5, maxScore: '5/5' },
+      { Icon: PenLine,    title: 'Expressió escrita',  desc: 'Escriure un text sobre un tema (corregit per IA)', minutes: 10, maxScore: '5/5' },
+      { Icon: Mic,        title: 'Expressió oral',     desc: 'Parlar sobre un tema (gravar i avaluar per IA)', minutes: 5, maxScore: '5/5' },
     ]
+    const totalMinutes = parts.reduce((a, p) => a + p.minutes, 0)
     return (
-      <div className={wrapper}>
-        <div className={container}>
-          <div className={inner}>
-            <p className="text-[13px] font-bold text-[#666] uppercase tracking-widest mb-3">Simulaci\u00f3</p>
-            <h1 className="text-[32px] font-extrabold text-[#1a1a1a] leading-[1.1] mb-2">Examen CPNL A1</h1>
-            <p className="text-[15px] text-[#666] font-semibold mb-10">
-              Simula l&apos;examen oficial del CPNL nivell A1. Consta de 4 proves.
-            </p>
-
-            <div className="space-y-3 mb-10">
-              {parts.map((p, i) => (
-                <div key={i} className="flex items-start gap-4 bg-[#F5F5F5] rounded-2xl p-5">
-                  <span className="text-[28px]">{p.emoji}</span>
-                  <div>
-                    <h3 className="text-[15px] font-extrabold text-[#1a1a1a]">Part {i + 1}: {p.title}</h3>
-                    <p className="text-[13px] font-semibold text-[#666]">{p.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={() => setStage('part1')}
-              className="w-full sm:w-auto bg-[#1a1a1a] text-white text-[14px] font-bold px-8 py-3.5 rounded-full hover:bg-[#333] transition-colors"
-            >
-              Comen\u00e7ar examen
-            </button>
+      <div className={container}>
+        <header className="mb-8">
+          <p className="text-xs font-extrabold uppercase tracking-widest text-primary mb-2">
+            Simulació
+          </p>
+          <div className="flex items-center gap-3 mb-3">
+            <Mascot expression="happy" size="sm" />
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight ">
+            Examen CPNL A1
+          </h1>
           </div>
+          <p className="text-lg text-ink-soft">
+            Simula l&apos;examen oficial del CPNL nivell A1. Consta de 4 proves.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <span className="inline-flex items-center gap-2 h-9 px-3.5 rounded-full bg-paper-2 border-2 border-line text-sm font-semibold text-ink">
+              <Clock size={16} strokeWidth={2} className="text-ink-muted" aria-hidden="true" />
+              ~{totalMinutes} min total
+            </span>
+            <span className="inline-flex items-center gap-2 h-9 px-3.5 rounded-full bg-paper-2 border-2 border-line text-sm font-semibold text-ink">
+              <Sparkles size={16} strokeWidth={2} className="text-accent" aria-hidden="true" />
+              Fins a {parts.reduce((a, p) => a + 5, 0)} XP
+            </span>
+            <span className="inline-flex items-center gap-2 h-9 px-3.5 rounded-full bg-paper-2 border-2 border-line text-sm font-semibold text-ink">
+              <Trophy size={16} strokeWidth={2} className="text-warning" aria-hidden="true" />
+              Apte des del 60%
+            </span>
+          </div>
+        </header>
+
+        <div className="space-y-3 mb-10">
+          {parts.map((p, i) => (
+            <div
+              key={i}
+              className="flex items-start gap-4 bg-paper border-2 border-line rounded-2xl p-5"
+            >
+              <span className="w-11 h-11 rounded-xl bg-accent-soft text-accent flex items-center justify-center shrink-0">
+                <p.Icon size={22} strokeWidth={2} aria-hidden="true" />
+              </span>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-extrabold text-ink">
+                  Part {i + 1}: {p.title}
+                </h3>
+                <p className="text-sm text-ink-soft mt-0.5">{p.desc}</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-ink-muted">
+                    <Clock size={12} strokeWidth={2} aria-hidden="true" />
+                    ~{p.minutes} min
+                  </span>
+                  <span className="text-xs font-semibold text-ink-muted">
+                    · Nota màx {p.maxScore}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
+
+        <button
+          type="button"
+          onClick={() => setStage('part1')}
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark px-8 h-14 rounded-2xl hover:bg-ink-soft transition-colors"
+        >
+          Començar examen
+          <ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" />
+        </button>
       </div>
     )
   }
 
-  // ==================== PART 1: Comprensio escrita ====================
+  // ══ PART 1 ══
   if (stage === 'part1') {
     return (
-      <div className={wrapper}>
-        <div className={container}>
-          <div className={inner}>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-bold text-white bg-[#1a1a1a] rounded-full px-2.5 py-0.5">1/4</span>
-              <h2 className="text-[13px] font-bold text-[#999] uppercase tracking-widest">Comprensi\u00f3 escrita</h2>
-            </div>
-            <h1 className="text-[24px] font-extrabold text-[#1a1a1a] mb-6">Llegeix el text i respon</h1>
-
-            <div className="bg-[#F5F5F5] rounded-2xl p-5 mb-8 text-[15px] text-[#1a1a1a] font-medium leading-relaxed">
-              {textComprensioEscrita}
-            </div>
-
-            <div className="space-y-6 mb-8">
-              {preguntesEscrita.map((q, qi) => (
-                <div key={qi}>
-                  <p className="text-[15px] font-bold text-[#1a1a1a] mb-3">{qi + 1}. {q.question}</p>
-                  <div className="space-y-2">
-                    {q.options.map((opt, oi) => {
-                      const selected = p1Answers[qi] === oi
-                      const isCorrect = p1Submitted && oi === q.correct
-                      const isWrong = p1Submitted && selected && oi !== q.correct
-                      let bg = 'bg-[#F5F5F5] hover:bg-[#ECECEC]'
-                      if (isCorrect) bg = 'bg-green-100 ring-2 ring-green-400'
-                      else if (isWrong) bg = 'bg-red-100 ring-2 ring-red-400'
-                      else if (selected) bg = 'bg-[#E3E3E3]'
-
-                      return (
-                        <button
-                          key={oi}
-                          onClick={() => {
-                            if (p1Submitted) return
-                            const next = [...p1Answers]
-                            next[qi] = oi
-                            setP1Answers(next)
-                          }}
-                          className={`w-full text-left rounded-xl px-4 py-3 text-[14px] font-medium transition-colors ${bg}`}
-                        >
-                          {opt}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {!p1Submitted ? (
-              <button
-                onClick={submitPart1}
-                disabled={p1Answers.some((a) => a === null)}
-                className="w-full sm:w-auto bg-[#1a1a1a] text-white text-[14px] font-bold px-8 py-3.5 rounded-full hover:bg-[#333] transition-colors disabled:opacity-40"
-              >
-                Comprovar respostes
-              </button>
-            ) : (
-              <div>
-                <p className="text-[15px] font-bold text-[#1a1a1a] mb-4">
-                  Resultat: {p1Answers.filter((a, i) => a === preguntesEscrita[i].correct).length}/{preguntesEscrita.length} correctes
-                </p>
-                <button
-                  onClick={() => setStage('part2')}
-                  className="bg-[#1a1a1a] text-white text-[14px] font-bold px-8 py-3.5 rounded-full hover:bg-[#333] transition-colors"
-                >
-                  Seg\u00fcent prova
-                  <svg className="inline ml-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                </button>
-              </div>
-            )}
-          </div>
+      <div className={container}>
+        <div className="flex items-center gap-2 mb-2">
+          <StageBadge current={1} />
+          <h2 className="text-xs font-extrabold uppercase tracking-widest text-primary">
+            Comprensió escrita
+          </h2>
         </div>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-ink mb-6">Llegeix el text i respon</h1>
+
+        <div className="bg-paper-2 border-2 border-line rounded-2xl p-6 mb-8 text-base md:text-lg text-ink leading-relaxed">
+          {textComprensioEscrita}
+        </div>
+
+        <div className="space-y-6 mb-8">
+          {preguntesEscrita.map((q, qi) => (
+            <div key={qi}>
+              <p className="text-base font-bold text-ink mb-3">
+                {qi + 1}. {q.question}
+              </p>
+              <div className="space-y-2">
+                {q.options.map((opt, oi) => {
+                  const selected = p1Answers[qi] === oi
+                  let state: OptionState = 'idle'
+                  if (p1Submitted && oi === q.correct) state = 'correct'
+                  else if (p1Submitted && selected && oi !== q.correct) state = 'wrong'
+                  else if (selected) state = 'selected'
+                  return (
+                    <OptionButton
+                      key={oi}
+                      state={state}
+                      onClick={() => {
+                        if (p1Submitted) return
+                        const next = [...p1Answers]
+                        next[qi] = oi
+                        setP1Answers(next)
+                      }}
+                      disabled={p1Submitted}
+                    >
+                      {opt}
+                    </OptionButton>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {!p1Submitted ? (
+          <button
+            type="button"
+            onClick={submitPart1}
+            disabled={p1Answers.some((a) => a === null)}
+            className="w-full sm:w-auto bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark px-8 h-14 rounded-2xl hover:bg-ink-soft transition-colors disabled:opacity-40"
+          >
+            Comprovar respostes
+          </button>
+        ) : (
+          <div className="space-y-4">
+            <FeedbackBanner
+              status={
+                p1Answers.filter((a, i) => a === preguntesEscrita[i].correct).length >=
+                Math.ceil(preguntesEscrita.length * 0.6)
+                  ? 'correct'
+                  : 'incorrect'
+              }
+              title={`Resultat: ${p1Answers.filter((a, i) => a === preguntesEscrita[i].correct).length}/${preguntesEscrita.length} correctes`}
+            />
+            <button
+              type="button"
+              onClick={() => setStage('part2')}
+              className="inline-flex items-center gap-2 bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark px-8 h-14 rounded-2xl hover:bg-ink-soft transition-colors"
+            >
+              Següent prova
+              <ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" />
+            </button>
+          </div>
+        )}
       </div>
     )
   }
 
-  // ==================== PART 2: Comprensio oral ====================
+  // ══ PART 2 ══
   if (stage === 'part2') {
     return (
-      <div className={wrapper}>
-        <div className={container}>
-          <div className={inner}>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-bold text-white bg-[#1a1a1a] rounded-full px-2.5 py-0.5">2/4</span>
-              <h2 className="text-[13px] font-bold text-[#999] uppercase tracking-widest">Comprensi\u00f3 oral</h2>
-            </div>
-            <h1 className="text-[24px] font-extrabold text-[#1a1a1a] mb-6">Escolta i respon</h1>
-
-            <div className="bg-[#F5F5F5] rounded-2xl p-6 mb-8 flex flex-col items-center gap-4">
-              <button
-                onClick={speakText}
-                disabled={p2Playing}
-                className="w-16 h-16 rounded-full bg-[#1a1a1a] text-white flex items-center justify-center hover:bg-[#333] transition-colors disabled:opacity-60"
-              >
-                {p2Playing ? (
-                  <svg className="animate-pulse" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></svg>
-                ) : (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3" /></svg>
-                )}
-              </button>
-              <p className="text-[13px] font-bold text-[#999]">
-                {p2Playing ? 'Escoltant...' : 'Prem per escoltar el text'}
-              </p>
-              {!p2Playing && (
-                <button onClick={speakText} className="text-[13px] font-bold text-[#666] underline">
-                  Repetir
-                </button>
-              )}
-            </div>
-
-            <div className="space-y-6 mb-8">
-              {preguntesOral.map((q, qi) => (
-                <div key={qi}>
-                  <p className="text-[15px] font-bold text-[#1a1a1a] mb-3">{qi + 1}. {q.question}</p>
-                  <div className="space-y-2">
-                    {q.options.map((opt, oi) => {
-                      const selected = p2Answers[qi] === oi
-                      const isCorrect = p2Submitted && oi === q.correct
-                      const isWrong = p2Submitted && selected && oi !== q.correct
-                      let bg = 'bg-[#F5F5F5] hover:bg-[#ECECEC]'
-                      if (isCorrect) bg = 'bg-green-100 ring-2 ring-green-400'
-                      else if (isWrong) bg = 'bg-red-100 ring-2 ring-red-400'
-                      else if (selected) bg = 'bg-[#E3E3E3]'
-
-                      return (
-                        <button
-                          key={oi}
-                          onClick={() => {
-                            if (p2Submitted) return
-                            const next = [...p2Answers]
-                            next[qi] = oi
-                            setP2Answers(next)
-                          }}
-                          className={`w-full text-left rounded-xl px-4 py-3 text-[14px] font-medium transition-colors ${bg}`}
-                        >
-                          {opt}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {!p2Submitted ? (
-              <button
-                onClick={submitPart2}
-                disabled={p2Answers.some((a) => a === null)}
-                className="w-full sm:w-auto bg-[#1a1a1a] text-white text-[14px] font-bold px-8 py-3.5 rounded-full hover:bg-[#333] transition-colors disabled:opacity-40"
-              >
-                Comprovar respostes
-              </button>
-            ) : (
-              <div>
-                <p className="text-[15px] font-bold text-[#1a1a1a] mb-4">
-                  Resultat: {p2Answers.filter((a, i) => a === preguntesOral[i].correct).length}/{preguntesOral.length} correctes
-                </p>
-                <button
-                  onClick={() => setStage('part3')}
-                  className="bg-[#1a1a1a] text-white text-[14px] font-bold px-8 py-3.5 rounded-full hover:bg-[#333] transition-colors"
-                >
-                  Seg\u00fcent prova
-                  <svg className="inline ml-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                </button>
-              </div>
-            )}
-          </div>
+      <div className={container}>
+        <div className="flex items-center gap-2 mb-2">
+          <StageBadge current={2} />
+          <h2 className="text-xs font-extrabold uppercase tracking-widest text-primary">
+            Comprensió oral
+          </h2>
         </div>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-ink mb-6">Escolta i respon</h1>
+
+        <div className="bg-paper-2 border-2 border-line rounded-2xl p-6 mb-8 flex flex-col items-center gap-4">
+          <button
+            type="button"
+            onClick={speakText}
+            disabled={p2Playing}
+            aria-label={p2Playing ? 'Reproduint' : 'Reproduir el text'}
+            className={cn(
+              'w-16 h-16 rounded-full text-ink-inverse flex items-center justify-center transition-colors disabled:opacity-60',
+              p2Playing ? 'bg-accent animate-pulse' : 'bg-ink hover:bg-ink-soft',
+            )}
+          >
+            {p2Playing ? (
+              <Pause size={26} strokeWidth={2.5} aria-hidden="true" />
+            ) : (
+              <Play size={26} strokeWidth={2.5} className="ml-0.5" aria-hidden="true" />
+            )}
+          </button>
+          <p className="text-sm font-semibold text-ink-muted">
+            {p2Playing ? 'Escoltant...' : 'Prem per escoltar el text'}
+          </p>
+          {!p2Playing && (
+            <button
+              type="button"
+              onClick={speakText}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-ink-soft hover:text-ink underline"
+            >
+              <Volume2 size={14} strokeWidth={2} aria-hidden="true" />
+              Repetir
+            </button>
+          )}
+        </div>
+
+        <div className="space-y-6 mb-8">
+          {preguntesOral.map((q, qi) => (
+            <div key={qi}>
+              <p className="text-base font-bold text-ink mb-3">
+                {qi + 1}. {q.question}
+              </p>
+              <div className="space-y-2">
+                {q.options.map((opt, oi) => {
+                  const selected = p2Answers[qi] === oi
+                  let state: OptionState = 'idle'
+                  if (p2Submitted && oi === q.correct) state = 'correct'
+                  else if (p2Submitted && selected && oi !== q.correct) state = 'wrong'
+                  else if (selected) state = 'selected'
+                  return (
+                    <OptionButton
+                      key={oi}
+                      state={state}
+                      onClick={() => {
+                        if (p2Submitted) return
+                        const next = [...p2Answers]
+                        next[qi] = oi
+                        setP2Answers(next)
+                      }}
+                      disabled={p2Submitted}
+                    >
+                      {opt}
+                    </OptionButton>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {!p2Submitted ? (
+          <button
+            type="button"
+            onClick={submitPart2}
+            disabled={p2Answers.some((a) => a === null)}
+            className="w-full sm:w-auto bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark px-8 h-14 rounded-2xl hover:bg-ink-soft transition-colors disabled:opacity-40"
+          >
+            Comprovar respostes
+          </button>
+        ) : (
+          <div className="space-y-4">
+            <FeedbackBanner
+              status={
+                p2Answers.filter((a, i) => a === preguntesOral[i].correct).length >=
+                Math.ceil(preguntesOral.length * 0.6)
+                  ? 'correct'
+                  : 'incorrect'
+              }
+              title={`Resultat: ${p2Answers.filter((a, i) => a === preguntesOral[i].correct).length}/${preguntesOral.length} correctes`}
+            />
+            <button
+              type="button"
+              onClick={() => setStage('part3')}
+              className="inline-flex items-center gap-2 bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark px-8 h-14 rounded-2xl hover:bg-ink-soft transition-colors"
+            >
+              Següent prova
+              <ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" />
+            </button>
+          </div>
+        )}
       </div>
     )
   }
 
-  // ==================== PART 3: Expressio escrita ====================
+  // ══ PART 3 ══
   if (stage === 'part3') {
     return (
-      <div className={wrapper}>
-        <div className={container}>
-          <div className={inner}>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-bold text-white bg-[#1a1a1a] rounded-full px-2.5 py-0.5">3/4</span>
-              <h2 className="text-[13px] font-bold text-[#999] uppercase tracking-widest">Expressi\u00f3 escrita</h2>
-            </div>
-            <h1 className="text-[24px] font-extrabold text-[#1a1a1a] mb-4">Escriu un text</h1>
-
-            <div className="bg-[#F5F5F5] rounded-2xl p-5 mb-6">
-              <p className="text-[14px] font-semibold text-[#1a1a1a]">
-                Escriu un text sobre la teva rutina di\u00e0ria. Explica qu\u00e8 fas cada dia, a quina hora et lleves, on treballes o estudies, i qu\u00e8 fas el cap de setmana.
-              </p>
-              <p className="text-[12px] font-bold text-[#999] mt-2">M\u00ednim 50 paraules</p>
-            </div>
-
-            <textarea
-              value={p3Text}
-              onChange={(e) => setP3Text(e.target.value)}
-              placeholder="Escriu aqu\u00ed en catal\u00e0..."
-              disabled={!!p3Result}
-              className="w-full min-h-[200px] bg-[#F5F5F5] rounded-2xl p-5 text-[15px] text-[#1a1a1a] font-medium placeholder:text-[#999] outline-none resize-y focus:ring-2 focus:ring-[#1a1a1a]/10 disabled:opacity-60"
-            />
-
-            <div className="flex items-center justify-between mt-4 mb-6">
-              <span className={`text-[13px] font-bold ${wordCount(p3Text) >= 50 ? 'text-green-600' : 'text-[#999]'}`}>
-                {wordCount(p3Text)} / 50 paraules
-              </span>
-              {!p3Result && (
-                <button
-                  onClick={submitPart3}
-                  disabled={p3Loading || wordCount(p3Text) < 10}
-                  className="flex items-center gap-2 bg-[#1a1a1a] text-white text-[14px] font-bold px-6 py-3 rounded-full hover:bg-[#333] transition-colors disabled:opacity-40"
-                >
-                  {p3Loading ? (
-                    <>
-                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                      Avaluant...
-                    </>
-                  ) : 'Enviar'}
-                </button>
-              )}
-            </div>
-
-            {p3Result && (
-              <div className="bg-[#F5F5F5] rounded-2xl p-5 mb-6">
-                <p className="text-[15px] font-bold text-[#1a1a1a] mb-2">Puntuaci\u00f3: {p3Result.score}/5</p>
-                <p className="text-[14px] font-medium text-[#555] leading-relaxed">{p3Result.feedback}</p>
-              </div>
-            )}
-
-            {p3Result && (
-              <button
-                onClick={() => setStage('part4')}
-                className="bg-[#1a1a1a] text-white text-[14px] font-bold px-8 py-3.5 rounded-full hover:bg-[#333] transition-colors"
-              >
-                Seg\u00fcent prova
-                <svg className="inline ml-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </button>
-            )}
-          </div>
+      <div className={container}>
+        <div className="flex items-center gap-2 mb-2">
+          <StageBadge current={3} />
+          <h2 className="text-xs font-extrabold uppercase tracking-widest text-primary">
+            Expressió escrita
+          </h2>
         </div>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-ink mb-4">Escriu un text</h1>
+
+        <div className="bg-paper-2 border-2 border-line rounded-2xl p-6 mb-6">
+          <p className="text-base md:text-lg text-ink font-medium leading-relaxed">
+            Escriu un text sobre la teva rutina diària. Explica què fas cada dia, a quina hora et lleves, on treballes o estudies, i què fas el cap de setmana.
+          </p>
+          <p className="text-sm font-semibold text-ink-muted mt-3">Mínim 50 paraules</p>
+        </div>
+
+        <textarea
+          value={p3Text}
+          onChange={(e) => setP3Text(e.target.value)}
+          placeholder="Escriu aquí en català..."
+          disabled={!!p3Result}
+          className="w-full min-h-[240px] bg-paper border-2 border-line rounded-2xl p-5 text-base md:text-lg text-ink font-medium placeholder:text-ink-subtle outline-none resize-y focus:border-accent focus:ring-2 focus:ring-accent-ring disabled:opacity-60 transition-colors"
+        />
+
+        <div className="flex items-center justify-between mt-4 mb-6">
+          <span className={cn(
+            'text-sm font-semibold',
+            wordCount(p3Text) >= 50 ? 'text-success' : 'text-ink-muted',
+          )}>
+            {wordCount(p3Text)} / 50 paraules
+          </span>
+          {!p3Result && (
+            <button
+              type="button"
+              onClick={submitPart3}
+              disabled={p3Loading || wordCount(p3Text) < 10}
+              className="inline-flex items-center gap-2 bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark px-6 h-12 rounded-xl hover:bg-ink-soft transition-colors disabled:opacity-40"
+            >
+              {p3Loading ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" aria-hidden="true" />
+                  Avaluant...
+                </>
+              ) : (
+                'Enviar'
+              )}
+            </button>
+          )}
+        </div>
+
+        {p3Result && (
+          <>
+            <div className="bg-paper-2 border-2 border-line rounded-2xl p-5 mb-6">
+              <p className="text-base font-bold text-ink mb-2">
+                Puntuació: {p3Result.score}/5
+              </p>
+              <p className="text-base text-ink-soft leading-relaxed">{p3Result.feedback}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setStage('part4')}
+              className="inline-flex items-center gap-2 bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark px-8 h-14 rounded-2xl hover:bg-ink-soft transition-colors"
+            >
+              Següent prova
+              <ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" />
+            </button>
+          </>
+        )}
       </div>
     )
   }
 
-  // ==================== PART 4: Expressio oral ====================
+  // ══ PART 4 ══
   if (stage === 'part4') {
     return (
-      <div className={wrapper}>
-        <div className={container}>
-          <div className={inner}>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-bold text-white bg-[#1a1a1a] rounded-full px-2.5 py-0.5">4/4</span>
-              <h2 className="text-[13px] font-bold text-[#999] uppercase tracking-widest">Expressi\u00f3 oral</h2>
-            </div>
-            <h1 className="text-[24px] font-extrabold text-[#1a1a1a] mb-4">Parla sobre un tema</h1>
-
-            <div className="bg-[#F5F5F5] rounded-2xl p-5 mb-8">
-              <p className="text-[14px] font-semibold text-[#1a1a1a]">
-                Parla sobre la teva fam\u00edlia. Digues quantes persones hi ha, com es diuen i com s\u00f3n.
-              </p>
-            </div>
-
-            {/* Microphone button */}
-            <div className="flex flex-col items-center gap-4 mb-8">
-              <button
-                onClick={toggleRecording}
-                disabled={!!p4Result}
-                className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${
-                  p4Recording
-                    ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-                    : 'bg-[#1a1a1a] hover:bg-[#333]'
-                } text-white disabled:opacity-40`}
-              >
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                  <line x1="12" y1="19" x2="12" y2="23" />
-                  <line x1="8" y1="23" x2="16" y2="23" />
-                </svg>
-              </button>
-              <p className="text-[13px] font-bold text-[#999]">
-                {p4Recording ? 'Gravant... prem per aturar' : p4Result ? 'Gravaci\u00f3 completada' : 'Prem per gravar'}
-              </p>
-            </div>
-
-            {/* Transcription */}
-            {p4Transcription && (
-              <div className="mb-6">
-                <h3 className="text-[13px] font-bold text-[#999] uppercase tracking-widest mb-2">Transcripci\u00f3</h3>
-                <div className="bg-[#F5F5F5] rounded-2xl p-5 text-[14px] text-[#1a1a1a] font-medium leading-relaxed min-h-[60px]">
-                  {p4Transcription}
-                </div>
-              </div>
-            )}
-
-            {!p4Result && p4Transcription.trim().length > 0 && !p4Recording && (
-              <button
-                onClick={submitPart4}
-                disabled={p4Loading}
-                className="flex items-center gap-2 bg-[#1a1a1a] text-white text-[14px] font-bold px-6 py-3 rounded-full hover:bg-[#333] transition-colors disabled:opacity-40 mb-6"
-              >
-                {p4Loading ? (
-                  <>
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                    Avaluant...
-                  </>
-                ) : 'Enviar per avaluar'}
-              </button>
-            )}
-
-            {p4Result && (
-              <>
-                <div className="bg-[#F5F5F5] rounded-2xl p-5 mb-6">
-                  <p className="text-[15px] font-bold text-[#1a1a1a] mb-2">Puntuaci\u00f3: {p4Result.score}/5</p>
-                  <p className="text-[14px] font-medium text-[#555] leading-relaxed">{p4Result.feedback}</p>
-                </div>
-                <button
-                  onClick={() => setStage('results')}
-                  className="bg-[#1a1a1a] text-white text-[14px] font-bold px-8 py-3.5 rounded-full hover:bg-[#333] transition-colors"
-                >
-                  Veure resultats finals
-                  <svg className="inline ml-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                </button>
-              </>
-            )}
-          </div>
+      <div className={container}>
+        <div className="flex items-center gap-2 mb-2">
+          <StageBadge current={4} />
+          <h2 className="text-xs font-extrabold uppercase tracking-widest text-primary">
+            Expressió oral
+          </h2>
         </div>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-ink mb-4">Parla sobre un tema</h1>
+
+        <div className="bg-paper-2 border-2 border-line rounded-2xl p-6 mb-8">
+          <p className="text-base md:text-lg text-ink font-medium leading-relaxed">
+            Parla sobre la teva família. Digues quantes persones hi ha, com es diuen i com són.
+          </p>
+        </div>
+
+        <div className="flex flex-col items-center gap-4 mb-8">
+          <button
+            type="button"
+            onClick={toggleRecording}
+            disabled={!!p4Result}
+            aria-label={p4Recording ? 'Aturar gravació' : 'Començar gravació'}
+            className={cn(
+              'w-24 h-24 rounded-full text-ink-inverse flex items-center justify-center transition-all disabled:opacity-40',
+              p4Recording ? 'bg-error animate-pulse' : 'bg-accent hover:bg-accent-hover',
+            )}
+          >
+            <Mic size={36} strokeWidth={2.25} aria-hidden="true" />
+          </button>
+          <p className="text-sm font-semibold text-ink-muted">
+            {p4Recording
+              ? 'Gravant... prem per aturar'
+              : p4Result
+                ? 'Gravació completada'
+                : 'Prem per gravar'}
+          </p>
+        </div>
+
+        {p4Transcription && (
+          <div className="mb-6">
+            <h3 className="text-xs font-extrabold uppercase tracking-widest text-primary mb-2">
+              Transcripció
+            </h3>
+            <div className="bg-paper-2 border-2 border-line rounded-2xl p-5 text-base text-ink font-medium leading-relaxed min-h-[80px]">
+              {p4Transcription}
+            </div>
+          </div>
+        )}
+
+        {!p4Result && p4Transcription.trim().length > 0 && !p4Recording && (
+          <button
+            type="button"
+            onClick={submitPart4}
+            disabled={p4Loading}
+            className="inline-flex items-center gap-2 bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark px-6 h-12 rounded-xl hover:bg-ink-soft transition-colors disabled:opacity-40 mb-6"
+          >
+            {p4Loading ? (
+              <>
+                <Loader2 size={16} className="animate-spin" aria-hidden="true" />
+                Avaluant...
+              </>
+            ) : (
+              'Enviar per avaluar'
+            )}
+          </button>
+        )}
+
+        {p4Result && (
+          <>
+            <div className="bg-paper-2 border-2 border-line rounded-2xl p-5 mb-6">
+              <p className="text-base font-bold text-ink mb-2">
+                Puntuació: {p4Result.score}/5
+              </p>
+              <p className="text-base text-ink-soft leading-relaxed">{p4Result.feedback}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setStage('results')}
+              className="inline-flex items-center gap-2 bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark px-8 h-14 rounded-2xl hover:bg-ink-soft transition-colors"
+            >
+              Veure resultats finals
+              <ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" />
+            </button>
+          </>
+        )}
       </div>
     )
   }
 
-  // ==================== RESULTS ====================
+  // ══ RESULTS ══
+  const aptTone = apte ? 'text-success' : 'text-error'
+  const aptBg = apte ? 'bg-success-soft' : 'bg-error-soft'
+
   return (
-    <div className={wrapper}>
-      <div className={container}>
-        <div className={inner}>
-          <div className="text-center mb-10">
-            {apte && (
-              <div className="mb-6">
-                <span className="text-[64px]">{'\uD83C\uDF93'}</span>
-                <h1 className="text-[28px] font-extrabold text-[#4CAF50] mt-2">Has superat l&apos;examen A1!</h1>
-                <p className="text-[15px] font-semibold text-[#666] mt-1">Certificat de nivell b\u00e0sic A1 de catal\u00e0</p>
-              </div>
-            )}
-            {!apte && (
-              <div className="mb-6">
-                <h1 className="text-[28px] font-extrabold text-[#EF5350]">No apte</h1>
-                <p className="text-[15px] font-semibold text-[#666] mt-1">Necessites un 60% per aprovar. Continua practicant!</p>
-              </div>
-            )}
-
-            <ScoreCircle score={totalScore} total={totalMax} size={160} />
-            <p className="text-[14px] font-bold text-[#666] mt-4">Nota global: {pctGlobal}%</p>
-            <p className="text-[20px] font-extrabold text-[#1a1a1a] mt-1">
-              {apte ? 'APTE' : 'NO APTE'}
-            </p>
-          </div>
-
-          {/* Breakdown */}
-          <div className="space-y-3 mb-10">
-            {scores.map((s, i) => {
-              const pct = s.total > 0 ? Math.round((s.score / s.total) * 100) : 0
-              const color = pct >= 80 ? '#4CAF50' : pct >= 50 ? '#FFA726' : '#EF5350'
-              return (
-                <div key={i} className="flex items-center gap-4 bg-[#F5F5F5] rounded-2xl p-4">
-                  <span className="text-[24px]">{s.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-bold text-[#1a1a1a]">Part {i + 1}: {s.label}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full transition-all duration-1000"
-                          style={{ width: `${pct}%`, backgroundColor: color }}
-                        />
-                      </div>
-                      <span className="text-[12px] font-bold" style={{ color }}>{s.score}/{s.total}</span>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={restart}
-              className="flex-1 text-center bg-[#1a1a1a] text-white text-[14px] font-bold px-6 py-3.5 rounded-full hover:bg-[#333] transition-colors"
-            >
-              Tornar a fer
-            </button>
-            <button
-              onClick={() => {
-                if (navigator.share) {
-                  navigator.share({
-                    title: 'Examen CPNL A1',
-                    text: `He obtingut un ${pctGlobal}% a l'examen CPNL A1 de CatalApp! ${apte ? '\uD83C\uDF93 APTE' : 'Continuaré practicant!'}`,
-                  }).catch(() => {})
-                } else {
-                  navigator.clipboard?.writeText(`He obtingut un ${pctGlobal}% a l'examen CPNL A1 de CatalApp! ${apte ? '\uD83C\uDF93 APTE' : 'Continuaré practicant!'}`)
-                }
-              }}
-              className="flex-1 text-center bg-[#F5F5F5] text-[#1a1a1a] text-[14px] font-bold px-6 py-3.5 rounded-full hover:bg-[#ECECEC] transition-colors"
-            >
-              Compartir
-            </button>
-          </div>
+    <div className={container}>
+      <div className="text-center mb-10">
+        <div
+          className={cn(
+            'inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6',
+            aptBg,
+          )}
+        >
+          {apte ? (
+            <GraduationCap size={40} strokeWidth={1.75} className={aptTone} aria-hidden="true" />
+          ) : (
+            <Trophy size={40} strokeWidth={1.75} className={aptTone} aria-hidden="true" />
+          )}
         </div>
+        <h1 className={cn('text-3xl md:text-4xl font-extrabold tracking-tight mb-2', aptTone)}>
+          {apte ? "Has superat l'examen A1!" : 'No apte'}
+        </h1>
+        <p className="text-base text-ink-soft mb-8">
+          {apte
+            ? 'Certificat de nivell bàsic A1 de català'
+            : 'Necessites un 60% per aprovar. Continua practicant!'}
+        </p>
+      </div>
+
+      <ResultsScore
+        score={totalScore}
+        total={totalMax}
+        title={apte ? 'APTE' : 'NO APTE'}
+        subtitle={`Nota global: ${pctGlobal}%`}
+      />
+
+      <div className="space-y-3 mt-10 mb-10">
+        {scores.map((s, i) => {
+          const pct = s.total > 0 ? Math.round((s.score / s.total) * 100) : 0
+          const tone = pct >= 80 ? 'success' : pct >= 50 ? 'warning' : 'error'
+          const barClass =
+            tone === 'success' ? 'bg-success' : tone === 'warning' ? 'bg-warning' : 'bg-error'
+          const textClass =
+            tone === 'success' ? 'text-success' : tone === 'warning' ? 'text-warning' : 'text-error'
+          return (
+            <div
+              key={i}
+              className="flex items-center gap-4 bg-paper border-2 border-line rounded-2xl p-5"
+            >
+              <span className="w-11 h-11 rounded-xl bg-accent-soft text-accent flex items-center justify-center shrink-0">
+                <s.Icon size={22} strokeWidth={2} aria-hidden="true" />
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-base font-bold text-ink">
+                  Part {i + 1}: {s.label}
+                </p>
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="flex-1 h-1.5 bg-paper-3 rounded-full overflow-hidden">
+                    <div
+                      className={cn('h-full rounded-full transition-all duration-1000', barClass)}
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                  <span className={cn('text-sm font-bold tabular-nums', textClass)}>
+                    {s.score}/{s.total}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button
+          type="button"
+          onClick={restart}
+          className="flex-1 text-center bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark px-6 h-14 rounded-2xl hover:bg-ink-soft transition-colors"
+        >
+          Tornar a fer
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const text = `He obtingut un ${pctGlobal}% a l'examen CPNL A1 de CatalApp! ${apte ? 'APTE' : 'Continuaré practicant!'}`
+            if (navigator.share) {
+              navigator.share({ title: 'Examen CPNL A1', text }).catch(() => {})
+            } else {
+              navigator.clipboard?.writeText(text)
+            }
+          }}
+          className="flex-1 text-center inline-flex items-center justify-center gap-2 bg-paper-3 text-ink text-base font-semibold px-6 h-14 rounded-2xl hover:bg-paper-4 transition-colors"
+        >
+          <Share2 size={18} strokeWidth={2} aria-hidden="true" />
+          Compartir
+        </button>
       </div>
     </div>
   )

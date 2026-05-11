@@ -1,9 +1,24 @@
 'use client'
 
 import { useState } from 'react'
+import {
+  ArrowRight,
+  Loader2,
+  Sparkles,
+  PenLine,
+  UserCircle2,
+  Users,
+  House,
+  Clock,
+  Mail,
+  Feather,
+  type LucideIcon,
+} from 'lucide-react'
 import { callSonnet } from '@/lib/api'
-import { wordCount } from '@/lib/utils'
+import { wordCount, cn } from '@/lib/utils'
 import { recordError, type ErrorCategory } from '@/lib/errorLog'
+import BackLink from '@/components/exercises/ui/BackLink'
+import { Mascot } from '@/components/ui/Mascot'
 
 function mapEscripturaType(type: string): ErrorCategory | undefined {
   const t = type.toLowerCase()
@@ -19,9 +34,10 @@ type View = 'home' | 'writing' | 'results'
 
 interface Task {
   id: string
-  emoji: string
+  Icon: LucideIcon
   title: string
   description: string
+  estimatedMinutes: number
 }
 
 interface ErrorItem {
@@ -40,37 +56,59 @@ interface CorrectionResult {
 }
 
 const tasks: Task[] = [
-  { id: 'presentar-me', emoji: '\u{1F44B}', title: 'Presentar-me', description: 'Escriu un text presentant-te (nom, edat, proced\u00e8ncia, feina)' },
-  { id: 'familia', emoji: '\u{1F46A}', title: 'La meva fam\u00edlia', description: 'Descriu la teva fam\u00edlia' },
-  { id: 'casa', emoji: '\u{1F3E0}', title: 'La meva casa', description: 'Descriu on vius' },
-  { id: 'rutina', emoji: '\u{23F0}', title: 'La meva rutina', description: 'Explica qu\u00e8 fas cada dia' },
-  { id: 'carta', emoji: '\u{2709}\uFE0F', title: 'Una carta', description: 'Escriu una carta a un amic' },
-  { id: 'lliure', emoji: '\u{270D}\uFE0F', title: 'Text lliure', description: 'Escriu sobre el que vulguis' },
+  { id: 'presentar-me', Icon: UserCircle2, title: 'Presentar-me', description: 'Escriu un text presentant-te (nom, edat, procedència, feina)', estimatedMinutes: 5 },
+  { id: 'familia',      Icon: Users,       title: 'La meva família', description: 'Descriu la teva família', estimatedMinutes: 5 },
+  { id: 'casa',         Icon: House,       title: 'La meva casa', description: 'Descriu on vius', estimatedMinutes: 5 },
+  { id: 'rutina',       Icon: Clock,       title: 'La meva rutina', description: 'Explica què fas cada dia', estimatedMinutes: 8 },
+  { id: 'carta',        Icon: Mail,        title: 'Una carta', description: 'Escriu una carta a un amic', estimatedMinutes: 10 },
+  { id: 'lliure',       Icon: Feather,     title: 'Text lliure', description: 'Escriu sobre el que vulguis', estimatedMinutes: 10 },
 ]
+
+function errorTypeTone(type: string): 'error' | 'accent' | 'warning' {
+  const t = type.toLowerCase()
+  if (t.includes('ortograf')) return 'error'
+  if (t.includes('vocabul') || t.includes('lexic') || t.includes('lèxic')) return 'accent'
+  return 'warning'
+}
 
 function ScoreCircle({ score }: { score: number }) {
   const radius = 54
   const circumference = 2 * Math.PI * radius
   const offset = circumference - (score / 100) * circumference
-  const color = score >= 80 ? '#4CAF50' : score >= 50 ? '#FFA726' : '#EF5350'
+  const tone = score >= 80 ? 'text-success' : score >= 50 ? 'text-warning' : 'text-error'
+  const ring =
+    score >= 80
+      ? 'stroke-success'
+      : score >= 50
+        ? 'stroke-warning'
+        : 'stroke-error'
 
   return (
-    <div className="relative w-[140px] h-[140px] mx-auto">
-      <svg width="140" height="140" viewBox="0 0 140 140">
-        <circle cx="70" cy="70" r={radius} fill="none" stroke="#F5F5F5" strokeWidth="10" />
+    <div className="relative w-[160px] h-[160px] mx-auto">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r={radius} fill="none" stroke="var(--color-paper-3)" strokeWidth="10" />
         <circle
-          cx="70" cy="70" r={radius} fill="none" stroke={color} strokeWidth="10"
-          strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset}
-          transform="rotate(-90 70 70)" className="transition-all duration-1000"
+          cx="80"
+          cy="80"
+          r={radius}
+          fill="none"
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          transform="rotate(-90 80 80)"
+          className={cn('transition-all duration-1000', ring)}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-[36px] font-extrabold" style={{ color }}>{score}</span>
-        <span className="text-[12px] font-bold text-[#999]">/ 100</span>
+        <span className={cn('text-4xl font-extrabold tabular-nums', tone)}>{score}</span>
+        <span className="text-sm font-semibold text-ink-muted">/ 100</span>
       </div>
     </div>
   )
 }
+
+const container = 'mx-auto w-full max-w-[860px] px-5 md:px-8 py-8 md:py-12'
 
 export default function EscripturaPage() {
   const [view, setView] = useState<View>('home')
@@ -98,7 +136,7 @@ export default function EscripturaPage() {
         score: res.score ?? res.puntuacio ?? 70,
         correctedText: res.correctedText ?? res.text_corregit ?? text,
         errors: (res.errors ?? res.errors_list ?? []).map((e: Record<string, string>) => ({
-          type: e.type ?? e.tipus ?? 'gram\u00e0tica',
+          type: e.type ?? e.tipus ?? 'gramàtica',
           original: e.original ?? e.original_text ?? '',
           corrected: e.corrected ?? e.correccio ?? '',
           explanation: e.explanation ?? e.explicacio ?? '',
@@ -121,7 +159,7 @@ export default function EscripturaPage() {
       }
       setView('results')
     } catch {
-      alert('Error de connexi\u00f3 amb la IA. Torna-ho a provar.')
+      alert('Error de connexió amb la IA. Torna-ho a provar.')
     } finally {
       setLoading(false)
     }
@@ -140,189 +178,210 @@ export default function EscripturaPage() {
     setView('writing')
   }
 
-  // Home view
   if (view === 'home') {
     return (
-      <div className="min-h-screen bg-white">
-        <div className="px-5 md:px-10 lg:px-20 xl:px-32 pt-8 pb-44 md:pb-12">
-          <div className="max-w-[800px] mx-auto">
-            <p className="text-[13px] font-bold text-[#666] uppercase tracking-widest mb-3">Pr\u00e0ctica</p>
-            <h1 className="text-[32px] font-extrabold text-[#1a1a1a] leading-[1.1] mb-2">Escriptura</h1>
-            <p className="text-[15px] text-[#666] font-semibold mb-10">
-              Escriu en catal\u00e0 i la IA corregir\u00e0 el teu text
-            </p>
-
-            <h2 className="text-[13px] font-bold text-[#999] uppercase tracking-widest mb-4">Tria una tasca</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
-              {tasks.map((task) => (
-                <button
-                  key={task.id}
-                  onClick={() => selectTask(task)}
-                  className="text-left rounded-2xl p-5 bg-[#F5F5F5] hover:bg-[#ECECEC] transition-colors"
-                >
-                  <span className="text-[24px] block mb-2">{task.emoji}</span>
-                  <h3 className="text-[15px] font-extrabold text-[#1a1a1a] mb-1">{task.title}</h3>
-                  <p className="text-[13px] font-semibold text-[#666]">{task.description}</p>
-                </button>
-              ))}
-            </div>
+      <div className={container}>
+        <header className="mb-10">
+          <p className="text-xs font-extrabold uppercase tracking-widest text-primary mb-2">
+            Pràctica
+          </p>
+          <div className="flex items-center gap-3 mb-3">
+            <Mascot expression="happy" size="sm" />
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight ">
+            Escriptura
+          </h1>
           </div>
+          <p className="text-lg text-ink-soft">
+            Escriu en català i la IA corregirà el teu text.
+          </p>
+        </header>
+
+        <h2 className="text-xs font-extrabold uppercase tracking-widest text-primary mb-4">
+          Tria una tasca
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {tasks.map((task) => (
+            <button
+              key={task.id}
+              type="button"
+              onClick={() => selectTask(task)}
+              className="text-left rounded-2xl p-5 bg-paper border border-line hover:border-accent/50 hover:bg-paper-2 transition-colors focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              <div className="flex items-start gap-4">
+                <span className="shrink-0 w-12 h-12 rounded-xl bg-accent-soft text-accent flex items-center justify-center">
+                  <task.Icon size={22} strokeWidth={1.75} aria-hidden="true" />
+                </span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-extrabold text-ink mb-1">{task.title}</h3>
+                  <p className="text-sm text-ink-soft mb-2">{task.description}</p>
+                  <p className="text-xs font-semibold text-ink-muted inline-flex items-center gap-1">
+                    <Clock size={12} strokeWidth={2} aria-hidden="true" />
+                    ~{task.estimatedMinutes} min
+                  </p>
+                </div>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
     )
   }
 
-  // Writing view
   if (view === 'writing') {
     const wc = wordCount(text)
     return (
-      <div className="min-h-screen bg-white">
-        <div className="px-5 md:px-10 lg:px-20 xl:px-32 pt-8 pb-44 md:pb-12">
-          <div className="max-w-[800px] mx-auto">
-            <button onClick={resetToHome} className="flex items-center gap-2 text-[14px] font-bold text-[#666] hover:text-[#1a1a1a] transition-colors mb-6">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-              Enrere
-            </button>
+      <div className={container}>
+        <BackLink onClick={resetToHome} label="Enrere" />
 
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-[24px]">{selectedTask?.emoji}</span>
-              <h1 className="text-[24px] font-extrabold text-[#1a1a1a]">{selectedTask?.title}</h1>
-            </div>
-            <p className="text-[14px] font-semibold text-[#666] mb-6">{selectedTask?.description}</p>
+        <div className="mt-4 flex items-center gap-3 mb-2">
+          {selectedTask && (
+            <span className="w-11 h-11 rounded-xl bg-accent-soft text-accent flex items-center justify-center shrink-0">
+              <selectedTask.Icon size={22} strokeWidth={1.75} aria-hidden="true" />
+            </span>
+          )}
+          <h1 className="text-2xl md:text-3xl font-extrabold text-ink">{selectedTask?.title}</h1>
+        </div>
+        <p className="text-base text-ink-soft mb-6">{selectedTask?.description}</p>
 
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Escriu aqu\u00ed en catal\u00e0..."
-              className="w-full min-h-[200px] bg-[#F5F5F5] rounded-2xl p-5 text-[15px] text-[#1a1a1a] font-medium placeholder:text-[#999] outline-none resize-y focus:ring-2 focus:ring-[#1a1a1a]/10"
-            />
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Escriu aquí en català..."
+          className="w-full min-h-[240px] bg-paper border-2 border-line rounded-2xl p-5 text-base md:text-lg text-ink font-medium placeholder:text-ink-subtle outline-none resize-y focus:border-accent focus:ring-2 focus:ring-accent-ring transition-colors"
+        />
 
-            <div className="flex items-center justify-between mt-4">
-              <span className="text-[13px] font-bold text-[#999]">
-                {wc} {wc === 1 ? 'paraula' : 'paraules'}
-              </span>
-              <button
-                onClick={handleCorrect}
-                disabled={loading || wc < 3}
-                className="flex items-center gap-2 bg-[#1a1a1a] text-white text-[14px] font-bold px-6 py-3 rounded-full hover:bg-[#333] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <>
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-                    Corregint...
-                  </>
-                ) : (
-                  <>
-                    Corregir amb IA
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
+        <div className="flex items-center justify-between mt-4">
+          <span className="text-sm font-semibold text-ink-muted">
+            {wc} {wc === 1 ? 'paraula' : 'paraules'}
+          </span>
+          <button
+            type="button"
+            onClick={handleCorrect}
+            disabled={loading || wc < 3}
+            className="inline-flex items-center gap-2 h-12 px-6 rounded-xl bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <>
+                <Loader2 size={18} className="animate-spin" aria-hidden="true" />
+                Corregint...
+              </>
+            ) : (
+              <>
+                <Sparkles size={18} aria-hidden="true" />
+                Corregir amb IA
+              </>
+            )}
+          </button>
         </div>
       </div>
     )
   }
 
-  // Results view
   return (
-    <div className="min-h-screen bg-white">
-      <div className="px-5 md:px-10 lg:px-20 xl:px-32 pt-8 pb-44 md:pb-12">
-        <div className="max-w-[800px] mx-auto">
-          <h1 className="text-[24px] font-extrabold text-[#1a1a1a] mb-8">Resultats</h1>
+    <div className={container}>
+      <h1 className="text-2xl md:text-3xl font-extrabold text-ink mb-8">Resultats</h1>
 
-          {result && (
-            <>
-              <ScoreCircle score={result.score} />
-              <p className="text-center text-[14px] font-bold text-[#666] mt-4 mb-10">Puntuaci\u00f3 global</p>
+      {result && (
+        <>
+          <ScoreCircle score={result.score} />
+          <p className="text-center text-sm font-semibold text-ink-muted mt-4 mb-10">
+            Puntuació global
+          </p>
 
-              {/* Corrected text */}
-              <div className="mb-8">
-                <h2 className="text-[13px] font-bold text-[#999] uppercase tracking-widest mb-3">Text corregit</h2>
-                <div className="bg-[#F5F5F5] rounded-2xl p-5 text-[15px] text-[#1a1a1a] font-medium leading-relaxed whitespace-pre-wrap">
-                  {result.correctedText}
-                </div>
+          <section className="mb-8">
+            <h2 className="text-xs font-extrabold uppercase tracking-widest text-primary mb-3">
+              Text corregit
+            </h2>
+            <div className="bg-paper-2 border-2 border-line rounded-2xl p-5 md:p-6 text-base md:text-lg text-ink font-medium leading-relaxed whitespace-pre-wrap">
+              {result.correctedText}
+            </div>
+          </section>
+
+          {result.errors.length > 0 && (
+            <section className="mb-8">
+              <h2 className="text-xs font-extrabold uppercase tracking-widest text-primary mb-3">
+                Errors ({result.errors.length})
+              </h2>
+              <div className="space-y-3">
+                {result.errors.map((err, i) => {
+                  const tone = errorTypeTone(err.type)
+                  const tagBg: Record<typeof tone, string> = {
+                    error: 'bg-error-soft text-error',
+                    accent: 'bg-accent-soft text-accent',
+                    warning: 'bg-warning-soft text-warning',
+                  }
+                  return (
+                    <div key={i} className="bg-paper border-2 border-line rounded-2xl p-5">
+                      <span className={cn('inline-flex items-center px-3 h-6 rounded-full text-xs font-semibold uppercase tracking-wider mb-2', tagBg[tone])}>
+                        {err.type}
+                      </span>
+                      <p className="text-base text-ink mb-1 flex flex-wrap items-center gap-x-2">
+                        <span className="line-through text-error">{err.original}</span>
+                        <ArrowRight size={16} className="text-ink-muted" aria-hidden="true" />
+                        <span className="text-success font-bold">{err.corrected}</span>
+                      </p>
+                      {err.explanation && (
+                        <p className="text-sm text-ink-soft mt-1">{err.explanation}</p>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
-
-              {/* Errors list */}
-              {result.errors.length > 0 && (
-                <div className="mb-8">
-                  <h2 className="text-[13px] font-bold text-[#999] uppercase tracking-widest mb-3">
-                    Errors ({result.errors.length})
-                  </h2>
-                  <div className="space-y-3">
-                    {result.errors.map((err, i) => (
-                      <div key={i} className="bg-[#F5F5F5] rounded-2xl p-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                            err.type === 'ortografia' ? 'bg-red-100 text-red-700'
-                              : err.type === 'vocabulari' ? 'bg-blue-100 text-blue-700'
-                              : 'bg-yellow-100 text-yellow-700'
-                          }`}>
-                            {err.type}
-                          </span>
-                        </div>
-                        <p className="text-[14px] font-medium text-[#1a1a1a] mb-1">
-                          <span className="line-through text-red-500">{err.original}</span>
-                          <span className="mx-2 text-[#999]">&rarr;</span>
-                          <span className="text-green-600 font-bold">{err.corrected}</span>
-                        </p>
-                        {err.explanation && (
-                          <p className="text-[13px] text-[#666] font-medium">{err.explanation}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Suggestions */}
-              {result.suggestions.length > 0 && (
-                <div className="mb-8">
-                  <h2 className="text-[13px] font-bold text-[#999] uppercase tracking-widest mb-3">Suggeriments de millora</h2>
-                  <div className="bg-[#F5F5F5] rounded-2xl p-5">
-                    <ul className="space-y-2">
-                      {result.suggestions.map((s, i) => (
-                        <li key={i} className="flex items-start gap-2 text-[14px] font-medium text-[#1a1a1a]">
-                          <span className="text-[#999] mt-0.5">&#x2022;</span>
-                          {s}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
-
-              {/* Feedback */}
-              {result.feedback && (
-                <div className="mb-10">
-                  <h2 className="text-[13px] font-bold text-[#999] uppercase tracking-widest mb-3">Feedback de la IA</h2>
-                  <div className="bg-[#F5F5F5] rounded-2xl p-5 text-[14px] font-medium text-[#1a1a1a] leading-relaxed">
-                    {result.feedback}
-                  </div>
-                </div>
-              )}
-
-              {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={rewrite}
-                  className="flex-1 text-center bg-[#F5F5F5] text-[#1a1a1a] text-[14px] font-bold px-6 py-3 rounded-full hover:bg-[#ECECEC] transition-colors"
-                >
-                  Tornar a escriure
-                </button>
-                <button
-                  onClick={resetToHome}
-                  className="flex-1 text-center bg-[#1a1a1a] text-white text-[14px] font-bold px-6 py-3 rounded-full hover:bg-[#333] transition-colors"
-                >
-                  Nova tasca
-                </button>
-              </div>
-            </>
+            </section>
           )}
-        </div>
-      </div>
+
+          {result.suggestions.length > 0 && (
+            <section className="mb-8">
+              <h2 className="text-xs font-extrabold uppercase tracking-widest text-primary mb-3">
+                Suggeriments de millora
+              </h2>
+              <div className="bg-paper-2 border-2 border-line rounded-2xl p-5">
+                <ul className="space-y-2">
+                  {result.suggestions.map((s, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-2 text-base text-ink font-medium"
+                    >
+                      <span className="text-accent mt-0.5" aria-hidden="true">•</span>
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          )}
+
+          {result.feedback && (
+            <section className="mb-10">
+              <h2 className="text-xs font-extrabold uppercase tracking-widest text-primary mb-3">
+                <span className="inline-flex items-center gap-2">
+                  <Sparkles size={14} aria-hidden="true" /> Feedback de la IA
+                </span>
+              </h2>
+              <div className="bg-accent-soft rounded-2xl p-5 text-base text-ink leading-relaxed">
+                {result.feedback}
+              </div>
+            </section>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={rewrite}
+              className="flex-1 h-14 rounded-2xl bg-paper text-ink text-base font-extrabold uppercase tracking-wider btn-3d border-line-strong"
+            >
+              Tornar a escriure
+            </button>
+            <button
+              type="button"
+              onClick={resetToHome}
+              className="flex-1 h-14 rounded-2xl bg-primary text-white text-base font-extrabold uppercase tracking-wider btn-3d border-primary-dark inline-flex items-center justify-center gap-2"
+            >
+              <PenLine size={18} aria-hidden="true" /> Nova tasca
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }

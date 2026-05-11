@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import { shuffle } from '@/lib/utils'
+import { CheckCircle2 } from 'lucide-react'
+import { cn, shuffle } from '@/lib/utils'
 
 interface Pair {
   a: string
@@ -54,26 +55,34 @@ export default function MatchPairs({ pairs, onComplete }: MatchPairsProps) {
     }
   }, [selectedLeft, selectedRight, pairMap, matched, pairs.length, onComplete])
 
-  const getItemStyle = (item: string, selected: string | null, flashItem: string | undefined) => {
-    if (matched.has(item)) return 'bg-[#E8F5E9] text-[#2E7D32]'
-    if (flashItem === item) return 'bg-red-50 text-red-600 animate-pulse'
-    if (selected === item) return 'bg-[#1a1a1a] text-white'
-    return 'bg-[#F5F5F5] text-[#1a1a1a]'
+  const getItemClass = (item: string, selected: string | null, flashItem: string | undefined) => {
+    if (matched.has(item)) return 'bg-success-soft text-success border-success'
+    if (flashItem === item) return 'bg-error-soft text-error border-error animate-pulse'
+    if (selected === item) return 'bg-primary text-white border-primary-dark'
+    return 'bg-paper border-line text-ink hover:border-accent/50 hover:bg-paper-2'
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <p className="text-sm text-gray-500">Emparella cada paraula en catala amb la seva traduccio</p>
+    <div className="flex flex-col gap-5">
+      <p className="text-base text-ink-soft">
+        Empareja cada paraula en català amb la seva traducció.
+      </p>
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
           {leftItems.map((item) => (
             <button
               key={`l-${item}`}
+              type="button"
               onClick={() => {
                 if (!matched.has(item) && !flash) setSelectedLeft(item)
               }}
               disabled={matched.has(item)}
-              className={`rounded-2xl py-3 px-4 text-sm font-medium text-left transition-all ${getItemStyle(item, selectedLeft, flash?.left)} disabled:cursor-default`}
+              className={cn(
+                'rounded-xl py-3 px-4 text-base font-medium text-left border transition-all',
+                'focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-accent',
+                getItemClass(item, selectedLeft, flash?.left),
+                'disabled:cursor-default',
+              )}
             >
               {item}
             </button>
@@ -84,11 +93,17 @@ export default function MatchPairs({ pairs, onComplete }: MatchPairsProps) {
           {rightItems.map((item) => (
             <button
               key={`r-${item}`}
+              type="button"
               onClick={() => {
                 if (!matched.has(item) && !flash) setSelectedRight(item)
               }}
               disabled={matched.has(item)}
-              className={`rounded-2xl py-3 px-4 text-sm font-medium text-left transition-all ${getItemStyle(item, selectedRight, flash?.right)} disabled:cursor-default`}
+              className={cn(
+                'rounded-xl py-3 px-4 text-base font-medium text-left border transition-all',
+                'focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-accent',
+                getItemClass(item, selectedRight, flash?.right),
+                'disabled:cursor-default',
+              )}
             >
               {item}
             </button>
@@ -97,7 +112,8 @@ export default function MatchPairs({ pairs, onComplete }: MatchPairsProps) {
       </div>
 
       {matched.size === pairs.length * 2 && (
-        <div className="text-sm font-medium text-[#2E7D32]">
+        <div className="inline-flex items-center gap-2 text-base font-semibold text-success">
+          <CheckCircle2 size={20} strokeWidth={2.25} aria-hidden="true" />
           Tots els parells emparellats correctament!
         </div>
       )}

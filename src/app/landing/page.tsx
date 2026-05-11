@@ -1,114 +1,164 @@
 import Link from 'next/link'
+import { ArrowRight, Bot, BookOpen, GraduationCap, ExternalLink } from 'lucide-react'
+import { Mascot } from '@/components/ui/Mascot'
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white text-[#1a1a1a]">
-      {/* Senyera decorative bars */}
-      <div className="h-2 bg-gradient-to-r from-[#FCDD09] via-[#DA121A] to-[#FCDD09]" />
+    <div className="min-h-screen bg-paper text-ink">
+      <div className="mx-auto w-full max-w-[920px] px-6 md:px-8 py-12 md:py-20">
 
-      <div className="max-w-[800px] mx-auto px-6 py-16">
-        {/* Hero */}
-        <section className="text-center mb-20">
-          <h1 className="text-[56px] md:text-[72px] font-extrabold tracking-tight leading-none mb-4">
-            Catal<span className="text-[#DA121A]">App</span>
-          </h1>
-          <p className="text-[20px] md:text-[24px] text-[#555] font-medium mb-8">
-            Apren catala gratis amb IA
+        <section className="text-center mb-20 md:mb-28">
+          <div className="mb-8 flex justify-center animate-float">
+            <Mascot expression="cheering" size="xl" />
+          </div>
+          <p className="text-sm font-extrabold uppercase tracking-widest text-primary mb-3">
+            Nivell A1 · Curs CPNL
           </p>
-          <Link href="/"
-            className="inline-block bg-[#1a1a1a] text-white font-bold text-[18px] px-10 py-4 rounded-full hover:bg-[#333] transition-colors">
-            Comencar
+          <h1 className="text-5xl md:text-[80px] leading-[0.95] mb-5">
+            CatalApp
+          </h1>
+          <p className="text-xl md:text-2xl text-ink-soft font-semibold max-w-[40ch] mx-auto mb-8">
+            Aprèn català gratis amb intel·ligència artificial.
+          </p>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-3 h-16 px-10 rounded-2xl bg-primary text-white text-lg font-extrabold uppercase tracking-wider btn-3d border-primary-dark"
+          >
+            Començar
+            <ArrowRight size={24} strokeWidth={3} aria-hidden="true" />
           </Link>
         </section>
 
-        {/* Senyera divider */}
-        <div className="flex gap-1 mb-20 justify-center">
-          <div className="h-1 w-16 bg-[#FCDD09] rounded-full" />
-          <div className="h-1 w-16 bg-[#DA121A] rounded-full" />
-          <div className="h-1 w-16 bg-[#FCDD09] rounded-full" />
-          <div className="h-1 w-16 bg-[#DA121A] rounded-full" />
-        </div>
-
-        {/* Features */}
-        <section className="mb-20">
-          <div className="space-y-8">
-            <div className="flex items-start gap-5">
-              <span className="text-[40px] flex-shrink-0">🤖</span>
-              <div>
-                <h3 className="text-[20px] font-extrabold mb-1">Conversa amb IA</h3>
-                <p className="text-[16px] text-[#666]">Practica parlant amb intel·ligencia artificial</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-5">
-              <span className="text-[40px] flex-shrink-0">📚</span>
-              <div>
-                <h3 className="text-[20px] font-extrabold mb-1">18 unitats completes</h3>
-                <p className="text-[16px] text-[#666]">Tot el curs A1 del CPNL</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-5">
-              <span className="text-[40px] flex-shrink-0">🎓</span>
-              <div>
-                <h3 className="text-[20px] font-extrabold mb-1">Examen CPNL</h3>
-                <p className="text-[16px] text-[#666]">Simula l&apos;examen real</p>
-              </div>
-            </div>
+        <section className="mb-20 md:mb-28">
+          <h2 className="text-2xl md:text-3xl text-center mb-10">
+            Què hi trobaràs?
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <Feature
+              Icon={Bot}
+              title="Conversa IA"
+              description="Practica parlant amb IA en 54 escenaris reals."
+              tone="primary"
+            />
+            <Feature
+              Icon={BookOpen}
+              title="18 unitats A1"
+              description="Tot el curs CPNL: gramàtica, vocabulari, diàlegs i exercicis."
+              tone="blue"
+            />
+            <Feature
+              Icon={GraduationCap}
+              title="Examen CPNL"
+              description="Simula l'examen oficial del Consorci."
+              tone="purple"
+            />
           </div>
         </section>
 
-        {/* Stats */}
-        <section className="mb-20">
-          <div className="bg-[#F8F8F8] rounded-2xl p-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-              <p className="text-[28px] font-extrabold text-[#1a1a1a]">463</p>
-              <p className="text-[14px] text-[#888] font-medium">exercicis</p>
-            </div>
-            <div>
-              <p className="text-[28px] font-extrabold text-[#1a1a1a]">960</p>
-              <p className="text-[14px] text-[#888] font-medium">paraules</p>
-            </div>
-            <div>
-              <p className="text-[28px] font-extrabold text-[#1a1a1a]">90</p>
-              <p className="text-[14px] text-[#888] font-medium">dialegs</p>
-            </div>
-            <div>
-              <p className="text-[28px] font-extrabold text-[#1a1a1a]">54</p>
-              <p className="text-[14px] text-[#888] font-medium">escenaris IA</p>
-            </div>
+        <section className="mb-20 md:mb-28">
+          <div className="bg-gold-soft border-2 border-gold/40 border-b-[6px] rounded-3xl p-8 md:p-10 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            <Stat value="463" label="exercicis" />
+            <Stat value="960" label="paraules" />
+            <Stat value="90" label="diàlegs" />
+            <Stat value="54" label="escenaris IA" />
           </div>
         </section>
 
-        {/* Testimonial */}
-        <section className="mb-20 text-center">
-          <div className="bg-[#F0F4FF] rounded-2xl p-8">
-            <p className="text-[18px] text-[#444] italic leading-relaxed">
-              &ldquo;Creat per estudiants del CPNL de Barcelona&rdquo;
+        <section className="mb-20 md:mb-28">
+          <div className="bg-primary-soft border-2 border-primary/30 rounded-3xl p-10 md:p-12 text-center">
+            <Mascot expression="thinking" size="md" className="mx-auto mb-4" />
+            <p className="text-xl md:text-2xl text-primary-dark italic leading-relaxed max-w-[44ch] mx-auto font-semibold">
+              «Creada per estudiants del CPNL de Barcelona, per a gent que no té temps però vol aprendre de veritat.»
             </p>
           </div>
         </section>
 
-        {/* CTA final */}
-        <section className="text-center mb-20">
-          <h2 className="text-[32px] md:text-[40px] font-extrabold mb-6">
-            Prova CatalApp gratis
+        <section className="text-center mb-20 md:mb-28">
+          <h2 className="text-3xl md:text-4xl mb-5">
+            Prova CatalApp gratis.
           </h2>
-          <Link href="/"
-            className="inline-block bg-[#1a1a1a] text-white font-bold text-[18px] px-10 py-4 rounded-full hover:bg-[#333] transition-colors">
-            Comencar ara
+          <p className="text-lg text-ink-soft mb-8 max-w-[40ch] mx-auto font-semibold">
+            Sense registre, sense publicitat, sense cost.
+          </p>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-3 h-16 px-10 rounded-2xl bg-primary text-white text-lg font-extrabold uppercase tracking-wider btn-3d border-primary-dark"
+          >
+            Començar ara
+            <ArrowRight size={24} strokeWidth={3} aria-hidden="true" />
           </Link>
         </section>
 
-        {/* Footer */}
-        <footer className="border-t border-gray-200 pt-8 text-center">
-          <p className="text-[14px] text-[#888] mb-2">
-            Creat per Luis Armando Rodriguez &middot; StrixAI &middot; Llicencia AGPL-3.0
+        <footer className="border-t-2 border-line pt-10 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+          <p className="text-sm text-ink-muted font-medium">
+            Creat per Luis Armando Rodríguez · StrixAI · Llicència AGPL-3.0
           </p>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer"
-            className="text-[14px] text-[#555] hover:text-[#1a1a1a] font-medium transition-colors">
+          <a
+            href="https://github.com/lrodriolivera/catalapp"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-bold text-ink-soft hover:text-ink transition-colors"
+          >
+            <ExternalLink size={16} strokeWidth={2.5} aria-hidden="true" />
             GitHub
           </a>
         </footer>
       </div>
+    </div>
+  )
+}
+
+const TONE: Record<'primary' | 'blue' | 'purple', { card: string; icon: string; iconBg: string; title: string }> = {
+  primary: {
+    card: 'bg-primary-soft border-primary/30',
+    icon: 'text-white',
+    iconBg: 'bg-primary border-primary-dark',
+    title: 'text-primary-dark',
+  },
+  blue: {
+    card: 'bg-blue-soft border-blue/30',
+    icon: 'text-white',
+    iconBg: 'bg-blue border-blue-dark',
+    title: 'text-blue-dark',
+  },
+  purple: {
+    card: 'bg-purple-soft border-purple/30',
+    icon: 'text-white',
+    iconBg: 'bg-purple border-purple-dark',
+    title: 'text-purple-dark',
+  },
+}
+
+function Feature({
+  Icon,
+  title,
+  description,
+  tone,
+}: {
+  Icon: typeof Bot
+  title: string
+  description: string
+  tone: 'primary' | 'blue' | 'purple'
+}) {
+  const t = TONE[tone]
+  return (
+    <div className={`rounded-2xl border-2 border-b-[6px] p-6 ${t.card}`}>
+      <span
+        className={`w-14 h-14 rounded-2xl border-b-[4px] flex items-center justify-center mb-4 ${t.iconBg}`}
+      >
+        <Icon size={28} strokeWidth={2.75} className={t.icon} aria-hidden="true" />
+      </span>
+      <h3 className={`text-xl md:text-2xl mb-2 ${t.title}`}>{title}</h3>
+      <p className="text-base text-ink-soft leading-relaxed font-medium">{description}</p>
+    </div>
+  )
+}
+
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="text-center">
+      <p className="text-4xl md:text-5xl font-black text-orange-dark tabular-nums leading-none">{value}</p>
+      <p className="text-sm md:text-base text-orange-dark/80 font-extrabold mt-2 uppercase tracking-wider">{label}</p>
     </div>
   )
 }

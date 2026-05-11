@@ -38,3 +38,8 @@ export function checkAnswer(
     ? correctAnswer.some((a) => a.toLowerCase().trim() === n)
     : correctAnswer.toLowerCase().trim() === n
 }
+
+/** Class name concat helper (falsy-safe). */
+export function cn(...parts: Array<string | false | null | undefined>): string {
+  return parts.filter(Boolean).join(' ')
+}

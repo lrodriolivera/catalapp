@@ -44,6 +44,10 @@ export function addXP(amount: number): UserProgress {
   const progress = getProgress()
   progress.xp += amount
   saveProgress(progress)
+  // Delegate stats/cloud sync to stats.ts (con multiplier xp_double + gems)
+  if (typeof window !== 'undefined') {
+    import('./stats').then(({ addXP: addStatsXP }) => addStatsXP(amount)).catch(() => {})
+  }
   return progress
 }
 

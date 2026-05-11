@@ -1,211 +1,222 @@
-'use client';
+'use client'
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react'
+import {
+  ArrowRight,
+  Trophy,
+  Heart,
+  Gem,
+  Swords,
+  type LucideIcon,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Mascot, type MascotExpression } from '@/components/ui/Mascot'
 
-const slides = [
+interface Slide {
+  kind: 'welcome' | 'feature' | 'cta'
+  title: string
+  description: string
+  mascot: MascotExpression
+  Icon?: LucideIcon
+  iconTone?: 'primary' | 'orange' | 'blue' | 'purple' | 'gold'
+}
+
+const slides: Slide[] = [
   {
-    emoji: '',
-    senyera: true,
-    title: 'Benvingut a CatalApp!',
-    description: 'Aprèn català amb IA',
+    kind: 'welcome',
+    title: 'Hola! Sóc en Cataló',
+    description: 'Et guiaré per aprendre català al teu ritme. Som-hi?',
+    mascot: 'cheering',
   },
   {
-    emoji: '📚',
-    title: '6 seccions per aprendre',
-    description: '',
-    features: [
-      { icon: '📖', label: 'Gramàtica' },
-      { icon: '💬', label: 'Conversa' },
-      { icon: '🗣️', label: 'Pronúncia' },
-      { icon: '🎭', label: 'Diàlegs' },
-      { icon: '✅', label: 'Avaluació' },
-      { icon: '🃏', label: 'Flashcards' },
-    ],
+    kind: 'feature',
+    title: 'Practica i guanya XP',
+    description: 'Cada exercici, joc i duel et fa pujar de nivell. Mantén la ratxa diària per multiplicar les recompenses.',
+    mascot: 'happy',
+    Icon: Gem,
+    iconTone: 'blue',
   },
   {
-    emoji: '🎙️',
-    title: 'Conversa amb IA',
-    description:
-      'Mantén el botó premut per parlar i practica la teva pronúncia amb intel·ligència artificial.',
+    kind: 'feature',
+    title: 'Vides i gemmes',
+    description: 'Quan falles perds una vida (es recupera sola en 30 min). Les gemmes serveixen per a la botiga: recarregar vides, doblar XP, congelar la ratxa.',
+    mascot: 'thinking',
+    Icon: Heart,
+    iconTone: 'primary',
   },
   {
-    emoji: '🚀',
+    kind: 'feature',
+    title: 'Lligues setmanals',
+    description: '8 lligues (Bronze → Llegenda). Cada setmana, els 7 millors del teu grup pugen i els últims 5 baixen. Diumenge a la nit es tanca tot.',
+    mascot: 'happy',
+    Icon: Trophy,
+    iconTone: 'gold',
+  },
+  {
+    kind: 'feature',
+    title: 'Duels en directe + amics',
+    description: '7 preguntes contra un rival real (o un bot). Crea classes per competir amb companys del CPNL.',
+    mascot: 'cheering',
+    Icon: Swords,
+    iconTone: 'purple',
+  },
+  {
+    kind: 'cta',
     title: 'Preparat per començar?',
-    description: 'Comença el teu camí per aprendre català ara mateix.',
-    cta: true,
+    description: 'Comença per la Unitat 1 i marca la teva primera ratxa.',
+    mascot: 'cheering',
   },
-];
+]
+
+const TONE: Record<NonNullable<Slide['iconTone']>, string> = {
+  primary: 'bg-primary text-white border-primary-dark',
+  orange: 'bg-orange text-white border-orange-dark',
+  blue: 'bg-blue text-white border-blue-dark',
+  purple: 'bg-purple text-white border-purple-dark',
+  gold: 'bg-gold text-ink border-gold-dark',
+}
 
 export default function Onboarding() {
-  const [visible, setVisible] = useState(false);
-  const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState<'left' | 'right'>('right');
-  const [animating, setAnimating] = useState(false);
+  const [visible, setVisible] = useState(false)
+  const [current, setCurrent] = useState(0)
+  const [animating, setAnimating] = useState(false)
 
   useEffect(() => {
-    const done = localStorage.getItem('catalapp-onboarding-done');
-    if (!done) {
-      setVisible(true);
-    }
-  }, []);
+    const done = localStorage.getItem('catalapp-onboarding-done')
+    if (!done) setVisible(true)
+  }, [])
 
   const close = useCallback(() => {
-    localStorage.setItem('catalapp-onboarding-done', 'true');
-    setVisible(false);
-  }, []);
+    localStorage.setItem('catalapp-onboarding-done', 'true')
+    setVisible(false)
+  }, [])
 
   const goTo = useCallback(
     (index: number) => {
-      if (animating || index === current) return;
-      setDirection(index > current ? 'right' : 'left');
-      setAnimating(true);
+      if (animating || index === current) return
+      setAnimating(true)
       setTimeout(() => {
-        setCurrent(index);
-        setAnimating(false);
-      }, 200);
+        setCurrent(index)
+        setAnimating(false)
+      }, 200)
     },
-    [animating, current]
-  );
+    [animating, current],
+  )
 
   const next = useCallback(() => {
-    if (current < slides.length - 1) {
-      goTo(current + 1);
-    }
-  }, [current, goTo]);
+    if (current < slides.length - 1) goTo(current + 1)
+  }, [current, goTo])
 
-  // Swipe support
-  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null)
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.touches[0].clientX);
-  };
+    setTouchStart(e.touches[0].clientX)
+  }
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStart === null) return;
-    const diff = e.changedTouches[0].clientX - touchStart;
+    if (touchStart === null) return
+    const diff = e.changedTouches[0].clientX - touchStart
     if (Math.abs(diff) > 50) {
-      if (diff < 0 && current < slides.length - 1) {
-        goTo(current + 1);
-      } else if (diff > 0 && current > 0) {
-        goTo(current - 1);
-      }
+      if (diff < 0 && current < slides.length - 1) goTo(current + 1)
+      else if (diff > 0 && current > 0) goTo(current - 1)
     }
-    setTouchStart(null);
-  };
+    setTouchStart(null)
+  }
 
-  if (!visible) return null;
+  if (!visible) return null
 
-  const slide = slides[current];
+  const slide = slides[current]
 
   return (
-    <div className="fixed inset-0 z-[60] bg-white dark:bg-[#0F0F0F] flex flex-col items-center justify-between">
-      {/* Skip button */}
-      <div className="w-full flex justify-end p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Benvinguda a CatalApp"
+      className="fixed inset-0 z-[60] bg-paper flex flex-col items-center justify-between"
+    >
+      <div className="w-full flex justify-end p-5">
         <button
+          type="button"
           onClick={close}
-          className="text-sm font-semibold text-[#555] dark:text-[#A0A0A0] hover:opacity-70 cursor-pointer"
+          className="text-sm font-bold text-ink-muted hover:text-ink transition-colors"
         >
           Saltar
         </button>
       </div>
 
-      {/* Slide content */}
       <div
         className="flex-1 flex items-center justify-center w-full px-6"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
         <div
-          className={`max-w-[400px] w-full mx-auto text-center transition-opacity duration-200 ${
-            animating ? 'opacity-0' : 'opacity-100'
-          } ${
-            animating
-              ? direction === 'right'
-                ? 'translate-x-4'
-                : '-translate-x-4'
-              : 'translate-x-0'
-          }`}
+          className={cn(
+            'max-w-[480px] w-full mx-auto text-center transition-opacity duration-200',
+            animating ? 'opacity-0' : 'opacity-100',
+          )}
         >
-          {/* Emoji or Senyera */}
-          {'senyera' in slide && slide.senyera ? (
-            <div className="flex gap-[4px] mb-8 justify-center">
-              {[...Array(9)].map((_, i) => (
-                <div key={i} className={`w-3 h-16 rounded-sm ${i % 2 === 0 ? 'bg-[#FCDD09]' : 'bg-[#C40000]'}`} />
-              ))}
+          <div className="mb-6 flex justify-center">
+            <div className={slide.kind === 'feature' ? '' : 'animate-float'}>
+              <Mascot expression={slide.mascot} size="xl" />
             </div>
-          ) : (
-            <div className="text-7xl mb-8">{slide.emoji}</div>
+          </div>
+
+          {slide.kind === 'feature' && slide.Icon && slide.iconTone && (
+            <div className="flex justify-center mb-3">
+              <span className={`w-14 h-14 rounded-2xl border-b-[4px] inline-flex items-center justify-center ${TONE[slide.iconTone]}`}>
+                <slide.Icon size={28} strokeWidth={2.75} />
+              </span>
+            </div>
           )}
 
-          {/* Title */}
-          <h1 className="text-2xl font-bold text-[#1a1a1a] dark:text-[#F5F5F5] mb-4">
+          <h1 className="text-3xl md:text-4xl text-ink mb-4 px-2">
             {slide.title}
           </h1>
 
-          {/* Description */}
-          {slide.description && (
-            <p className="text-base text-[#555] dark:text-[#A0A0A0] leading-relaxed mb-6">
-              {slide.description}
-            </p>
-          )}
+          <p className="text-base md:text-lg text-ink-soft leading-relaxed mb-6 max-w-[44ch] mx-auto font-medium px-2">
+            {slide.description}
+          </p>
 
-          {/* Features grid (slide 2) */}
-          {'features' in slide && slide.features && (
-            <div className="grid grid-cols-3 gap-4 mt-6">
-              {slide.features.map((f) => (
-                <div
-                  key={f.label}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-[#F5F5F5] dark:bg-[#1A1A1A]"
-                >
-                  <span className="text-2xl">{f.icon}</span>
-                  <span className="text-xs font-semibold text-[#1a1a1a] dark:text-[#F5F5F5]">
-                    {f.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* CTA button (last slide) */}
-          {'cta' in slide && slide.cta && (
+          {slide.kind === 'cta' && (
             <button
+              type="button"
               onClick={close}
-              className="mt-8 px-8 py-3 rounded-full bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] text-white font-bold text-base shadow-lg hover:opacity-90 transition-opacity cursor-pointer"
+              className="mt-6 inline-flex items-center gap-2 bg-primary text-white font-extrabold uppercase tracking-wider btn-3d border-primary-dark text-lg px-8 h-14 rounded-2xl"
             >
               Començar
+              <ArrowRight size={22} strokeWidth={3} aria-hidden="true" />
             </button>
           )}
         </div>
       </div>
 
-      {/* Bottom navigation */}
-      <div className="w-full flex flex-col items-center gap-6 pb-12">
-        {/* Dots */}
+      <div className="w-full flex flex-col items-center gap-5 pb-8 md:pb-12">
         <div className="flex gap-2">
           {slides.map((_, i) => (
             <button
               key={i}
+              type="button"
               onClick={() => goTo(i)}
               aria-label={`Diapositiva ${i + 1}`}
-              className={`w-2.5 h-2.5 rounded-full transition-colors duration-200 cursor-pointer ${
-                i === current
-                  ? 'bg-[#1a1a1a] dark:bg-[#F5F5F5]'
-                  : 'bg-[#D0D0D0] dark:bg-[#444]'
-              }`}
+              className={cn(
+                'h-2 rounded-full transition-all duration-200',
+                i === current ? 'w-8 bg-primary' : 'w-2 bg-line-strong',
+              )}
             />
           ))}
         </div>
 
-        {/* Next button (not on last slide) */}
         {current < slides.length - 1 && (
           <button
+            type="button"
             onClick={next}
-            className="px-6 py-2.5 rounded-full bg-[#1a1a1a] dark:bg-[#F5F5F5] text-white dark:text-[#0F0F0F] font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer"
+            className="inline-flex items-center gap-2 bg-primary text-white font-extrabold uppercase tracking-wider btn-3d border-primary-dark text-base px-6 h-12 rounded-xl"
           >
             Següent
+            <ArrowRight size={18} strokeWidth={3} aria-hidden="true" />
           </button>
         )}
       </div>
     </div>
-  );
+  )
 }

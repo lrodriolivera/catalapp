@@ -1,19 +1,28 @@
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager'
 
 const BUCKET = 'catalapp-web'
 const RSS_URL = 'https://www.vilaweb.cat/feed/'
 const MODEL_ID = 'us.anthropic.claude-haiku-4-5-20251001-v1:0'
 const BEDROCK_REGION = 'us-east-1'
 const BUCKET_REGION = 'eu-west-1'
+const SECRET_NAME = 'catalapp/bedrock-credentials'
 
-const bedrock = new BedrockRuntimeClient({
-  region: BEDROCK_REGION,
-  credentials: {
-    accessKeyId: process.env.BEDROCK_ACCESS_KEY_ID,
-    secretAccessKey: process.env.BEDROCK_SECRET_ACCESS_KEY,
-  },
-})
+const smClient = new SecretsManagerClient({ region: BEDROCK_REGION })
+let cachedBedrock = null
+
+async function getBedrockClient() {
+  if (cachedBedrock) return cachedBedrock
+  const resp = await smClient.send(new GetSecretValueCommand({ SecretId: SECRET_NAME }))
+  const { accessKeyId, secretAccessKey } = JSON.parse(resp.SecretString)
+  cachedBedrock = new BedrockRuntimeClient({
+    region: BEDROCK_REGION,
+    credentials: { accessKeyId, secretAccessKey },
+  })
+  return cachedBedrock
+}
+
 const s3 = new S3Client({ region: BUCKET_REGION })
 
 // Catalan festivities with matching date (month-day) and context for prompt
@@ -94,6 +103,7 @@ async function generateLesson(item, festivity, date) {
     max_tokens: 2000,
     messages: [{ role: 'user', content: prompt }],
   })
+  const bedrock = await getBedrockClient()
   const res = await bedrock.send(
     new InvokeModelCommand({
       modelId: MODEL_ID,
