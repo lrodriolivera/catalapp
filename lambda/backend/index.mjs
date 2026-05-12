@@ -8,6 +8,17 @@ import {
   DeleteItemCommand,
 } from '@aws-sdk/client-dynamodb'
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb'
+import {
+  CognitoIdentityProviderClient,
+  AdminCreateUserCommand,
+  AdminDisableUserCommand,
+  AdminEnableUserCommand,
+  AdminDeleteUserCommand,
+  ListUsersCommand,
+} from '@aws-sdk/client-cognito-identity-provider'
+
+const cognito = new CognitoIdentityProviderClient({ region: 'us-east-1' })
+const USER_POOL_ID = 'us-east-1_1uR4Juh5T'
 
 const TABLE = 'catalapp-data'
 const ddb = new DynamoDBClient({ region: 'us-east-1' })
@@ -31,6 +42,7 @@ const SHOP_ITEMS = {
 
 const TIERS = ['bronze', 'silver', 'gold', 'sapphire', 'ruby', 'emerald', 'diamond', 'legend']
 const GROUP_CAP = 30
+const ADMIN_SUB = '949864a8-d031-70d4-e9a4-3e0083cb42c5'
 
 function corsHeaders(origin) {
   const allow = ORIGIN_ALLOWLIST.has(origin) ? origin : 'https://catala.strixai.es'
@@ -852,6 +864,86 @@ export const handler = async (event) => {
         groupId: stats.currentGroupId,
         entries,
       }, origin)
+    }
+
+    // ─── ADMIN ENDPOINTS ───
+    if (path.startsWith('/admin')) {
+      if (userId !== ADMIN_SUB) return res(403, { error: 'forbidden' }, origin)
+
+      if (path === '/admin/users' && method === 'GET') {
+        const result = await cognito.send(new ListUsersCommand({
+          UserPoolId: USER_POOL_ID, Limit: 60,
+        }))
+        const users = (result.Users ?? []).map((u) => ({
+          username: u.Username,
+          status: u.UserStatus,
+          enabled: u.Enabled,
+          created: u.UserCreateDate?.toISOString(),
+          modified: u.UserLastModifiedDate?.toISOString(),
+          email: u.Attributes?.find((a) => a.Name === 'email')?.Value,
+          nickname: u.Attributes?.find((a) => a.Name === 'nickname')?.Value,
+        }))
+        return res(200, { users }, origin)
+      }
+
+      if (path === '/admin/invite' && method === 'POST') {
+        const body = event.body ? JSON.parse(event.body) : {}
+        const inviteEmail = String(body.email || '').trim().toLowerCase()
+        const inviteNickname = String(body.nickname || '').trim() || inviteEmail.split('@')[0]
+        if (!inviteEmail || !inviteEmail.includes('@')) {
+          return res(400, { error: 'email required' }, origin)
+        }
+        const r = await cognito.send(new AdminCreateUserCommand({
+          UserPoolId: USER_POOL_ID,
+          Username: inviteEmail,
+          UserAttributes: [
+            { Name: 'email', Value: inviteEmail },
+            { Name: 'email_verified', Value: 'true' },
+            { Name: 'nickname', Value: inviteNickname },
+          ],
+          DesiredDeliveryMediums: ['EMAIL'],
+        }))
+        return res(200, { ok: true, username: r.User?.Username }, origin)
+      }
+
+      if (path === '/admin/users/disable' && method === 'POST') {
+        const body = event.body ? JSON.parse(event.body) : {}
+        const username = String(body.username || '').trim()
+        if (!username) return res(400, { error: 'username required' }, origin)
+        await cognito.send(new AdminDisableUserCommand({ UserPoolId: USER_POOL_ID, Username: username }))
+        return res(200, { ok: true }, origin)
+      }
+
+      if (path === '/admin/users/enable' && method === 'POST') {
+        const body = event.body ? JSON.parse(event.body) : {}
+        const username = String(body.username || '').trim()
+        if (!username) return res(400, { error: 'username required' }, origin)
+        await cognito.send(new AdminEnableUserCommand({ UserPoolId: USER_POOL_ID, Username: username }))
+        return res(200, { ok: true }, origin)
+      }
+
+      if (path === '/admin/users/delete' && method === 'POST') {
+        const body = event.body ? JSON.parse(event.body) : {}
+        const username = String(body.username || '').trim()
+        if (!username) return res(400, { error: 'username required' }, origin)
+        await cognito.send(new AdminDeleteUserCommand({ UserPoolId: USER_POOL_ID, Username: username }))
+        return res(200, { ok: true }, origin)
+      }
+
+      if (path === '/admin/stats' && method === 'GET') {
+        const scan = await ddb.send(new ScanCommand({
+          TableName: TABLE,
+          FilterExpression: 'SK = :sk',
+          ExpressionAttributeValues: marshall({ ':sk': 'STATS' }),
+        }))
+        const allStats = (scan.Items ?? []).map((i) => unmarshall(i))
+        const today = new Date().toISOString().slice(0, 10)
+        const totalUsers = allStats.length
+        const activeToday = allStats.filter((s) => s.lastActivityDate === today).length
+        const totalXp = allStats.reduce((acc, s) => acc + (s.xp ?? 0), 0)
+        const avgStreak = totalUsers > 0 ? Math.round(allStats.reduce((acc, s) => acc + (s.streak ?? 0), 0) / totalUsers) : 0
+        return res(200, { totalUsers, activeToday, totalXp, avgStreak }, origin)
+      }
     }
 
     return res(404, { error: 'not found', path, method }, origin)

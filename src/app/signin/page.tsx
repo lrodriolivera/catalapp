@@ -197,10 +197,7 @@ export default function SignInPage() {
         {mode === 'signin' && (
           <>
             <p className="text-sm font-bold text-ink-soft">
-              No tens compte?{' '}
-              <button type="button" onClick={() => { setMode('signup'); clear() }} className="text-primary-dark underline underline-offset-2">
-                Crea&apos;n un
-              </button>
+              L&apos;accés és només per invitació.
             </p>
             <p className="text-sm">
               <button type="button" onClick={() => { setMode('forgot'); clear() }} className="font-bold text-ink-muted underline underline-offset-2 hover:text-ink">

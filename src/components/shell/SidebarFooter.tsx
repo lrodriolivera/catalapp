@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Languages, Moon, Sun, LogIn, LogOut, User } from 'lucide-react'
+import { Languages, Moon, Sun, LogIn, LogOut, User, Shield } from 'lucide-react'
 import { getLang, setLang, type Lang } from '@/lib/i18n'
 import { useAuth } from '@/lib/AuthContext'
 import { cn } from '@/lib/utils'
@@ -47,14 +47,26 @@ export function SidebarFooter() {
   return (
     <div className="border-t-2 border-line px-3 py-4 space-y-1">
       {mounted && user ? (
-        <Link
-          href="/perfil"
-          className="px-3 py-2 mb-1 rounded-xl bg-primary-soft border-2 border-primary/30 flex items-center gap-2 hover:brightness-105"
-          title="Veure perfil"
-        >
-          <User size={18} className="text-primary-dark" strokeWidth={2.5} />
-          <span className="text-sm font-extrabold text-primary-dark truncate">{user.nickname ?? user.email.split('@')[0]}</span>
-        </Link>
+        <>
+          <Link
+            href="/perfil"
+            className="px-3 py-2 mb-1 rounded-xl bg-primary-soft border-2 border-primary/30 flex items-center gap-2 hover:brightness-105"
+            title="Veure perfil"
+          >
+            <User size={18} className="text-primary-dark" strokeWidth={2.5} />
+            <span className="text-sm font-extrabold text-primary-dark truncate">{user.nickname ?? user.email.split('@')[0]}</span>
+          </Link>
+          {user.sub === '949864a8-d031-70d4-e9a4-3e0083cb42c5' && (
+            <Link
+              href="/admin"
+              className="px-3 py-2 mb-1 rounded-xl bg-gold-soft border-2 border-gold/30 flex items-center gap-2 hover:brightness-105"
+              title="Administració"
+            >
+              <Shield size={16} className="text-yellow-700" strokeWidth={2.5} />
+              <span className="text-xs font-extrabold text-yellow-700">Admin</span>
+            </Link>
+          )}
+        </>
       ) : null}
 
       <button

@@ -6,6 +6,7 @@ import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
 import OnboardingWrapper from '@/components/OnboardingWrapper'
 import { PwaInstallPrompt } from '@/components/PwaInstallPrompt'
 import { AuthProvider } from '@/lib/AuthContext'
+import { AuthGuard } from '@/components/AuthGuard'
 
 const nunito = Nunito({
   variable: '--font-nunito',
@@ -69,10 +70,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Saltar al contingut
         </a>
         <AuthProvider>
-          <OnboardingWrapper />
-          <ServiceWorkerRegister />
-          <PwaInstallPrompt />
-          <AppShell>{children}</AppShell>
+          <AuthGuard>
+            <OnboardingWrapper />
+            <ServiceWorkerRegister />
+            <PwaInstallPrompt />
+            <AppShell>{children}</AppShell>
+          </AuthGuard>
         </AuthProvider>
       </body>
     </html>
